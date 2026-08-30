@@ -10,33 +10,193 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CommunityRouteImport } from './routes/community'
+import { Route as EventsRouteImport } from './routes/events'
+import { Route as SavedRouteImport } from './routes/saved'
+import { Route as SubmitRouteImport } from './routes/submit'
+import { Route as AmbassadorsIndexRouteImport } from './routes/ambassadors.index'
+import { Route as AmbassadorsIdRouteImport } from './routes/ambassadors.$id'
+import { Route as BuildersIndexRouteImport } from './routes/builders.index'
+import { Route as BuildersIdRouteImport } from './routes/builders.$id'
+import { Route as OpportunitiesIndexRouteImport } from './routes/opportunities.index'
+import { Route as OpportunitiesIdRouteImport } from './routes/opportunities.$id'
+import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
+import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommunityRoute = CommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SavedRoute = SavedRouteImport.update({
+  id: '/saved',
+  path: '/saved',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubmitRoute = SubmitRouteImport.update({
+  id: '/submit',
+  path: '/submit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AmbassadorsIndexRoute = AmbassadorsIndexRouteImport.update({
+  id: '/ambassadors/',
+  path: '/ambassadors/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AmbassadorsIdRoute = AmbassadorsIdRouteImport.update({
+  id: '/ambassadors/$id',
+  path: '/ambassadors/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuildersIndexRoute = BuildersIndexRouteImport.update({
+  id: '/builders/',
+  path: '/builders/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuildersIdRoute = BuildersIdRouteImport.update({
+  id: '/builders/$id',
+  path: '/builders/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OpportunitiesIndexRoute = OpportunitiesIndexRouteImport.update({
+  id: '/opportunities/',
+  path: '/opportunities/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OpportunitiesIdRoute = OpportunitiesIdRouteImport.update({
+  id: '/opportunities/$id',
+  path: '/opportunities/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsIdRoute = ProjectsIdRouteImport.update({
+  id: '/projects/$id',
+  path: '/projects/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/community': typeof CommunityRoute
+  '/events': typeof EventsRoute
+  '/saved': typeof SavedRoute
+  '/submit': typeof SubmitRoute
+  '/ambassadors/$id': typeof AmbassadorsIdRoute
+  '/builders/$id': typeof BuildersIdRoute
+  '/opportunities/$id': typeof OpportunitiesIdRoute
+  '/projects/$id': typeof ProjectsIdRoute
+  '/ambassadors/': typeof AmbassadorsIndexRoute
+  '/builders/': typeof BuildersIndexRoute
+  '/opportunities/': typeof OpportunitiesIndexRoute
+  '/projects/': typeof ProjectsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/community': typeof CommunityRoute
+  '/events': typeof EventsRoute
+  '/saved': typeof SavedRoute
+  '/submit': typeof SubmitRoute
+  '/ambassadors/$id': typeof AmbassadorsIdRoute
+  '/builders/$id': typeof BuildersIdRoute
+  '/opportunities/$id': typeof OpportunitiesIdRoute
+  '/projects/$id': typeof ProjectsIdRoute
+  '/ambassadors': typeof AmbassadorsIndexRoute
+  '/builders': typeof BuildersIndexRoute
+  '/opportunities': typeof OpportunitiesIndexRoute
+  '/projects': typeof ProjectsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/community': typeof CommunityRoute
+  '/events': typeof EventsRoute
+  '/saved': typeof SavedRoute
+  '/submit': typeof SubmitRoute
+  '/ambassadors/$id': typeof AmbassadorsIdRoute
+  '/builders/$id': typeof BuildersIdRoute
+  '/opportunities/$id': typeof OpportunitiesIdRoute
+  '/projects/$id': typeof ProjectsIdRoute
+  '/ambassadors/': typeof AmbassadorsIndexRoute
+  '/builders/': typeof BuildersIndexRoute
+  '/opportunities/': typeof OpportunitiesIndexRoute
+  '/projects/': typeof ProjectsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/community'
+    | '/events'
+    | '/saved'
+    | '/submit'
+    | '/ambassadors/$id'
+    | '/builders/$id'
+    | '/opportunities/$id'
+    | '/projects/$id'
+    | '/ambassadors/'
+    | '/builders/'
+    | '/opportunities/'
+    | '/projects/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/community'
+    | '/events'
+    | '/saved'
+    | '/submit'
+    | '/ambassadors/$id'
+    | '/builders/$id'
+    | '/opportunities/$id'
+    | '/projects/$id'
+    | '/ambassadors'
+    | '/builders'
+    | '/opportunities'
+    | '/projects'
+  id:
+    | '__root__'
+    | '/'
+    | '/community'
+    | '/events'
+    | '/saved'
+    | '/submit'
+    | '/ambassadors/$id'
+    | '/builders/$id'
+    | '/opportunities/$id'
+    | '/projects/$id'
+    | '/ambassadors/'
+    | '/builders/'
+    | '/opportunities/'
+    | '/projects/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CommunityRoute: typeof CommunityRoute
+  EventsRoute: typeof EventsRoute
+  SavedRoute: typeof SavedRoute
+  SubmitRoute: typeof SubmitRoute
+  AmbassadorsIdRoute: typeof AmbassadorsIdRoute
+  BuildersIdRoute: typeof BuildersIdRoute
+  OpportunitiesIdRoute: typeof OpportunitiesIdRoute
+  ProjectsIdRoute: typeof ProjectsIdRoute
+  AmbassadorsIndexRoute: typeof AmbassadorsIndexRoute
+  BuildersIndexRoute: typeof BuildersIndexRoute
+  OpportunitiesIndexRoute: typeof OpportunitiesIndexRoute
+  ProjectsIndexRoute: typeof ProjectsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +208,107 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/community': {
+      id: '/community'
+      path: '/community'
+      fullPath: '/community'
+      preLoaderRoute: typeof CommunityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/saved': {
+      id: '/saved'
+      path: '/saved'
+      fullPath: '/saved'
+      preLoaderRoute: typeof SavedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/submit': {
+      id: '/submit'
+      path: '/submit'
+      fullPath: '/submit'
+      preLoaderRoute: typeof SubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ambassadors/': {
+      id: '/ambassadors/'
+      path: '/ambassadors'
+      fullPath: '/ambassadors/'
+      preLoaderRoute: typeof AmbassadorsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ambassadors/$id': {
+      id: '/ambassadors/$id'
+      path: '/ambassadors/$id'
+      fullPath: '/ambassadors/$id'
+      preLoaderRoute: typeof AmbassadorsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/builders/': {
+      id: '/builders/'
+      path: '/builders'
+      fullPath: '/builders/'
+      preLoaderRoute: typeof BuildersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/builders/$id': {
+      id: '/builders/$id'
+      path: '/builders/$id'
+      fullPath: '/builders/$id'
+      preLoaderRoute: typeof BuildersIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/opportunities/': {
+      id: '/opportunities/'
+      path: '/opportunities'
+      fullPath: '/opportunities/'
+      preLoaderRoute: typeof OpportunitiesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/opportunities/$id': {
+      id: '/opportunities/$id'
+      path: '/opportunities/$id'
+      fullPath: '/opportunities/$id'
+      preLoaderRoute: typeof OpportunitiesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/': {
+      id: '/projects/'
+      path: '/projects'
+      fullPath: '/projects/'
+      preLoaderRoute: typeof ProjectsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/$id': {
+      id: '/projects/$id'
+      path: '/projects/$id'
+      fullPath: '/projects/$id'
+      preLoaderRoute: typeof ProjectsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CommunityRoute: CommunityRoute,
+  EventsRoute: EventsRoute,
+  SavedRoute: SavedRoute,
+  SubmitRoute: SubmitRoute,
+  AmbassadorsIdRoute: AmbassadorsIdRoute,
+  BuildersIdRoute: BuildersIdRoute,
+  OpportunitiesIdRoute: OpportunitiesIdRoute,
+  ProjectsIdRoute: ProjectsIdRoute,
+  AmbassadorsIndexRoute: AmbassadorsIndexRoute,
+  BuildersIndexRoute: BuildersIndexRoute,
+  OpportunitiesIndexRoute: OpportunitiesIndexRoute,
+  ProjectsIndexRoute: ProjectsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
