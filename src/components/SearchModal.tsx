@@ -93,16 +93,15 @@ export function SearchModal({
   const flat = grouped.flatMap(([, hits]) => hits);
 
   useEffect(() => {
-    if (open) {
-      setQuery("");
-      setActive(0);
-      document.body.style.overflow = "hidden";
-      const t = setTimeout(() => inputRef.current?.focus(), 20);
-      return () => {
-        clearTimeout(t);
-        document.body.style.overflow = "";
-      };
-    }
+    if (!open) return undefined;
+    setQuery("");
+    setActive(0);
+    document.body.style.overflow = "hidden";
+    const t = setTimeout(() => inputRef.current?.focus(), 20);
+    return () => {
+      clearTimeout(t);
+      document.body.style.overflow = "";
+    };
   }, [open]);
 
   if (!open) return null;
