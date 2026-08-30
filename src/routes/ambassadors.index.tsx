@@ -12,17 +12,17 @@ import { ambassadorPrograms } from "@/data/ambassadors";
 export const Route = createFileRoute("/ambassadors/")({
   head: () => ({
     meta: [
-      { title: "Ambassador Programs — The Rec Room" },
+      { title: "Ambassadors — The Rec Room" },
       {
         name: "description",
         content:
-          "Live ambassador and community programs looking for people to help grow interesting projects.",
+          "Help shape the room. Ambassador and community programs worth joining to grow interesting projects.",
       },
-      { property: "og:title", content: "Ambassador Programs — The Rec Room" },
+      { property: "og:title", content: "Ambassadors — The Rec Room" },
       {
         property: "og:description",
         content:
-          "Represent something you believe in. Community, content, developer and regional programs.",
+          "Communities are built by people who care. Community, content, developer and regional programs.",
       },
     ],
   }),
@@ -65,19 +65,15 @@ function AmbassadorsPage() {
 
   return (
     <>
-      <PageHero label="Ambassadors" title="Represent something you believe in.">
-        Find live ambassador and community programs looking for people to help
-        grow interesting projects.
+      <PageHero label="Ambassadors" title="Help shape the room.">
+        Interesting communities are built by people who care. Find ambassador and community programs
+        worth joining.
       </PageHero>
 
       <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
         <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
           {filters.map((f) => (
-            <TogglePill
-              key={f.key}
-              active={active.includes(f.key)}
-              onClick={() => toggle(f.key)}
-            >
+            <TogglePill key={f.key} active={active.includes(f.key)} onClick={() => toggle(f.key)}>
               {f.label}
             </TogglePill>
           ))}

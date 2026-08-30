@@ -10,8 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as CommunityRouteImport } from './routes/community'
 import { Route as EventsRouteImport } from './routes/events'
+import { Route as RoomRouteImport } from './routes/room'
 import { Route as SavedRouteImport } from './routes/saved'
 import { Route as SubmitRouteImport } from './routes/submit'
 import { Route as AmbassadorsIndexRouteImport } from './routes/ambassadors.index'
@@ -28,14 +28,14 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CommunityRoute = CommunityRouteImport.update({
-  id: '/community',
-  path: '/community',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoomRoute = RoomRouteImport.update({
+  id: '/room',
+  path: '/room',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SavedRoute = SavedRouteImport.update({
@@ -91,8 +91,8 @@ const ProjectsIdRoute = ProjectsIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/community': typeof CommunityRoute
   '/events': typeof EventsRoute
+  '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
   '/ambassadors/$id': typeof AmbassadorsIdRoute
@@ -106,8 +106,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/community': typeof CommunityRoute
   '/events': typeof EventsRoute
+  '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
   '/ambassadors/$id': typeof AmbassadorsIdRoute
@@ -122,8 +122,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/community': typeof CommunityRoute
   '/events': typeof EventsRoute
+  '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
   '/ambassadors/$id': typeof AmbassadorsIdRoute
@@ -139,8 +139,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/community'
     | '/events'
+    | '/room'
     | '/saved'
     | '/submit'
     | '/ambassadors/$id'
@@ -154,8 +154,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/community'
     | '/events'
+    | '/room'
     | '/saved'
     | '/submit'
     | '/ambassadors/$id'
@@ -169,8 +169,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/community'
     | '/events'
+    | '/room'
     | '/saved'
     | '/submit'
     | '/ambassadors/$id'
@@ -185,8 +185,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CommunityRoute: typeof CommunityRoute
   EventsRoute: typeof EventsRoute
+  RoomRoute: typeof RoomRoute
   SavedRoute: typeof SavedRoute
   SubmitRoute: typeof SubmitRoute
   AmbassadorsIdRoute: typeof AmbassadorsIdRoute
@@ -208,18 +208,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/community': {
-      id: '/community'
-      path: '/community'
-      fullPath: '/community'
-      preLoaderRoute: typeof CommunityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/events': {
       id: '/events'
       path: '/events'
       fullPath: '/events'
       preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/room': {
+      id: '/room'
+      path: '/room'
+      fullPath: '/room'
+      preLoaderRoute: typeof RoomRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/saved': {
@@ -297,8 +297,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CommunityRoute: CommunityRoute,
   EventsRoute: EventsRoute,
+  RoomRoute: RoomRoute,
   SavedRoute: SavedRoute,
   SubmitRoute: SubmitRoute,
   AmbassadorsIdRoute: AmbassadorsIdRoute,

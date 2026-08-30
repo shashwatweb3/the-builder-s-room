@@ -31,11 +31,7 @@ export interface Opportunity {
   applyUrl: string;
 }
 
-export type AmbassadorProgramType =
-  | "community"
-  | "content"
-  | "developer"
-  | "regional";
+export type AmbassadorProgramType = "community" | "content" | "developer" | "regional";
 
 export interface AmbassadorProgram {
   id: string;
@@ -69,10 +65,7 @@ export type BuilderRole =
   | "other";
 
 export type BuilderStatus =
-  | "building"
-  | "open-to-collabs"
-  | "available-for-work"
-  | "open-to-opportunities";
+  "building" | "open-to-collabs" | "available-for-work" | "open-to-opportunities";
 
 export interface Builder {
   id: string;
@@ -119,12 +112,7 @@ export interface Project {
   accent: string;
 }
 
-export type EventKind =
-  | "meetup"
-  | "hackathon"
-  | "workshop"
-  | "demo-day"
-  | "community-call";
+export type EventKind = "meetup" | "hackathon" | "workshop" | "demo-day" | "community-call";
 
 export interface RecEvent {
   id: string;
@@ -140,3 +128,31 @@ export interface RecEvent {
 }
 
 export type SavedKind = "opportunity" | "project" | "builder";
+
+export type FeedKind = "building" | "question" | "share" | "looking-for" | "event" | "launch";
+
+export interface FeedComment {
+  id: string;
+  authorName: string;
+  authorHandle?: string;
+  content: string;
+  postedAt: string;
+}
+
+export interface FeedPost {
+  id: string;
+  kind: FeedKind;
+  builderId?: string;
+  authorName?: string;
+  authorHandle?: string;
+  authorRole?: string;
+  content: string;
+  postedAt: string;
+  likes: number;
+  comments: FeedComment[];
+}
+
+export interface RoomAnnouncement {
+  title: string;
+  body: string;
+}

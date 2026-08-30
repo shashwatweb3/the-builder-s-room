@@ -6,9 +6,10 @@ import { SectionLabel } from "./SectionLabel";
 import { cn } from "@/lib/utils";
 
 const interests = [
-  { id: "opportunities", label: "Opportunities" },
   { id: "community", label: "Community updates" },
+  { id: "opportunities", label: "Opportunities" },
   { id: "projects", label: "New projects" },
+  { id: "events", label: "Events" },
 ];
 
 /**
@@ -16,7 +17,7 @@ const interests = [
  */
 export function JoinCTA({ className }: { className?: string }) {
   const [email, setEmail] = useState("");
-  const [picked, setPicked] = useState<string[]>(["opportunities"]);
+  const [picked, setPicked] = useState<string[]>(["community"]);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
@@ -35,20 +36,18 @@ export function JoinCTA({ className }: { className?: string }) {
       as="section"
       tone="lavender"
       size="lg"
-      className={cn("overflow-hidden p-6 sm:p-10", className)}
+      id="join"
+      className={cn("scroll-mt-24 overflow-hidden p-6 sm:p-10", className)}
       aria-labelledby="join-heading"
     >
       <div className="grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:items-center">
         <div>
           <SectionLabel>Join the room</SectionLabel>
-          <h2
-            id="join-heading"
-            className="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl"
-          >
+          <h2 id="join-heading" className="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl">
             Pull up a chair.
           </h2>
           <p className="mt-3 max-w-md text-base text-foreground/75 sm:text-lg">
-            Get the interesting stuff without the noise.
+            Meet builders. Learn something. Build something. Find your people.
           </p>
         </div>
 
@@ -57,12 +56,8 @@ export function JoinCTA({ className }: { className?: string }) {
             <span className="grid size-11 place-items-center rounded-full border-2 border-border bg-primary text-primary-foreground">
               <Check className="size-5" aria-hidden />
             </span>
-            <p className="mt-4 text-2xl font-extrabold tracking-tight">
-              You're in. See you in the room.
-            </p>
-            <p className="label-mono mt-2 text-muted-foreground">
-              {picked.length ? picked.join(" · ") : "No topics selected"}
-            </p>
+            <p className="mt-4 text-2xl font-extrabold tracking-tight">You're in the room.</p>
+            <p className="mt-2 text-base text-muted-foreground">You'll hear from us soon.</p>
           </div>
         ) : (
           <form
@@ -90,9 +85,7 @@ export function JoinCTA({ className }: { className?: string }) {
             )}
 
             <fieldset className="mt-4">
-              <legend className="label-mono text-muted-foreground">
-                Send me
-              </legend>
+              <legend className="label-mono text-muted-foreground">Send me</legend>
               <div className="mt-2 flex flex-wrap gap-2">
                 {interests.map((i) => {
                   const on = picked.includes(i.id);
@@ -102,9 +95,7 @@ export function JoinCTA({ className }: { className?: string }) {
                       type="button"
                       aria-pressed={on}
                       onClick={() =>
-                        setPicked((p) =>
-                          on ? p.filter((x) => x !== i.id) : [...p, i.id],
-                        )
+                        setPicked((p) => (on ? p.filter((x) => x !== i.id) : [...p, i.id]))
                       }
                       className={cn(
                         "label-mono press min-h-9 rounded-full border-2 border-border px-3 py-2 shadow-offset-sm",

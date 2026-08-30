@@ -3,27 +3,25 @@ import { X, ArrowUpRight } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { Button } from "./Button";
 import { Dot } from "./StatusBadge";
+import { useJoinRoom } from "@/lib/useJoinRoom";
 
 const items = [
-  { to: "/", label: "Home" },
-  { to: "/opportunities", label: "Opportunities" },
-  { to: "/ambassadors", label: "Ambassadors" },
+  { to: "/room", label: "The Room" },
   { to: "/builders", label: "Builders" },
   { to: "/projects", label: "Projects" },
   { to: "/events", label: "Events" },
-  { to: "/community", label: "Community" },
+  { to: "/opportunities", label: "Opportunities" },
   { to: "/saved", label: "Saved" },
+] as const;
+
+const secondary = [
+  { to: "/ambassadors", label: "Ambassadors" },
   { to: "/submit", label: "Submit" },
 ] as const;
 
-export function MobileMenu({
-  open,
-  onClose,
-}: {
-  open: boolean;
-  onClose: () => void;
-}) {
+export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const joinRoom = useJoinRoom();
 
   useEffect(() => {
     if (!open) return;
@@ -40,7 +38,7 @@ export function MobileMenu({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] lg:hidden">
+    <div className="fixed inset-0 z-[60] xl:hidden">
       <button
         type="button"
         aria-label="Close menu"
@@ -80,17 +78,45 @@ export function MobileMenu({
                   activeProps={{ className: "bg-lavender/70" }}
                 >
                   {item.label}
-                  <ArrowUpRight className="size-5 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden />
+                  <ArrowUpRight
+                    className="size-5 opacity-0 transition-opacity group-hover:opacity-100"
+                    aria-hidden
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <p className="label-mono mt-6 mb-2 text-muted-foreground">More</p>
+          <ul className="space-y-1">
+            {secondary.map((item) => (
+              <li key={item.to}>
+                <Link
+                  to={item.to}
+                  onClick={onClose}
+                  className="group flex items-center justify-between rounded-2xl px-3 py-3 text-lg font-bold tracking-tight transition-colors hover:bg-lavender/60"
+                  activeProps={{ className: "bg-lavender/70" }}
+                >
+                  {item.label}
+                  <ArrowUpRight
+                    className="size-5 opacity-0 transition-opacity group-hover:opacity-100"
+                    aria-hidden
+                  />
                 </Link>
               </li>
             ))}
           </ul>
         </nav>
 
-        <Button asChild size="lg" className="mt-5 w-full">
-          <Link to="/community" onClick={onClose}>
-            Join the Room
-          </Link>
+        <Button
+          size="lg"
+          className="mt-5 w-full"
+          onClick={() => {
+            onClose();
+            joinRoom();
+          }}
+        >
+          Join the Room
         </Button>
       </div>
     </div>

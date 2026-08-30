@@ -79,7 +79,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Discover jobs, hackathons, residencies, ambassador programs, projects and people worth building with.",
+          "The Rec Room is a community for builders and creators — a place to meet people, learn together, share what you're building and discover things worth making.",
       },
       { name: "author", content: "The Rec Room" },
       { property: "og:site_name", content: "The Rec Room" },

@@ -18,19 +18,18 @@ export function CollabPanel() {
             id="collab-heading"
             className="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl"
           >
-            Need someone to ship with?
+            Looking for someone to build with?
           </h2>
           <p className="mt-3 max-w-lg text-base text-primary-foreground/85 sm:text-lg">
-            Good projects rarely happen alone. Find someone with the skills
-            you're missing.
+            Good projects rarely happen alone. Find someone with the skills you're missing.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
           <Button asChild variant="ink" size="lg">
-            <Link to="/builders">Find a builder</Link>
+            <Link to="/builders">Find a collaborator →</Link>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <Link to="/submit">Start a project</Link>
+            <Link to="/submit">Start a project →</Link>
           </Button>
         </div>
       </div>
