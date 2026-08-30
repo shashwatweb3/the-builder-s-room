@@ -141,7 +141,7 @@ function Home() {
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg">
-                <Link to="/opportunities">Explore opportunities →</Link>
+                <Link to="/opportunities" search={{ category: undefined }}>Explore opportunities →</Link>
               </Button>
               <Button asChild variant="outline" size="lg">
                 <Link to="/builders">Meet the builders</Link>
@@ -209,7 +209,6 @@ function Home() {
               <span className="mt-6 inline-flex items-center gap-1.5 font-semibold">
                 <Link
                   to="/opportunities"
-            search={{ category: undefined }}
                   search={{ category: c.key }}
                   className="after:absolute after:inset-0 after:content-['']"
                 >
@@ -272,7 +271,7 @@ function Home() {
             <EmptyState
               action={
                 <Button asChild variant="outline">
-                  <Link to="/opportunities">Explore everything →</Link>
+                  <Link to="/opportunities" search={{ category: undefined }}>Explore everything →</Link>
                 </Button>
               }
             />
