@@ -9,7 +9,7 @@ import { JoinCTA } from "@/components/JoinCTA";
 import { Button } from "@/components/Button";
 import { ambassadorPrograms } from "@/data/ambassadors";
 
-export const Route = createFileRoute("/ambassadors")({
+export const Route = createFileRoute("/ambassadors/")({
   head: () => ({
     meta: [
       { title: "Ambassador Programs — The Rec Room" },
