@@ -13,7 +13,7 @@ export const buttonVariants = cva(
         outline: "bg-card text-foreground shadow-offset hover:bg-lavender/40",
         soft: "bg-lavender text-foreground shadow-offset-sm",
         ghost:
-          "border-transparent bg-transparent shadow-none hover:bg-foreground/5 hover:translate-none active:translate-none",
+          "border-transparent bg-transparent shadow-none hover:bg-foreground/5 hover:shadow-none active:shadow-none [&:active]:transform-none [&:hover]:transform-none",
       },
       size: {
         sm: "min-h-9 px-4 text-sm",
