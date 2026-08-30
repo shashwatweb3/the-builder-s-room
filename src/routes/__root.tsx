@@ -7,29 +7,33 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { SearchModal } from "@/components/SearchModal";
+import { Button } from "@/components/Button";
+import { SavedProvider } from "@/lib/saved";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
-          </Link>
-        </div>
-      </div>
+    <div className="mx-auto flex min-h-[70vh] w-full max-w-3xl flex-col items-center justify-center px-4 py-20 text-center">
+      <p className="label-mono text-muted-foreground">Error 404</p>
+      <p className="mt-4 text-[clamp(5rem,22vw,12rem)] leading-[0.8] font-extrabold tracking-tighter">
+        404
+      </p>
+      <h1 className="mt-6 text-3xl font-extrabold tracking-tight sm:text-5xl">
+        You wandered into the wrong room.
+      </h1>
+      <p className="mt-3 max-w-md text-muted-foreground">
+        Nothing here but folding chairs and a broken ping-pong table.
+      </p>
+      <Button asChild size="lg" className="mt-8">
+        <Link to="/">Back to The Rec Room →</Link>
+      </Button>
     </div>
   );
 }
@@ -42,31 +46,25 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <button
-            onClick={() => {
-              router.invalidate();
-              reset();
-            }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Try again
-          </button>
-          <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            Go home
-          </a>
-        </div>
+    <div className="mx-auto flex min-h-[70vh] w-full max-w-2xl flex-col items-center justify-center px-4 py-20 text-center">
+      <p className="label-mono text-muted-foreground">Signal lost</p>
+      <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-6xl">
+        Well, that didn't work.
+      </h1>
+      <p className="mt-3 text-muted-foreground">The room lost the signal.</p>
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <Button
+          onClick={() => {
+            router.invalidate();
+            reset();
+          }}
+          size="lg"
+        >
+          Try again →
+        </Button>
+        <Button asChild variant="outline" size="lg">
+          <Link to="/">Go home</Link>
+        </Button>
       </div>
     </div>
   );
@@ -77,19 +75,29 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "The Rec Room — A Recreation Room for Builders" },
+      {
+        name: "description",
+        content:
+          "Discover jobs, hackathons, residencies, ambassador programs, projects and people worth building with.",
+      },
+      { name: "author", content: "The Rec Room" },
+      { property: "og:site_name", content: "The Rec Room" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "theme-color", content: "#F5F3EF" },
     ],
     links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      {
+        rel: "preconnect",
+        href: "https://fonts.gstatic.com",
+        crossOrigin: "anonymous",
+      },
       {
         rel: "stylesheet",
-        href: appCss,
+        href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap",
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
@@ -116,11 +124,37 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSearchOpen((o) => !o);
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <SavedProvider>
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[80] focus:rounded-full focus:border-2 focus:border-border focus:bg-card focus:px-4 focus:py-2 focus:font-semibold"
+        >
+          Skip to content
+        </a>
+        <Navbar onOpenSearch={() => setSearchOpen(true)} />
+        <main id="main">
+          {/* Required: nested routes render here. */}
+          <Outlet />
+        </main>
+        <Footer />
+        <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
+        <Toaster position="bottom-right" />
+      </SavedProvider>
     </QueryClientProvider>
   );
 }
