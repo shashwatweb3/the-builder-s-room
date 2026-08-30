@@ -209,6 +209,7 @@ function Home() {
               <span className="mt-6 inline-flex items-center gap-1.5 font-semibold">
                 <Link
                   to="/opportunities"
+            search={{ category: undefined }}
                   search={{ category: c.key }}
                   className="after:absolute after:inset-0 after:content-['']"
                 >
@@ -235,6 +236,7 @@ function Home() {
           </div>
           <Link
             to="/opportunities"
+            search={{ category: undefined }}
             className="group inline-flex items-center gap-2 font-semibold underline-offset-4 hover:underline"
           >
             View all opportunities

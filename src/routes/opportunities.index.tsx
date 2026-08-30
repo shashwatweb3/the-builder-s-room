@@ -14,9 +14,9 @@ import { JoinCTA } from "@/components/JoinCTA";
 import { opportunities } from "@/data/opportunities";
 import { daysUntil, isClosingSoon } from "@/lib/format";
 
-export const Route = createFileRoute("/opportunities")({
+export const Route = createFileRoute("/opportunities/")({
   validateSearch: (search: Record<string, unknown>) => ({
-    category: typeof search.category === "string" ? search.category : undefined,
+    category: typeof search['category'] === "string" ? (search['category'] as string) : undefined,
   }),
   head: () => ({
     meta: [
