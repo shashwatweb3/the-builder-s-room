@@ -29,7 +29,9 @@ export function CollabPanel() {
             <Link to="/builders">Find a collaborator →</Link>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <Link to="/submit">Start a project →</Link>
+            <a href="https://t.me/Lucky_sc0" target="_blank" rel="noopener noreferrer">
+              Start a project →
+            </a>
           </Button>
         </div>
       </div>

@@ -317,6 +317,19 @@ function OpportunitiesPage() {
           resultCount={results.length}
         />
 
+        <p className="mt-5 text-sm text-muted-foreground">
+          Want to add an opportunity or event? DM{" "}
+          <a
+            href="https://t.me/Lucky_sc0"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-primary underline decoration-2 underline-offset-2 hover:opacity-80"
+          >
+            @Lucky_sc0
+          </a>{" "}
+          on Telegram.
+        </p>
+
         <div className="mt-10">
           {shown.length === 0 ? (
             <EmptyState

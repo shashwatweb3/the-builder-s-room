@@ -6,8 +6,8 @@ import { AdminLayout } from "@/components/AdminLayout";
 
 export const Route = createFileRoute("/admin/")({
   beforeLoad: async () => {
-    const session = await getSession();
-    if (!session.isAdmin) throw redirect({ to: "/admin/login" });
+    const { isAdmin } = await getSession();
+    if (!isAdmin) throw redirect({ to: "/admin/login" });
   },
   loader: async () => {
     const stats = await getAdminStats();
@@ -16,20 +16,15 @@ export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
 });
 
-const getSession = createServerFn({ method: "GET" }).handler(async () => {
-  if (!import.meta.env["VITE_SUPABASE_URL"] || !import.meta.env["VITE_SUPABASE_ANON_KEY"]) {
-    return { user: null, isAdmin: false };
-  }
-  const request = getRequest();
-  if (!request) return { user: null, isAdmin: false };
-  const supabase = createServerClient(
+function makeClient(request: Request) {
+  return createServerClient(
     import.meta.env["VITE_SUPABASE_URL"],
     import.meta.env["VITE_SUPABASE_ANON_KEY"],
     {
       cookies: {
         getAll() {
-          const header = request.headers.get("cookie") ?? "";
-          return header.split(";").map((c) => {
+          const h = request.headers.get("cookie") ?? "";
+          return h.split(";").map((c) => {
             const [name, ...rest] = c.trim().split("=");
             return { name: name ?? "", value: rest.join("=") };
           });
@@ -38,6 +33,15 @@ const getSession = createServerFn({ method: "GET" }).handler(async () => {
       },
     },
   );
+}
+
+const getSession = createServerFn({ method: "GET" }).handler(async () => {
+  if (!import.meta.env["VITE_SUPABASE_URL"] || !import.meta.env["VITE_SUPABASE_ANON_KEY"]) {
+    return { user: null, isAdmin: false };
+  }
+  const request = getRequest();
+  if (!request) return { user: null, isAdmin: false };
+  const supabase = makeClient(request);
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -47,38 +51,38 @@ const getSession = createServerFn({ method: "GET" }).handler(async () => {
     .select("role")
     .eq("id", user.id)
     .single();
-  return { user: { id: user.id, email: user.email ?? "" }, isAdmin: profile?.role === "admin" };
+  return {
+    user: { id: user.id, email: user.email ?? "" },
+    isAdmin: (profile as { role?: string } | null)?.role === "admin",
+  };
 });
 
-const getAdminStats = createServerFn({ method: "GET" }).handler(async () => {
+async function requireAdminClient(request: Request) {
   if (!import.meta.env["VITE_SUPABASE_URL"] || !import.meta.env["VITE_SUPABASE_ANON_KEY"]) {
-    return {
-      events: { total: 0, published: 0, drafts: 0, upcoming: 0 },
-      opportunities: { total: 0, published: 0, drafts: 0, closingSoon: 0 },
-    };
+    throw new Error(
+      "Admin dashboard misconfigured: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set. Add them to your environment (.env.local) before using the admin panel.",
+    );
   }
+  const supabase = makeClient(request);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Admin authentication required");
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+  if ((profile as { role?: string } | null)?.role !== "admin") {
+    throw new Error("Admin authentication required");
+  }
+  return supabase;
+}
+
+const getAdminStats = createServerFn({ method: "GET" }).handler(async () => {
   const request = getRequest();
-  if (!request)
-    return {
-      events: { total: 0, published: 0, drafts: 0, upcoming: 0 },
-      opportunities: { total: 0, published: 0, drafts: 0, closingSoon: 0 },
-    };
-  const supabase = createServerClient(
-    import.meta.env["VITE_SUPABASE_URL"],
-    import.meta.env["VITE_SUPABASE_ANON_KEY"],
-    {
-      cookies: {
-        getAll() {
-          const header = request.headers.get("cookie") ?? "";
-          return header.split(";").map((c) => {
-            const [name, ...rest] = c.trim().split("=");
-            return { name: name ?? "", value: rest.join("=") };
-          });
-        },
-        setAll() {},
-      },
-    },
-  );
+  if (!request) throw new Error("Admin dashboard must run in a server context");
+  const supabase = await requireAdminClient(request);
 
   const [eventsAll, eventsPublished, eventsDrafts, eventsUpcoming] = await Promise.all([
     supabase.from("events").select("id", { count: "exact", head: true }),

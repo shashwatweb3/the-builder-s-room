@@ -2,7 +2,6 @@ import { createFileRoute, Link, redirect, useRouter } from "@tanstack/react-rout
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { createServerClient } from "@supabase/ssr";
-import { createClient } from "@supabase/supabase-js";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Pencil, Eye, EyeOff, Trash2, Plus } from "lucide-react";
@@ -32,8 +31,8 @@ type OpportunityRow = {
 
 export const Route = createFileRoute("/admin/opportunities")({
   beforeLoad: async () => {
-    const session = await getSession();
-    if (!session.isAdmin) throw redirect({ to: "/admin/login" });
+    const { isAdmin } = await getSession();
+    if (!isAdmin) throw redirect({ to: "/admin/login" });
   },
   loader: async () => {
     const opportunities = await getOpportunities();
@@ -79,19 +78,37 @@ const getSession = createServerFn({ method: "GET" }).handler(async () => {
     .single();
   return {
     user: { id: user.id, email: user.email ?? "" },
-    isAdmin: profile?.role === "admin",
+    isAdmin: (profile as { role?: string } | null)?.role === "admin",
   };
 });
 
-const getOpportunities = createServerFn({ method: "GET" }).handler(async () => {
-  if (!import.meta.env["VITE_SUPABASE_URL"] || !import.meta.env["SUPABASE_SERVICE_ROLE_KEY"]) {
-    return [] as OpportunityRow[];
+async function requireAdminClient(request: Request) {
+  if (!import.meta.env["VITE_SUPABASE_URL"] || !import.meta.env["VITE_SUPABASE_ANON_KEY"]) {
+    throw new Error(
+      "Admin dashboard misconfigured: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set.",
+    );
   }
-  const adminClient = createClient(
-    import.meta.env["VITE_SUPABASE_URL"],
-    import.meta.env["SUPABASE_SERVICE_ROLE_KEY"],
-  );
-  const { data, error } = await adminClient
+  const supabase = makeClient(request);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Admin authentication required");
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+  if ((profile as { role?: string } | null)?.role !== "admin") {
+    throw new Error("Admin authentication required");
+  }
+  return supabase;
+}
+
+const getOpportunities = createServerFn({ method: "GET" }).handler(async () => {
+  const request = getRequest();
+  if (!request) throw new Error("Admin dashboard must run in a server context");
+  const supabase = await requireAdminClient(request);
+  const { data, error } = await supabase
     .from("opportunities")
     .select("*")
     .order("created_at", { ascending: false });
@@ -102,17 +119,13 @@ const getOpportunities = createServerFn({ method: "GET" }).handler(async () => {
 const toggleStatus = createServerFn({ method: "POST" })
   .validator((data: { id: string; status: string }) => data)
   .handler(async ({ data }) => {
-    if (!import.meta.env["VITE_SUPABASE_URL"] || !import.meta.env["SUPABASE_SERVICE_ROLE_KEY"]) {
-      return { success: false };
-    }
-    const adminClient = createClient(
-      import.meta.env["VITE_SUPABASE_URL"],
-      import.meta.env["SUPABASE_SERVICE_ROLE_KEY"],
-    );
+    const request = getRequest();
+    if (!request) throw new Error("Admin dashboard must run in a server context");
+    const supabase = await requireAdminClient(request);
     const newStatus = data.status === "published" ? "draft" : "published";
-    const { error } = await adminClient
+    const { error } = await supabase
       .from("opportunities")
-      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .update({ status: newStatus })
       .eq("id", data.id);
     if (error) throw error;
     return { success: true };
@@ -121,14 +134,10 @@ const toggleStatus = createServerFn({ method: "POST" })
 const deleteOpportunity = createServerFn({ method: "POST" })
   .validator((data: { id: string }) => data)
   .handler(async ({ data }) => {
-    if (!import.meta.env["VITE_SUPABASE_URL"] || !import.meta.env["SUPABASE_SERVICE_ROLE_KEY"]) {
-      return { success: false };
-    }
-    const adminClient = createClient(
-      import.meta.env["VITE_SUPABASE_URL"],
-      import.meta.env["SUPABASE_SERVICE_ROLE_KEY"],
-    );
-    const { error } = await adminClient.from("opportunities").delete().eq("id", data.id);
+    const request = getRequest();
+    if (!request) throw new Error("Admin dashboard must run in a server context");
+    const supabase = await requireAdminClient(request);
+    const { error } = await supabase.from("opportunities").delete().eq("id", data.id);
     if (error) throw error;
     return { success: true };
   });

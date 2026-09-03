@@ -1,8 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import { EmptyState } from "@/components/EmptyState";
-import { Button } from "@/components/Button";
 import { CollabPanel } from "@/components/CollabPanel";
 import { JoinCTA } from "@/components/JoinCTA";
 
@@ -35,11 +34,14 @@ function ProjectsPage() {
 
       <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
         <div className="flex flex-wrap items-end justify-between gap-6">
-          <Button asChild variant="outline" size="lg">
-            <Link to="/submit">
-              Share your project <ArrowRight className="size-4" aria-hidden />
-            </Link>
-          </Button>
+          <a
+            href="https://t.me/Lucky_sc0"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full border-2 border-border bg-card px-6 text-base font-semibold text-foreground shadow-offset transition-colors hover:bg-lavender/40"
+          >
+            Share your project <ArrowRight className="size-4" aria-hidden />
+          </a>
         </div>
 
         <div className="mt-10">

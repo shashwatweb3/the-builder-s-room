@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { createServerClient } from "@supabase/ssr";
@@ -11,7 +11,6 @@ import { Dot } from "@/components/StatusBadge";
 import { EventCard } from "@/components/EventCard";
 import { FilterBar } from "@/components/FilterBar";
 import { EmptyState } from "@/components/EmptyState";
-import { Button } from "@/components/Button";
 import { JoinCTA } from "@/components/JoinCTA";
 import type { EventKind, RecEvent } from "@/data/types";
 
@@ -156,12 +155,28 @@ function EventsPage() {
               Pick a night to show up to.
             </h2>
           </div>
-          <Button asChild variant="outline" size="lg">
-            <Link to="/submit">
-              Host an event <ArrowRight className="size-4" aria-hidden />
-            </Link>
-          </Button>
+          <a
+            href="https://t.me/Lucky_sc0"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full border-2 border-border bg-card px-6 text-base font-semibold text-foreground shadow-offset transition-colors hover:bg-lavender/40"
+          >
+            Host an event <ArrowRight className="size-4" aria-hidden />
+          </a>
         </div>
+
+        <p className="mt-5 text-sm text-muted-foreground">
+          Want to add an opportunity or event? DM{" "}
+          <a
+            href="https://t.me/Lucky_sc0"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-primary underline decoration-2 underline-offset-2 hover:opacity-80"
+          >
+            @Lucky_sc0
+          </a>{" "}
+          on Telegram.
+        </p>
 
         <FilterBar
           ariaLabel="Filter events by type"
@@ -183,9 +198,14 @@ function EventsPage() {
               title="Nothing on the calendar yet."
               body="Someone should fix that. Host the first one."
               action={
-                <Button asChild variant="outline">
-                  <Link to="/submit">Host an event →</Link>
-                </Button>
+                <a
+                  href="https://t.me/Lucky_sc0"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border-2 border-border bg-card px-5 text-base font-semibold text-foreground shadow-offset transition-colors hover:bg-lavender/40"
+                >
+                  Host an event →
+                </a>
               }
             />
           )}

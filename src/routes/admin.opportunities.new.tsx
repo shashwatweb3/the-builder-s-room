@@ -1,18 +1,16 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { createServerClient } from "@supabase/ssr";
-import { createClient } from "@supabase/supabase-js";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
-import { Link } from "@tanstack/react-router";
 import { AdminLayout } from "@/components/AdminLayout";
 
 export const Route = createFileRoute("/admin/opportunities/new")({
   beforeLoad: async () => {
-    const session = await getSession();
-    if (!session.isAdmin) throw redirect({ to: "/admin/login" });
+    const { isAdmin } = await getSession();
+    if (!isAdmin) throw redirect({ to: "/admin/login" });
   },
   component: NewOpportunity,
 });
@@ -54,9 +52,31 @@ const getSession = createServerFn({ method: "GET" }).handler(async () => {
     .single();
   return {
     user: { id: user.id, email: user.email ?? "" },
-    isAdmin: profile?.role === "admin",
+    isAdmin: (profile as { role?: string } | null)?.role === "admin",
   };
 });
+
+async function requireAdminClient(request: Request) {
+  if (!import.meta.env["VITE_SUPABASE_URL"] || !import.meta.env["VITE_SUPABASE_ANON_KEY"]) {
+    throw new Error(
+      "Admin dashboard misconfigured: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set.",
+    );
+  }
+  const supabase = makeClient(request);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Admin authentication required");
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+  if ((profile as { role?: string } | null)?.role !== "admin") {
+    throw new Error("Admin authentication required");
+  }
+  return supabase;
+}
 
 const insertOpportunity = createServerFn({ method: "POST" })
   .validator(
@@ -79,15 +99,10 @@ const insertOpportunity = createServerFn({ method: "POST" })
     }) => data,
   )
   .handler(async ({ data }) => {
-    if (!import.meta.env["VITE_SUPABASE_URL"] || !import.meta.env["SUPABASE_SERVICE_ROLE_KEY"]) {
-      return { success: false };
-    }
-    const adminClient = createClient(
-      import.meta.env["VITE_SUPABASE_URL"],
-      import.meta.env["SUPABASE_SERVICE_ROLE_KEY"],
-    );
-    const now = new Date().toISOString();
-    const { error } = await adminClient.from("opportunities").insert({
+    const request = getRequest();
+    if (!request) throw new Error("Admin dashboard must run in a server context");
+    const supabase = await requireAdminClient(request);
+    const { error } = await supabase.from("opportunities").insert({
       title: data.title,
       slug: data.slug,
       type: data.type,
@@ -103,8 +118,6 @@ const insertOpportunity = createServerFn({ method: "POST" })
       tags: data.tags,
       featured: data.featured,
       status: data.status,
-      created_at: now,
-      updated_at: now,
     });
     if (error) throw error;
     return { success: true };
