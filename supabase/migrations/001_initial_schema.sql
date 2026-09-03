@@ -178,3 +178,17 @@ create trigger events_updated_at
 create trigger opportunities_updated_at
   before update on public.opportunities
   for each row execute function public.update_updated_at();
+
+-- ============================================
+-- TABLE PRIVILEGES (PostgREST access)
+-- RLS policies above control WHICH rows each role sees/edits.
+-- These GRANTs control WHETHER a role can touch the tables at all.
+-- They do not weaken RLS: anon still reads only published rows, and only
+-- users whose profiles.role = 'admin' can write.
+-- ============================================
+grant select on public.events, public.opportunities to anon;
+
+grant select on public.events, public.opportunities, public.profiles to authenticated;
+grant insert, update, delete on public.events, public.opportunities to authenticated;
+
+grant execute on function public.update_updated_at() to authenticated;
