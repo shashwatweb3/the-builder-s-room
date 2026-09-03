@@ -187,6 +187,11 @@ create trigger opportunities_updated_at
 -- users whose profiles.role = 'admin' can write.
 -- ============================================
 grant select on public.events, public.opportunities to anon;
+-- anon SELECT on profiles is required so PostgREST can evaluate the admin-role
+-- subquery in the events/opportunities RLS policies. It is safe: the profiles
+-- RLS policy is `auth.uid() = id`, so an anonymous user (auth.uid() = NULL) can
+-- read zero profile rows.
+grant select on public.profiles to anon;
 
 grant select on public.events, public.opportunities, public.profiles to authenticated;
 grant insert, update, delete on public.events, public.opportunities to authenticated;
