@@ -4,6 +4,8 @@ import { PageHero } from "@/components/PageHero";
 import { OffsetCard } from "@/components/OffsetCard";
 import { Button } from "@/components/Button";
 
+const TELEGRAM_CONTACT_URL = "https://t.me/Lucky_sc0";
+
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
@@ -19,14 +21,9 @@ export const Route = createFileRoute("/contact")({
 
 const links = [
   {
-    label: "Email us",
-    href: "mailto:hello@therecroom.dev",
-    description: "For general questions, feedback or partnership inquiries.",
-  },
-  {
-    label: "Open an issue",
-    href: "https://github.com/shashwatweb3/the-builder-s-room/issues",
-    description: "Found a bug or have a feature request? Let us know.",
+    label: "Message @Lucky_sc0",
+    href: TELEGRAM_CONTACT_URL,
+    description: "Have something worth sharing? DM @Lucky_sc0 on Telegram.",
   },
   {
     label: "Community Guidelines",
@@ -39,7 +36,7 @@ function ContactPage() {
   return (
     <>
       <PageHero label="Contact" title="Get in touch.">
-        Have a question, suggestion, or just want to say hi? We'd love to hear from you.
+        Have a question, suggestion, or something worth sharing? DM @Lucky_sc0 on Telegram.
       </PageHero>
 
       <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">

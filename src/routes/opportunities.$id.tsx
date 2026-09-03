@@ -22,7 +22,7 @@ const categoryMeta: Record<OpportunityCategory, { label: string; plural: string;
 
 export const Route = createFileRoute("/opportunities/$id")({
   loader: () => {
-    throw new Error("not found");
+    throw notFound();
   },
   head: () => ({
     meta: [

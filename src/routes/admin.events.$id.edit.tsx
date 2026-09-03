@@ -289,7 +289,7 @@ function EditEvent() {
               type="text"
               value={form.title}
               onChange={(e) => set("title", e.target.value)}
-              placeholder="What's it called?"
+              placeholder="Enter event title"
               className={`${inputClass} ${errors.title ? "border-destructive" : ""}`}
             />
             {errors.title && (
@@ -307,7 +307,7 @@ function EditEvent() {
               id="ev-desc"
               value={form.description}
               onChange={(e) => set("description", e.target.value)}
-              placeholder="Short description for the card."
+              placeholder="Enter a short event description"
               className={`${textareaClass} ${errors.description ? "border-destructive" : ""}`}
             />
             {errors.description && (
@@ -325,7 +325,7 @@ function EditEvent() {
               id="ev-long"
               value={form.long_description}
               onChange={(e) => set("long_description", e.target.value)}
-              placeholder="Full details for the detail page."
+              placeholder="Enter detailed event information"
               className={textareaClass}
             />
           </div>
@@ -370,7 +370,7 @@ function EditEvent() {
               type="text"
               value={form.location}
               onChange={(e) => set("location", e.target.value)}
-              placeholder="San Francisco, Anywhere…"
+              placeholder="Enter location"
               className={inputClass}
             />
           </div>
@@ -403,7 +403,7 @@ function EditEvent() {
               type="url"
               value={form.registration_url}
               onChange={(e) => set("registration_url", e.target.value)}
-              placeholder="https://lu.ma/…"
+              placeholder="Enter registration URL"
               className={`${inputClass} ${errors.registration_url ? "border-destructive" : ""}`}
             />
             {errors.registration_url && (

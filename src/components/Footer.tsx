@@ -15,12 +15,6 @@ const discover = [
   { to: "/contact", label: "Contact" },
 ] as const;
 
-const socials = [
-  { label: "X", url: "https://x.com" },
-  { label: "Discord", url: "https://discord.com" },
-  { label: "GitHub", url: "https://github.com" },
-];
-
 export function Footer() {
   return (
     <footer className="mt-24 border-t-2 border-border bg-background">
@@ -63,24 +57,6 @@ export function Footer() {
                   >
                     {l.label}
                   </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <nav aria-label="Footer elsewhere links">
-            <p className="label-mono text-muted-foreground">Elsewhere</p>
-            <ul className="mt-4 space-y-2">
-              {socials.map((s) => (
-                <li key={s.label}>
-                  <a
-                    href={s.url}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="font-medium underline-offset-4 transition-colors hover:text-primary hover:underline"
-                  >
-                    {s.label}
-                  </a>
                 </li>
               ))}
             </ul>

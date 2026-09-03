@@ -2,9 +2,6 @@
  * Domain models for The Rec Room.
  *
  * These types are the contract between the UI and the data layer.
- * Right now the data comes from local demo files in `src/data/*`.
- * Later they can be served from a database/API with the same shapes,
- * without touching any component.
  */
 
 export type OpportunityCategory = "job" | "hackathon" | "residency" | "grant";

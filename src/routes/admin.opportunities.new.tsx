@@ -254,7 +254,7 @@ function NewOpportunity() {
               type="text"
               value={form.title}
               onChange={(e) => set("title", e.target.value)}
-              placeholder="What's it called?"
+              placeholder="Enter opportunity title"
               className={`${inputClass} ${errors.title ? "border-destructive" : ""}`}
             />
             {errors.title && (
@@ -291,7 +291,7 @@ function NewOpportunity() {
               type="text"
               value={form.organization}
               onChange={(e) => set("organization", e.target.value)}
-              placeholder="Who's behind it?"
+              placeholder="Enter organization name"
               className={`${inputClass} ${errors.organization ? "border-destructive" : ""}`}
             />
             {errors.organization && (
@@ -309,7 +309,7 @@ function NewOpportunity() {
               id="opp-desc"
               value={form.description}
               onChange={(e) => set("description", e.target.value)}
-              placeholder="Short description for the card."
+              placeholder="Enter a short opportunity description"
               className={`${textareaClass} ${errors.description ? "border-destructive" : ""}`}
             />
             {errors.description && (
@@ -327,7 +327,7 @@ function NewOpportunity() {
               id="opp-long"
               value={form.long_description}
               onChange={(e) => set("long_description", e.target.value)}
-              placeholder="Full details for the detail page."
+              placeholder="Enter detailed opportunity information"
               className={textareaClass}
             />
           </div>
@@ -341,7 +341,7 @@ function NewOpportunity() {
               type="text"
               value={form.location}
               onChange={(e) => set("location", e.target.value)}
-              placeholder="Remote, Berlin, Anywhere…"
+              placeholder="Enter location"
               className={inputClass}
             />
           </div>
@@ -355,7 +355,7 @@ function NewOpportunity() {
               type="text"
               value={form.compensation}
               onChange={(e) => set("compensation", e.target.value)}
-              placeholder="$5,000, stipend, no equity…"
+              placeholder="Enter compensation details"
               className={inputClass}
             />
           </div>
@@ -410,7 +410,7 @@ function NewOpportunity() {
               type="text"
               value={form.tags}
               onChange={(e) => set("tags", e.target.value)}
-              placeholder="Rust, Open source, First time friendly…"
+              placeholder="Enter tags separated by commas"
               className={inputClass}
             />
             <p className="label-mono mt-1 text-muted-foreground">Comma-separated</p>
