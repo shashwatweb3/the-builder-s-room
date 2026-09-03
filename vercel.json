@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "build": {
+    "env": {}
+  },
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".output/public",
+  "framework": "vite"
+}
