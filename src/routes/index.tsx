@@ -1,29 +1,31 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/Button";
 import { OffsetCard } from "@/components/OffsetCard";
 import { SectionLabel } from "@/components/SectionLabel";
 import { Tag } from "@/components/Tag";
+import { StatusBadge } from "@/components/StatusBadge";
 import { HeroRoom } from "@/components/HeroRoom";
 import { JoinCTA } from "@/components/JoinCTA";
 import { FAQ } from "@/components/FAQ";
-import { builders, getBuilder, initials } from "@/data/builders";
 import { projects, projectStatusLabel } from "@/data/projects";
-import { feedPosts, feedKindMeta } from "@/data/feed";
-import { cn } from "@/lib/utils";
+import { events, eventKindLabel } from "@/data/events";
+import { opportunities, categoryMeta } from "@/data/opportunities";
+import { ambassadorPrograms, programTypeLabel } from "@/data/ambassadors";
+import { deadlineLabel, isClosingSoon } from "@/lib/format";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "The Rec Room — A Recreation Room for Builders" },
+      { title: "The Rec Room — A Community for Builders" },
       {
         name: "description",
         content:
-          "The Rec Room is a community for builders and creators — a place to meet people, learn together, share what you're building and find something worth making.",
+          "The Rec Room is a community where builders and creators learn, build, share ideas, and discover opportunities together.",
       },
       {
         property: "og:title",
-        content: "The Rec Room — A Recreation Room for Builders",
+        content: "The Rec Room — A Community for Builders",
       },
       {
         property: "og:description",
@@ -35,53 +37,28 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const rooms: {
-  label: string;
-  title: string;
-  copy: string;
-  to: string;
-  tone: "card" | "lavender" | "purple";
-}[] = [
+const learnCards = [
   {
-    label: "People",
-    title: "Meet builders and creators.",
-    copy: "Find people worth building with.",
-    to: "/builders",
-    tone: "lavender",
+    label: "Learn",
+    copy: "Community sessions, workshops and AMAs.",
+    tone: "card" as const,
   },
   {
-    label: "Projects",
-    title: "See what people are building.",
-    copy: "Discover projects worth following.",
-    to: "/projects",
-    tone: "card",
+    label: "Build",
+    copy: "Projects, hackathons and collaborations.",
+    tone: "lavender" as const,
   },
   {
-    label: "Events",
-    title: "Learn, hang out, and build together.",
-    copy: "Community sessions, meetups and workshops.",
-    to: "/events",
-    tone: "card",
+    label: "Discover",
+    copy: "Jobs, grants, residencies and ambassador programs.",
+    tone: "card" as const,
   },
-  {
-    label: "Opportunities",
-    title: "Jobs, hackathons, grants and more.",
-    copy: "Find something worth applying to.",
-    to: "/opportunities",
-    tone: "purple",
-  },
-];
-
-const communityCards = [
-  { label: "Meet", copy: "Find your people.", tone: "card" as const },
-  { label: "Learn", copy: "Share knowledge. Pick up new ideas.", tone: "lavender" as const },
-  { label: "Build", copy: "Turn ideas into things.", tone: "card" as const },
 ];
 
 const faqs = [
   {
     q: "What actually is The Rec Room?",
-    a: "A recreation room for builders and creators. A place to meet people, learn together, share what you're building and find your next rabbit hole — not just a list of opportunities.",
+    a: "A recreation room for builders and creators. A place to meet people, learn together, share what you're building and find your next rabbit hole.",
   },
   {
     q: "Who is it for?",
@@ -93,31 +70,24 @@ const faqs = [
   },
   {
     q: "How do I join the community?",
-    a: "Pull up a chair. Drop your email below to get in on the conversation before the door is locked.",
+    a: "Drop your email below and you're in. No paywall, no waiting list.",
   },
   {
     q: "Is it free?",
-    a: "Yes. Joining, browsing, posting and saving are all free. No paywall, no waiting list.",
+    a: "Yes. Joining, browsing, posting and saving are all free.",
   },
 ];
 
-const feedPreview = feedPosts.slice(0, 3);
-
-function builderName(builderId?: string, authorName?: string) {
-  if (!builderId) return authorName ?? "Someone in the room";
-  const b = getBuilder(builderId);
-  return b?.name ?? authorName ?? "Someone in the room";
-}
-
-function builderRole(builderId?: string, authorRole?: string) {
-  if (!builderId) return authorRole;
-  const b = getBuilder(builderId);
-  return b?.roleLabel ?? authorRole;
-}
-
 function Home() {
-  const spotlightBuilders = builders.slice(0, 4);
-  const spotlightProjects = projects.slice(0, 3);
+  const featuredProjects = projects.slice(0, 3);
+  const featuredEvents = events.slice(0, 3);
+  const featuredOpportunities = [
+    ...opportunities.slice(0, 2),
+    {
+      ...ambassadorPrograms[0],
+      _isAmbassador: true as const,
+    },
+  ];
 
   return (
     <>
@@ -125,7 +95,7 @@ function Home() {
       <section className="mx-auto w-full max-w-[1400px] px-4 pt-8 pb-8 sm:px-6 sm:pt-12 lg:px-10 lg:pt-20 lg:pb-10">
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
           <div className="rise-in">
-            <SectionLabel>A recreation room for builders</SectionLabel>
+            <SectionLabel>A community for builders</SectionLabel>
             <h1 className="mt-6 text-[clamp(2.5rem,7vw,5.5rem)] leading-[0.95] font-extrabold tracking-tight">
               <span className="block">Come for the ideas.</span>
               <span className="block">
@@ -140,18 +110,15 @@ function Home() {
               </span>
             </h1>
             <p className="mt-7 max-w-xl text-lg font-medium text-muted-foreground sm:text-xl">
-              The Rec Room is a community for builders and creators to learn, share, build, and ship
-              together.
-            </p>
-            <p className="mt-3 text-base font-medium text-muted-foreground/85 sm:text-lg">
-              Find people to build with. Find something worth building.
+              The Rec Room is a community where builders and creators learn, build, share ideas, and
+              discover opportunities together.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg">
-                <a href="#join">Join the Room →</a>
+                <a href="#join">Join the Room</a>
               </Button>
               <Button asChild variant="outline" size="lg">
-                <Link to="/builders">Meet the builders</Link>
+                <Link to="/projects">Explore Projects</Link>
               </Button>
             </div>
           </div>
@@ -160,104 +127,45 @@ function Home() {
         </div>
       </section>
 
-      {/* COMMUNITY / WHAT THE ROOM IS */}
-      <section className="mx-auto w-full max-w-[1400px] px-4 pt-16 sm:px-6 lg:px-10 lg:pt-24">
+      {/* WHAT IS THE REC ROOM */}
+      <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
         <OffsetCard tone="purple" size="lg" className="grid-paper p-6 sm:p-12">
           <p className="text-[clamp(2rem,6vw,4.5rem)] leading-[0.98] font-extrabold tracking-tight">
             Not a platform.
-            <br />A <span className="text-primary-foreground">room.</span>
+            <br />A <span className="text-primary-foreground">community.</span>
           </p>
           <p className="mt-4 max-w-xl text-base text-primary-foreground/85 sm:text-xl">
-            A place to meet people, learn from each other, share what you're building, and make
-            something together.
+            Meet people. Learn together. Build together. Discover opportunities worth your time.
           </p>
         </OffsetCard>
 
         <div className="mt-10 grid gap-6 sm:grid-cols-3">
-          {communityCards.map((c) => (
-            <OffsetCard key={c.label} tone={c.tone} className="flex flex-col p-6">
+          {learnCards.map((c) => (
+            <OffsetCard key={c.label} tone={c.tone} className="flex flex-col p-5">
               <span className="label-mono opacity-70">{c.label}</span>
-              <p className="mt-4 text-2xl leading-tight font-extrabold tracking-tight">{c.copy}</p>
+              <p className="mt-3 text-lg leading-tight font-extrabold tracking-tight">{c.copy}</p>
             </OffsetCard>
           ))}
         </div>
       </section>
 
-      {/* WHAT'S HAPPENING IN THE ROOM */}
-      <section className="mx-auto w-full max-w-[1400px] px-4 pt-16 sm:px-6 lg:px-10 lg:pt-24">
-        <SectionLabel>Inside the room</SectionLabel>
-        <h2 className="mt-4 text-[clamp(2rem,6vw,4rem)] leading-[1] font-extrabold tracking-tight">
-          What's happening in the room.
-        </h2>
-        <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
-          There's always something going on.
-        </p>
-
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-          {rooms.map((r) => (
-            <OffsetCard
-              key={r.label}
-              interactive
-              tone={r.tone}
-              className="group relative flex flex-col p-6"
-            >
-              <span
-                className={cn(
-                  "label-mono",
-                  r.tone === "purple" ? "text-primary-foreground/80" : "opacity-70",
-                )}
-              >
-                {r.label}
-              </span>
-              <p
-                className={cn(
-                  "mt-4 text-2xl leading-tight font-extrabold tracking-tight",
-                  r.tone === "purple" && "text-primary-foreground",
-                )}
-              >
-                {r.title}
-              </p>
-              <p
-                className={cn(
-                  "mt-2 text-sm sm:text-base",
-                  r.tone === "purple" ? "text-primary-foreground/80" : "text-muted-foreground",
-                )}
-              >
-                {r.copy}
-              </p>
-              <span
-                className={cn(
-                  "mt-6 inline-flex items-center gap-1.5 font-semibold",
-                  r.tone === "purple" && "text-primary-foreground",
-                )}
-              >
-                <Link to={r.to} className="after:absolute after:inset-0 after:content-['']">
-                  Step inside
-                </Link>
-                <ArrowRight
-                  className="size-4 transition-transform group-hover:translate-x-1"
-                  aria-hidden
-                />
-              </span>
-            </OffsetCard>
-          ))}
-        </div>
-      </section>
-
-      {/* ROOM PREVIEW */}
-      <section className="mx-auto w-full max-w-[1400px] px-4 pt-16 sm:px-6 lg:px-10 lg:pt-24">
+      {/* FEATURED PROJECTS */}
+      <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <SectionLabel>The room is talking</SectionLabel>
+            <SectionLabel>Projects</SectionLabel>
             <h2 className="mt-4 text-[clamp(2rem,6vw,4rem)] leading-[1] font-extrabold tracking-tight">
-              What's happening inside?
+              What people are building.
             </h2>
+            <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
+              Interesting ideas from the community.
+            </p>
           </div>
           <Link
-            to="/room"
+            to="/projects"
             className="group inline-flex items-center gap-2 font-semibold underline-offset-4 hover:underline"
           >
-            Enter the Room
+            Explore Projects
             <ArrowRight
               className="size-4 transition-transform group-hover:translate-x-1"
               aria-hidden
@@ -265,126 +173,170 @@ function Home() {
           </Link>
         </div>
 
-        <ul className="mt-8 grid gap-4 sm:grid-cols-3">
-          {feedPreview.map((p) => (
-            <li
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          {featuredProjects.map((p) => (
+            <Link
               key={p.id}
-              className="flex flex-col rounded-2xl border-2 border-border bg-card p-5 shadow-offset-sm"
+              to="/projects/$id"
+              params={{ id: p.id }}
+              className="group block rounded-2xl border-2 border-border bg-card p-5 shadow-offset-sm transition-colors hover:bg-lavender/30"
             >
-              <Tag tone={feedKindMeta[p.kind].tag}>{feedKindMeta[p.kind].label}</Tag>
-              <p className="mt-3 line-clamp-2 text-lg leading-snug font-bold">{p.content}</p>
-              <p className="mt-4 border-t-2 border-dashed border-foreground/15 pt-3 text-sm font-semibold text-muted-foreground">
-                {builderName(p.builderId, p.authorName)} — {builderRole(p.builderId, p.authorRole)}
-              </p>
-            </li>
+              <div className="flex items-center justify-between gap-2">
+                <Tag tone="purple">{projectStatusLabel[p.status]}</Tag>
+                <span className="label-mono text-muted-foreground">{p.category}</span>
+              </div>
+              <h3 className="mt-4 text-xl leading-tight font-extrabold tracking-tight group-hover:underline">
+                {p.name}
+              </h3>
+              <p className="mt-1.5 line-clamp-2 text-sm text-muted-foreground">{p.pitch}</p>
+            </Link>
           ))}
-        </ul>
+        </div>
       </section>
 
-      {/* BUILDERS + PROJECTS */}
-      <section className="mx-auto w-full max-w-[1400px] px-4 pt-16 sm:px-6 lg:px-10 lg:pt-24">
-        <div>
-          <SectionLabel>Stay a while</SectionLabel>
-          <h2 className="mt-4 text-[clamp(2rem,6vw,4rem)] leading-[1] font-extrabold tracking-tight">
-            See who's building.
-          </h2>
-          <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
-            Interesting people tend to build interesting things.
-          </p>
+      {/* UPCOMING EVENTS */}
+      <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <SectionLabel>Events</SectionLabel>
+            <h2 className="mt-4 text-[clamp(2rem,6vw,4rem)] leading-[1] font-extrabold tracking-tight">
+              Come hang out.
+            </h2>
+            <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
+              Weekly community sessions, workshops and demo nights.
+            </p>
+          </div>
+          <Link
+            to="/events"
+            className="group inline-flex items-center gap-2 font-semibold underline-offset-4 hover:underline"
+          >
+            See all Events
+            <ArrowRight
+              className="size-4 transition-transform group-hover:translate-x-1"
+              aria-hidden
+            />
+          </Link>
         </div>
 
-        <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-14">
-          <div>
-            <div className="flex items-center justify-between gap-4">
-              <span className="label-mono text-muted-foreground">Builders</span>
-              <Link
-                to="/builders"
-                className="group inline-flex items-center gap-1.5 font-semibold underline-offset-4 hover:underline"
-              >
-                Meet all builders
-                <ArrowRight
-                  className="size-4 transition-transform group-hover:translate-x-1"
-                  aria-hidden
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          {featuredEvents.map((e) => (
+            <article
+              key={e.id}
+              className="group flex flex-col rounded-2xl border-2 border-border bg-card p-5 shadow-offset-sm"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <Tag tone="purple">{eventKindLabel[e.kind]}</Tag>
+                <StatusBadge
+                  label={e.online ? "Online" : "In person"}
+                  tone={e.online ? "live" : "neutral"}
                 />
-              </Link>
-            </div>
-            <ul className="mt-4 space-y-3">
-              {spotlightBuilders.map((b) => (
-                <li key={b.id}>
-                  <Link
-                    to="/builders/$id"
-                    params={{ id: b.id }}
-                    className="group flex items-center gap-3 rounded-2xl border-2 border-border bg-card p-3 shadow-offset-sm"
-                  >
-                    <span
-                      aria-hidden
-                      className={cn(
-                        "grid size-11 shrink-0 place-items-center rounded-xl border-2 border-border text-xs font-extrabold shadow-offset-sm",
-                        b.accent,
-                      )}
-                    >
-                      {initials(b.name)}
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block truncate font-extrabold">{b.name}</span>
-                      <span className="block truncate text-sm text-muted-foreground">
-                        {b.roleLabel}
-                      </span>
-                    </span>
-                    <ArrowUpRight
-                      className="ml-auto size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                      aria-hidden
-                    />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+              </div>
+              <h3 className="mt-4 text-xl leading-tight font-extrabold tracking-tight">{e.name}</h3>
+              <p className="mt-1.5 label-mono text-muted-foreground">
+                {e.date} · {e.time}
+              </p>
+              <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{e.summary}</p>
+            </article>
+          ))}
+        </div>
+      </section>
 
+      {/* FEATURED OPPORTUNITIES */}
+      <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
+        <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <div className="flex items-center justify-between gap-4">
-              <span className="label-mono text-muted-foreground">Projects</span>
-              <Link
-                to="/projects"
-                className="group inline-flex items-center gap-1.5 font-semibold underline-offset-4 hover:underline"
-              >
-                Explore projects
-                <ArrowRight
-                  className="size-4 transition-transform group-hover:translate-x-1"
-                  aria-hidden
-                />
-              </Link>
-            </div>
-            <div className="mt-4 space-y-3">
-              {spotlightProjects.map((p) => (
-                <Link
-                  key={p.id}
-                  to="/projects/$id"
-                  params={{ id: p.id }}
-                  className="group block rounded-2xl border-2 border-border bg-card p-4 shadow-offset-sm"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <Tag tone="purple">{projectStatusLabel[p.status]}</Tag>
-                    <span className="label-mono text-muted-foreground">{p.category}</span>
-                  </div>
-                  <p className="mt-3 text-lg leading-tight font-extrabold tracking-tight group-hover:underline">
-                    {p.name}
-                  </p>
-                  <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{p.pitch}</p>
-                </Link>
-              ))}
-            </div>
+            <SectionLabel>Opportunities</SectionLabel>
+            <h2 className="mt-4 text-[clamp(2rem,6vw,4rem)] leading-[1] font-extrabold tracking-tight">
+              Something worth applying to.
+            </h2>
+            <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
+              Jobs, hackathons, residencies, grants and ambassador programs.
+            </p>
           </div>
+          <Link
+            to="/opportunities"
+            search={{ category: undefined }}
+            className="group inline-flex items-center gap-2 font-semibold underline-offset-4 hover:underline"
+          >
+            View all Opportunities
+            <ArrowRight
+              className="size-4 transition-transform group-hover:translate-x-1"
+              aria-hidden
+            />
+          </Link>
+        </div>
+
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          {featuredOpportunities.map((o) => {
+            if ("_isAmbassador" in o) {
+              const a = o as (typeof ambassadorPrograms)[0] & {
+                _isAmbassador: true;
+              };
+              return (
+                <Link
+                  key={a.id}
+                  to="/opportunities"
+                  search={{ category: "ambassador" }}
+                  className="group flex flex-col rounded-2xl border-2 border-border bg-card p-5 shadow-offset-sm transition-colors hover:bg-lavender/30"
+                >
+                  <Tag tone="purple">Ambassador</Tag>
+                  <h3 className="mt-4 text-xl leading-tight font-extrabold tracking-tight group-hover:underline">
+                    {a.name}
+                  </h3>
+                  <p className="mt-1.5 label-mono text-muted-foreground">{a.organization}</p>
+                  <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{a.summary}</p>
+                  <div className="mt-3 flex items-center gap-2">
+                    <StatusBadge
+                      label={a.open ? "Open" : "Closed"}
+                      tone={a.open ? "live" : "closed"}
+                      dot={a.open}
+                    />
+                    <span className="label-mono text-muted-foreground">
+                      {programTypeLabel[a.type]}
+                    </span>
+                  </div>
+                </Link>
+              );
+            }
+            const opp = o as (typeof opportunities)[0];
+            const closing = isClosingSoon(opp.deadline);
+            return (
+              <Link
+                key={opp.id}
+                to="/opportunities/$id"
+                params={{ id: opp.id }}
+                className="group flex flex-col rounded-2xl border-2 border-border bg-card p-5 shadow-offset-sm transition-colors hover:bg-lavender/30"
+              >
+                <Tag tone="purple">{categoryMeta[opp.category].label}</Tag>
+                <h3 className="mt-4 text-xl leading-tight font-extrabold tracking-tight group-hover:underline">
+                  {opp.title}
+                </h3>
+                <p className="mt-1.5 label-mono text-muted-foreground">{opp.organization}</p>
+                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{opp.summary}</p>
+                <div className="mt-3 flex items-center gap-2">
+                  <StatusBadge
+                    label={deadlineLabel(opp.deadline)}
+                    tone={closing ? "purple" : "neutral"}
+                    dot={closing}
+                  />
+                  <span className="label-mono text-muted-foreground">{opp.location}</span>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
       {/* JOIN */}
-      <section className="mx-auto w-full max-w-[1400px] px-4 pt-16 sm:px-6 lg:px-10 lg:pt-24">
+      <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
         <JoinCTA />
       </section>
 
       {/* FAQ */}
-      <section className="mx-auto w-full max-w-[1400px] px-4 pt-16 sm:px-6 lg:px-10 lg:pt-24">
+      <section
+        id="faq"
+        className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28"
+      >
         <div className="grid gap-8 lg:grid-cols-[1fr_1.4fr] lg:gap-14">
           <div>
             <SectionLabel>Questions</SectionLabel>

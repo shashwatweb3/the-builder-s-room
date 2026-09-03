@@ -9,11 +9,16 @@ import { useJoinRoom } from "@/lib/useJoinRoom";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { to: "/room", label: "The Room" },
-  { to: "/builders", label: "Builders" },
   { to: "/projects", label: "Projects" },
   { to: "/events", label: "Events" },
   { to: "/opportunities", label: "Opportunities" },
+] as const;
+
+const moreLinks = [
+  { to: "/about", label: "About" },
+  { to: "/guidelines", label: "Community Guidelines" },
+  { to: "/", hash: "faq", label: "FAQ" },
+  { to: "/contact", label: "Contact" },
 ] as const;
 
 export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
@@ -115,17 +120,17 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
                   aria-label="More"
                   className="rise-in absolute left-0 top-full mt-2 w-64 rounded-2xl border-2 border-border bg-card p-2 shadow-offset"
                 >
-                  <Link
-                    to="/ambassadors"
-                    role="menuitem"
-                    onClick={() => setMoreOpen(false)}
-                    className="block rounded-xl px-3 py-2.5 transition-colors hover:bg-lavender/50"
-                  >
-                    <span className="block font-semibold">Ambassadors</span>
-                    <span className="block text-sm text-muted-foreground">
-                      Help shape the room.
-                    </span>
-                  </Link>
+                  {moreLinks.map((l) => (
+                    <Link
+                      key={l.to}
+                      to={l.to}
+                      role="menuitem"
+                      onClick={() => setMoreOpen(false)}
+                      className="block rounded-xl px-3 py-2.5 font-medium transition-colors hover:bg-lavender/50"
+                    >
+                      {l.label}
+                    </Link>
+                  ))}
                 </div>
               )}
             </li>

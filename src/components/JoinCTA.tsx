@@ -5,19 +5,8 @@ import { OffsetCard } from "./OffsetCard";
 import { SectionLabel } from "./SectionLabel";
 import { cn } from "@/lib/utils";
 
-const interests = [
-  { id: "community", label: "Community updates" },
-  { id: "opportunities", label: "Opportunities" },
-  { id: "projects", label: "New projects" },
-  { id: "events", label: "Events" },
-];
-
-/**
- * Client-only for now. Wire `email` + `picked` to a backend list later.
- */
 export function JoinCTA({ className }: { className?: string }) {
   const [email, setEmail] = useState("");
-  const [picked, setPicked] = useState<string[]>(["community"]);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
@@ -47,7 +36,7 @@ export function JoinCTA({ className }: { className?: string }) {
             Pull up a chair.
           </h2>
           <p className="mt-3 max-w-md text-base text-foreground/75 sm:text-lg">
-            Meet builders. Learn something. Build something. Find your people.
+            Join the community and stay updated with projects, events and opportunities.
           </p>
         </div>
 
@@ -83,31 +72,6 @@ export function JoinCTA({ className }: { className?: string }) {
                 {error}
               </p>
             )}
-
-            <fieldset className="mt-4">
-              <legend className="label-mono text-muted-foreground">Send me</legend>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {interests.map((i) => {
-                  const on = picked.includes(i.id);
-                  return (
-                    <button
-                      key={i.id}
-                      type="button"
-                      aria-pressed={on}
-                      onClick={() =>
-                        setPicked((p) => (on ? p.filter((x) => x !== i.id) : [...p, i.id]))
-                      }
-                      className={cn(
-                        "label-mono press min-h-9 rounded-full border-2 border-border px-3 py-2 shadow-offset-sm",
-                        on ? "bg-primary text-primary-foreground" : "bg-background",
-                      )}
-                    >
-                      {on ? "☑" : "☐"} {i.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </fieldset>
 
             <Button type="submit" size="lg" className="mt-5 w-full">
               Join the Room

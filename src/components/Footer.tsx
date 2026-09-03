@@ -3,15 +3,15 @@ import { Dot } from "./StatusBadge";
 import { Button } from "./Button";
 
 const room = [
-  { to: "/room", label: "The Room" },
-  { to: "/builders", label: "Builders" },
   { to: "/projects", label: "Projects" },
   { to: "/events", label: "Events" },
 ] as const;
 
 const discover = [
   { to: "/opportunities", label: "Opportunities" },
-  { to: "/ambassadors", label: "Ambassadors" },
+  { to: "/about", label: "About" },
+  { to: "/guidelines", label: "Community Guidelines" },
+  { to: "/contact", label: "Contact" },
 ] as const;
 
 const socials = [

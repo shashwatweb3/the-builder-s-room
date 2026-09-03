@@ -39,10 +39,8 @@ export function OpportunityFilters({
   onChange: (next: OpportunityFilterState) => void;
   resultCount: number;
 }) {
-  const set = <K extends keyof OpportunityFilterState>(
-    key: K,
-    value: OpportunityFilterState[K],
-  ) => onChange({ ...state, [key]: value });
+  const set = <K extends keyof OpportunityFilterState>(key: K, value: OpportunityFilterState[K]) =>
+    onChange({ ...state, [key]: value });
 
   const dirty = JSON.stringify(state) !== JSON.stringify(defaultFilters);
 
@@ -73,9 +71,7 @@ export function OpportunityFilters({
           <select
             id="opp-sort"
             value={state.sort}
-            onChange={(e) =>
-              set("sort", e.target.value as OpportunityFilterState["sort"])
-            }
+            onChange={(e) => set("sort", e.target.value as OpportunityFilterState["sort"])}
             className={selectClass}
           >
             <option value="newest">Sort: Newest</option>
@@ -95,6 +91,7 @@ export function OpportunityFilters({
           { value: "hackathon", label: "Hackathons" },
           { value: "residency", label: "Residencies" },
           { value: "grant", label: "Grants" },
+          { value: "ambassador", label: "Ambassador Programs" },
         ]}
       />
 

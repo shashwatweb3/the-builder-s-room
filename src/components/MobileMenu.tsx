@@ -6,17 +6,16 @@ import { Dot } from "./StatusBadge";
 import { useJoinRoom } from "@/lib/useJoinRoom";
 
 const items = [
-  { to: "/room", label: "The Room" },
-  { to: "/builders", label: "Builders" },
   { to: "/projects", label: "Projects" },
   { to: "/events", label: "Events" },
   { to: "/opportunities", label: "Opportunities" },
-  { to: "/saved", label: "Saved" },
 ] as const;
 
 const secondary = [
-  { to: "/ambassadors", label: "Ambassadors" },
-  { to: "/submit", label: "Submit" },
+  { to: "/about", label: "About" },
+  { to: "/guidelines", label: "Community Guidelines" },
+  { to: "/", hash: "faq", label: "FAQ" },
+  { to: "/contact", label: "Contact" },
 ] as const;
 
 export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -94,12 +93,12 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
                 <Link
                   to={item.to}
                   onClick={onClose}
-                  className="group flex items-center justify-between rounded-2xl px-3 py-3 text-lg font-bold tracking-tight transition-colors hover:bg-lavender/60"
+                  className="group flex items-center justify-between rounded-2xl px-3 py-2.5 text-lg font-bold tracking-tight transition-colors hover:bg-lavender/60"
                   activeProps={{ className: "bg-lavender/70" }}
                 >
                   {item.label}
                   <ArrowUpRight
-                    className="size-5 opacity-0 transition-opacity group-hover:opacity-100"
+                    className="size-4 opacity-0 transition-opacity group-hover:opacity-100"
                     aria-hidden
                   />
                 </Link>
