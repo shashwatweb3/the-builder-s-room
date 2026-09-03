@@ -1,18 +1,20 @@
 import { Link } from "@tanstack/react-router";
 import { Github, ExternalLink } from "lucide-react";
-import type { Project } from "@/data/types";
-import { projectStatusLabel } from "@/data/projects";
-import { getBuilder } from "@/data/builders";
+import type { Project, ProjectStatus } from "@/data/types";
+
+const projectStatusLabel: Record<ProjectStatus, string> = {
+  building: "Building",
+  live: "Live",
+  experiment: "Experiment",
+  "needs-help": "Needs help",
+};
 import { OffsetCard } from "./OffsetCard";
 import { Tag } from "./Tag";
 import { SaveButton } from "./SaveButton";
 import { cn } from "@/lib/utils";
 
 export function ProjectCard({ project }: { project: Project }) {
-  const owners = project.builderIds
-    .map((id) => getBuilder(id)?.name)
-    .filter(Boolean)
-    .join(" & ");
+  const owners = project.builderIds.length > 0 ? "A builder" : "";
 
   return (
     <OffsetCard
@@ -23,10 +25,7 @@ export function ProjectCard({ project }: { project: Project }) {
       {/* Abstract generated visual — no stock photography */}
       <div
         aria-hidden
-        className={cn(
-          "grid-paper relative h-32 border-b-2 border-border sm:h-36",
-          project.accent,
-        )}
+        className={cn("grid-paper relative h-32 border-b-2 border-border sm:h-36", project.accent)}
       >
         <span className="absolute bottom-3 left-4 font-mono text-3xl font-bold opacity-30 sm:text-4xl">
           {project.name.slice(0, 2).toUpperCase()}
@@ -55,9 +54,7 @@ export function ProjectCard({ project }: { project: Project }) {
             {project.name}
           </Link>
         </h3>
-        <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-          {project.pitch}
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground sm:text-base">{project.pitch}</p>
         <p className="label-mono mt-3 text-muted-foreground">
           {owners} · {project.category}
         </p>

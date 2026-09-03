@@ -12,12 +12,7 @@ export function SectionLabel({
   className?: string;
 }) {
   return (
-    <p
-      className={cn(
-        "label-mono flex items-center gap-2 text-muted-foreground",
-        className,
-      )}
-    >
+    <p className={cn("label-mono flex items-center gap-2 text-muted-foreground", className)}>
       {dot && <Dot tone="purple" />}
       {children}
     </p>

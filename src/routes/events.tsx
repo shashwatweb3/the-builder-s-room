@@ -1,4 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
+import { createServerClient } from "@supabase/ssr";
 import { useMemo, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
@@ -10,8 +13,73 @@ import { FilterBar } from "@/components/FilterBar";
 import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/Button";
 import { JoinCTA } from "@/components/JoinCTA";
-import { events } from "@/data/events";
-import type { EventKind } from "@/data/types";
+import type { EventKind, RecEvent } from "@/data/types";
+
+type EventRow = {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  long_description: string | null;
+  event_date: string;
+  end_date: string | null;
+  location: string;
+  is_online: boolean;
+  meeting_url: string | null;
+  registration_url: string | null;
+  image_url: string | null;
+  featured: boolean;
+  status: "draft" | "published" | "cancelled" | "completed";
+  created_at: string;
+  updated_at: string;
+};
+
+const getPublishedEvents = createServerFn({ method: "GET" }).handler(async () => {
+  if (!import.meta.env["VITE_SUPABASE_URL"] || !import.meta.env["VITE_SUPABASE_ANON_KEY"]) {
+    return [] as RecEvent[];
+  }
+  const request = getRequest();
+  const supabase = createServerClient(
+    import.meta.env["VITE_SUPABASE_URL"],
+    import.meta.env["VITE_SUPABASE_ANON_KEY"],
+    {
+      cookies: {
+        getAll() {
+          const h = request?.headers.get("cookie") ?? "";
+          return h.split(";").map((c) => {
+            const [name, ...rest] = c.trim().split("=");
+            return { name: name ?? "", value: rest.join("=") };
+          });
+        },
+        setAll() {},
+      },
+    },
+  );
+
+  const { data, error } = await supabase
+    .from("events")
+    .select("*")
+    .eq("status", "published")
+    .order("event_date", { ascending: true });
+
+  if (error) {
+    console.error("Failed to fetch events:", error);
+    return [] as RecEvent[];
+  }
+
+  return ((data ?? []) as EventRow[]).map((row): RecEvent => ({
+    id: row.id,
+    name: row.title,
+    kind: "community-call",
+    date: row.event_date.split("T")[0] ?? row.event_date,
+    time: "",
+    location: row.location,
+    online: row.is_online,
+    organizer: "",
+    summary: row.description,
+    url: row.registration_url || row.meeting_url || "#",
+  }));
+});
 
 export const Route = createFileRoute("/events")({
   head: () => ({
@@ -29,6 +97,10 @@ export const Route = createFileRoute("/events")({
       },
     ],
   }),
+  loader: async () => {
+    const events = await getPublishedEvents();
+    return { events };
+  },
   component: EventsPage,
 });
 
@@ -42,6 +114,7 @@ const kindLabels: { value: EventKind | "all"; label: string }[] = [
 ];
 
 function EventsPage() {
+  const { events } = Route.useLoaderData();
   const [filter, setFilter] = useState<EventKind | "all">("all");
 
   const results = useMemo(
@@ -49,7 +122,7 @@ function EventsPage() {
       events
         .filter((e) => filter === "all" || e.kind === filter)
         .sort((a, b) => a.date.localeCompare(b.date)),
-    [filter],
+    [events, filter],
   );
 
   const online = events.filter((e) => e.online).length;
@@ -107,7 +180,7 @@ function EventsPage() {
             </div>
           ) : (
             <EmptyState
-              title="No events like that yet."
+              title="Nothing on the calendar yet."
               body="Someone should fix that. Host the first one."
               action={
                 <Button asChild variant="outline">

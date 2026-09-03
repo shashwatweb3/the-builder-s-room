@@ -2,14 +2,7 @@ import { cn } from "@/lib/utils";
 import { OffsetCard } from "./OffsetCard";
 
 function Bar({ className }: { className?: string }) {
-  return (
-    <span
-      className={cn(
-        "block animate-pulse rounded-full bg-foreground/10",
-        className,
-      )}
-    />
-  );
+  return <span className={cn("block animate-pulse rounded-full bg-foreground/10", className)} />;
 }
 
 export function CardSkeleton() {
@@ -32,11 +25,7 @@ export function CardSkeleton() {
 
 export function LoadingState({ count = 6 }: { count?: number }) {
   return (
-    <div
-      role="status"
-      aria-live="polite"
-      className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3"
-    >
+    <div role="status" aria-live="polite" className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
       <span className="sr-only">Loading the room…</span>
       {Array.from({ length: count }).map((_, i) => (
         <CardSkeleton key={i} />

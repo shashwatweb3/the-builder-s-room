@@ -1,7 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, MapPin } from "lucide-react";
-import type { Opportunity } from "@/data/types";
-import { categoryMeta } from "@/data/opportunities";
+import type { Opportunity, OpportunityCategory } from "@/data/types";
+
+const categoryMeta: Record<OpportunityCategory, { label: string; plural: string; blurb: string }> =
+  {
+    job: { label: "Job", plural: "Jobs", blurb: "Find your next role." },
+    hackathon: { label: "Hackathon", plural: "Hackathons", blurb: "Build something in a weekend." },
+    residency: { label: "Residency", plural: "Residencies", blurb: "Deep work with a team." },
+    grant: { label: "Grant", plural: "Grants", blurb: "Fund your next thing." },
+  };
 import { deadlineLabel, isClosingSoon } from "@/lib/format";
 import { OffsetCard } from "./OffsetCard";
 import { Tag } from "./Tag";
@@ -12,11 +19,7 @@ export function OpportunityCard({ item }: { item: Opportunity }) {
   const closing = isClosingSoon(item.deadline);
 
   return (
-    <OffsetCard
-      as="article"
-      interactive
-      className="group relative flex h-full flex-col p-5 sm:p-6"
-    >
+    <OffsetCard as="article" interactive className="group relative flex h-full flex-col p-5 sm:p-6">
       <div className="flex items-start justify-between gap-3">
         <Tag tone="purple">{categoryMeta[item.category].label}</Tag>
         <SaveButton kind="opportunity" id={item.id} label={item.title} className="relative z-10" />
@@ -31,13 +34,9 @@ export function OpportunityCard({ item }: { item: Opportunity }) {
           {item.title}
         </Link>
       </h3>
-      <p className="label-mono mt-1.5 text-muted-foreground">
-        {item.organization}
-      </p>
+      <p className="label-mono mt-1.5 text-muted-foreground">{item.organization}</p>
 
-      <p className="mt-3 line-clamp-2 text-sm text-muted-foreground sm:text-base">
-        {item.summary}
-      </p>
+      <p className="mt-3 line-clamp-2 text-sm text-muted-foreground sm:text-base">{item.summary}</p>
 
       <div className="mt-4 flex flex-wrap gap-2">
         {item.tags.slice(0, 3).map((t) => (

@@ -13,9 +13,7 @@ export function EmptyState({
   return (
     <OffsetCard className="grid-paper flex flex-col items-center gap-3 px-6 py-14 text-center">
       <span className="label-mono text-muted-foreground">Empty room</span>
-      <h3 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-        {title}
-      </h3>
+      <h3 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{title}</h3>
       <p className="max-w-sm text-muted-foreground">{body}</p>
       {action && <div className="mt-3">{action}</div>}
     </OffsetCard>

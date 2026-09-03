@@ -4,15 +4,9 @@ import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import { FilterBar } from "@/components/FilterBar";
 import { Button } from "@/components/Button";
-import { OpportunityCard } from "@/components/OpportunityCard";
-import { BuilderCard } from "@/components/BuilderCard";
-import { ProjectCard } from "@/components/ProjectCard";
 import { EmptyState } from "@/components/EmptyState";
 import { SectionLabel } from "@/components/SectionLabel";
 import { useSaved } from "@/lib/saved";
-import { getOpportunity } from "@/data/opportunities";
-import { getBuilder } from "@/data/builders";
-import { getProject } from "@/data/projects";
 import type { SavedKind } from "@/data/types";
 
 export const Route = createFileRoute("/saved")({
@@ -74,36 +68,12 @@ function SavedPage() {
       );
     }
 
-    if (tab === "opportunity") {
-      const items = ids.map(getOpportunity).filter(Boolean);
-      if (!items.length) return null;
-      return (
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-          {items.map((o) => (
-            <OpportunityCard key={o!.id} item={o!} />
-          ))}
-        </div>
-      );
-    }
-    if (tab === "project") {
-      const items = ids.map(getProject).filter(Boolean);
-      if (!items.length) return null;
-      return (
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-          {items.map((p) => (
-            <ProjectCard key={p!.id} project={p!} />
-          ))}
-        </div>
-      );
-    }
-    const items = ids.map(getBuilder).filter(Boolean);
-    if (!items.length) return null;
     return (
-      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-        {items.map((b) => (
-          <BuilderCard key={b!.id} builder={b!} />
-        ))}
-      </div>
+      <EmptyState
+        title="Saved items will appear here."
+        body="Data is being loaded from the server. Check back soon."
+        action={null}
+      />
     );
   };
 

@@ -1,7 +1,9 @@
 import { Search, X } from "lucide-react";
 import { FilterBar, TogglePill } from "./FilterBar";
 import { OffsetCard } from "./OffsetCard";
-import { ecosystems, allSkills, allLocations } from "@/data/opportunities";
+const ecosystems: string[] = [];
+const allSkills: string[] = [];
+const allLocations: string[] = [];
 
 export interface OpportunityFilterState {
   q: string;

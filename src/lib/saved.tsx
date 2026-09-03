@@ -54,10 +54,7 @@ export function SavedProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const isSaved = useCallback(
-    (kind: SavedKind, id: string) => saved[kind].includes(id),
-    [saved],
-  );
+  const isSaved = useCallback((kind: SavedKind, id: string) => saved[kind].includes(id), [saved]);
 
   const toggleSaved = useCallback(
     (kind: SavedKind, id: string) => {
@@ -79,8 +76,7 @@ export function SavedProvider({ children }: { children: ReactNode }) {
       hydrated,
       isSaved,
       toggleSaved,
-      count:
-        saved.opportunity.length + saved.project.length + saved.builder.length,
+      count: saved.opportunity.length + saved.project.length + saved.builder.length,
     }),
     [saved, hydrated, isSaved, toggleSaved],
   );

@@ -1,6 +1,13 @@
 import { ArrowUpRight } from "lucide-react";
-import type { RecEvent } from "@/data/types";
-import { eventKindLabel } from "@/data/events";
+import type { RecEvent, EventKind } from "@/data/types";
+
+const eventKindLabel: Record<EventKind, string> = {
+  meetup: "Meetup",
+  hackathon: "Hackathon",
+  workshop: "Workshop",
+  "demo-day": "Demo Day",
+  "community-call": "Community Call",
+};
 import { formatDate } from "@/lib/format";
 import { OffsetCard } from "./OffsetCard";
 import { Tag } from "./Tag";
@@ -20,9 +27,7 @@ export function EventCard({ event }: { event: RecEvent }) {
         <span className="label-mono">
           {d.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" })}
         </span>
-        <span className="text-2xl leading-none font-extrabold">
-          {d.getUTCDate()}
-        </span>
+        <span className="text-2xl leading-none font-extrabold">{d.getUTCDate()}</span>
       </div>
 
       <div className="min-w-0 flex-1">
@@ -40,15 +45,11 @@ export function EventCard({ event }: { event: RecEvent }) {
             {event.name}
           </a>
         </h3>
-        <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-          {event.summary}
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground sm:text-base">{event.summary}</p>
         <p className="label-mono mt-3 text-muted-foreground">
           {formatDate(event.date)} · {event.time} · {event.location}
         </p>
-        <p className="label-mono mt-1 text-muted-foreground">
-          Hosted by {event.organizer}
-        </p>
+        <p className="label-mono mt-1 text-muted-foreground">Hosted by {event.organizer}</p>
       </div>
 
       <span className="label-mono inline-flex shrink-0 items-center gap-1 self-start rounded-full border-2 border-border bg-background px-3 py-1.5 shadow-offset-sm">

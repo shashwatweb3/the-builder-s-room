@@ -1,7 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import type { AmbassadorProgram } from "@/data/types";
-import { programTypeLabel } from "@/data/ambassadors";
+
+const programTypeLabel: Record<string, string> = {
+  community: "Community",
+  content: "Content",
+  developer: "Developer",
+  regional: "Regional",
+};
 import { deadlineLabel } from "@/lib/format";
 import { OffsetCard } from "./OffsetCard";
 import { Tag } from "./Tag";
@@ -23,16 +29,12 @@ export function AmbassadorCard({
       className="group relative flex h-full flex-col p-5 sm:p-6"
     >
       <div className="flex flex-wrap items-center gap-2">
-        <Tag tone={featured ? "default" : "purple"}>
-          {programTypeLabel[program.type]}
-        </Tag>
+        <Tag tone={featured ? "default" : "purple"}>{programTypeLabel[program.type]}</Tag>
         {program.paid && <Tag tone="ghost">Paid</Tag>}
         {program.remote && <Tag tone="ghost">Remote</Tag>}
       </div>
 
-      <p className="label-mono mt-4 text-muted-foreground">
-        {program.organization}
-      </p>
+      <p className="label-mono mt-4 text-muted-foreground">{program.organization}</p>
       <h3
         className={
           featured
@@ -49,9 +51,7 @@ export function AmbassadorCard({
         </Link>
       </h3>
 
-      <p className="mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
-        {program.summary}
-      </p>
+      <p className="mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">{program.summary}</p>
 
       <div className="mt-4 flex flex-wrap gap-2">
         {program.perks.map((p) => (

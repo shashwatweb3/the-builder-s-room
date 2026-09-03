@@ -1,18 +1,33 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, Heart, MessageCircle } from "lucide-react";
-import type { FeedPost } from "@/data/types";
-import { getBuilder, initials } from "@/data/builders";
-import { feedKindMeta } from "@/data/feed";
+import type { FeedPost, FeedKind } from "@/data/types";
 import { formatShortDate } from "@/lib/format";
 import { OffsetCard } from "./OffsetCard";
 import { Tag } from "./Tag";
 import { cn } from "@/lib/utils";
 
+function initials(name: string) {
+  return name
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+const feedKindMeta: Record<FeedKind, { label: string; tag: "purple" | "ghost" }> = {
+  building: { label: "Building", tag: "purple" },
+  question: { label: "Question", tag: "ghost" },
+  share: { label: "Share", tag: "ghost" },
+  "looking-for": { label: "Looking for", tag: "purple" },
+  event: { label: "Event", tag: "ghost" },
+  launch: { label: "Launch", tag: "purple" },
+};
+
 export function FeedPostCard({ post, className }: { post: FeedPost; className?: string }) {
-  const builder = post.builderId ? getBuilder(post.builderId) : null;
-  const name = builder?.name ?? post.authorName ?? "Someone in the room";
-  const handle = builder?.handle ?? post.authorHandle;
-  const role = builder?.roleLabel ?? post.authorRole;
+  const name = post.authorName ?? "Someone in the room";
+  const handle = post.authorHandle;
+  const role = post.authorRole;
   const kind = feedKindMeta[post.kind];
 
   return (
@@ -21,8 +36,7 @@ export function FeedPostCard({ post, className }: { post: FeedPost; className?: 
         <span
           aria-hidden
           className={cn(
-            "grid size-11 shrink-0 place-items-center rounded-xl border-2 border-border text-sm font-extrabold shadow-offset-sm",
-            builder?.accent ?? "bg-lavender",
+            "grid size-11 shrink-0 place-items-center rounded-xl border-2 border-border text-sm font-extrabold shadow-offset-sm bg-lavender",
           )}
         >
           {initials(name)}

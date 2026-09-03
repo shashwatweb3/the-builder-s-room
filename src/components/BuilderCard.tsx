@@ -1,7 +1,22 @@
 import { Link } from "@tanstack/react-router";
 import { MapPin } from "lucide-react";
-import type { Builder } from "@/data/types";
-import { initials, statusLabel } from "@/data/builders";
+import type { Builder, BuilderStatus } from "@/data/types";
+
+function initials(name: string) {
+  return name
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+const statusLabel: Record<BuilderStatus, string> = {
+  building: "Building",
+  "open-to-collabs": "Open to collabs",
+  "available-for-work": "Available for work",
+  "open-to-opportunities": "Open to opportunities",
+};
 import { OffsetCard } from "./OffsetCard";
 import { Tag } from "./Tag";
 import { SaveButton } from "./SaveButton";
@@ -9,11 +24,7 @@ import { cn } from "@/lib/utils";
 
 export function BuilderCard({ builder }: { builder: Builder }) {
   return (
-    <OffsetCard
-      as="article"
-      interactive
-      className="group relative flex h-full flex-col p-5 sm:p-6"
-    >
+    <OffsetCard as="article" interactive className="group relative flex h-full flex-col p-5 sm:p-6">
       <div className="flex items-start gap-4">
         <span
           aria-hidden
@@ -34,21 +45,12 @@ export function BuilderCard({ builder }: { builder: Builder }) {
               {builder.name}
             </Link>
           </h3>
-          <p className="truncate text-sm font-medium text-muted-foreground">
-            {builder.roleLabel}
-          </p>
+          <p className="truncate text-sm font-medium text-muted-foreground">{builder.roleLabel}</p>
         </div>
-        <SaveButton
-          kind="builder"
-          id={builder.id}
-          label={builder.name}
-          className="relative z-10"
-        />
+        <SaveButton kind="builder" id={builder.id} label={builder.name} className="relative z-10" />
       </div>
 
-      <p className="mt-4 line-clamp-3 text-sm text-muted-foreground sm:text-base">
-        {builder.bio}
-      </p>
+      <p className="mt-4 line-clamp-3 text-sm text-muted-foreground sm:text-base">{builder.bio}</p>
 
       <div className="mt-4 flex flex-wrap gap-2">
         {builder.skills.slice(0, 3).map((s) => (

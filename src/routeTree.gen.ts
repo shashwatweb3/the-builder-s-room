@@ -17,6 +17,10 @@ import { Route as GuidelinesRouteImport } from './routes/guidelines'
 import { Route as RoomRouteImport } from './routes/room'
 import { Route as SavedRouteImport } from './routes/saved'
 import { Route as SubmitRouteImport } from './routes/submit'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminEventsRouteImport } from './routes/admin.events'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminOpportunitiesRouteImport } from './routes/admin.opportunities'
 import { Route as AmbassadorsIndexRouteImport } from './routes/ambassadors.index'
 import { Route as AmbassadorsIdRouteImport } from './routes/ambassadors.$id'
 import { Route as BuildersIndexRouteImport } from './routes/builders.index'
@@ -25,6 +29,10 @@ import { Route as OpportunitiesIndexRouteImport } from './routes/opportunities.i
 import { Route as OpportunitiesIdRouteImport } from './routes/opportunities.$id'
 import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
+import { Route as AdminEventsNewRouteImport } from './routes/admin.events.new'
+import { Route as AdminOpportunitiesNewRouteImport } from './routes/admin.opportunities.new'
+import { Route as AdminEventsIdEditRouteImport } from './routes/admin.events.$id.edit'
+import { Route as AdminOpportunitiesIdEditRouteImport } from './routes/admin.opportunities.$id.edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -64,6 +72,26 @@ const SavedRoute = SavedRouteImport.update({
 const SubmitRoute = SubmitRouteImport.update({
   id: '/submit',
   path: '/submit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminEventsRoute = AdminEventsRouteImport.update({
+  id: '/admin/events',
+  path: '/admin/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOpportunitiesRoute = AdminOpportunitiesRouteImport.update({
+  id: '/admin/opportunities',
+  path: '/admin/opportunities',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AmbassadorsIndexRoute = AmbassadorsIndexRouteImport.update({
@@ -106,6 +134,27 @@ const ProjectsIdRoute = ProjectsIdRouteImport.update({
   path: '/projects/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminEventsNewRoute = AdminEventsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AdminEventsRoute,
+} as any)
+const AdminOpportunitiesNewRoute = AdminOpportunitiesNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AdminOpportunitiesRoute,
+} as any)
+const AdminEventsIdEditRoute = AdminEventsIdEditRouteImport.update({
+  id: '/$id/edit',
+  path: '/$id/edit',
+  getParentRoute: () => AdminEventsRoute,
+} as any)
+const AdminOpportunitiesIdEditRoute =
+  AdminOpportunitiesIdEditRouteImport.update({
+    id: '/$id/edit',
+    path: '/$id/edit',
+    getParentRoute: () => AdminOpportunitiesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -116,14 +165,22 @@ export interface FileRoutesByFullPath {
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
+  '/admin/events': typeof AdminEventsRouteWithChildren
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/opportunities': typeof AdminOpportunitiesRouteWithChildren
   '/ambassadors/$id': typeof AmbassadorsIdRoute
   '/builders/$id': typeof BuildersIdRoute
   '/opportunities/$id': typeof OpportunitiesIdRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/admin/': typeof AdminIndexRoute
   '/ambassadors/': typeof AmbassadorsIndexRoute
   '/builders/': typeof BuildersIndexRoute
   '/opportunities/': typeof OpportunitiesIndexRoute
   '/projects/': typeof ProjectsIndexRoute
+  '/admin/events/new': typeof AdminEventsNewRoute
+  '/admin/opportunities/new': typeof AdminOpportunitiesNewRoute
+  '/admin/events/$id/edit': typeof AdminEventsIdEditRoute
+  '/admin/opportunities/$id/edit': typeof AdminOpportunitiesIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -134,14 +191,22 @@ export interface FileRoutesByTo {
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
+  '/admin/events': typeof AdminEventsRouteWithChildren
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/opportunities': typeof AdminOpportunitiesRouteWithChildren
   '/ambassadors/$id': typeof AmbassadorsIdRoute
   '/builders/$id': typeof BuildersIdRoute
   '/opportunities/$id': typeof OpportunitiesIdRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/admin': typeof AdminIndexRoute
   '/ambassadors': typeof AmbassadorsIndexRoute
   '/builders': typeof BuildersIndexRoute
   '/opportunities': typeof OpportunitiesIndexRoute
   '/projects': typeof ProjectsIndexRoute
+  '/admin/events/new': typeof AdminEventsNewRoute
+  '/admin/opportunities/new': typeof AdminOpportunitiesNewRoute
+  '/admin/events/$id/edit': typeof AdminEventsIdEditRoute
+  '/admin/opportunities/$id/edit': typeof AdminOpportunitiesIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -153,14 +218,22 @@ export interface FileRoutesById {
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
+  '/admin/events': typeof AdminEventsRouteWithChildren
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/opportunities': typeof AdminOpportunitiesRouteWithChildren
   '/ambassadors/$id': typeof AmbassadorsIdRoute
   '/builders/$id': typeof BuildersIdRoute
   '/opportunities/$id': typeof OpportunitiesIdRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/admin/': typeof AdminIndexRoute
   '/ambassadors/': typeof AmbassadorsIndexRoute
   '/builders/': typeof BuildersIndexRoute
   '/opportunities/': typeof OpportunitiesIndexRoute
   '/projects/': typeof ProjectsIndexRoute
+  '/admin/events/new': typeof AdminEventsNewRoute
+  '/admin/opportunities/new': typeof AdminOpportunitiesNewRoute
+  '/admin/events/$id/edit': typeof AdminEventsIdEditRoute
+  '/admin/opportunities/$id/edit': typeof AdminOpportunitiesIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -173,14 +246,22 @@ export interface FileRouteTypes {
     | '/room'
     | '/saved'
     | '/submit'
+    | '/admin/events'
+    | '/admin/login'
+    | '/admin/opportunities'
     | '/ambassadors/$id'
     | '/builders/$id'
     | '/opportunities/$id'
     | '/projects/$id'
+    | '/admin/'
     | '/ambassadors/'
     | '/builders/'
     | '/opportunities/'
     | '/projects/'
+    | '/admin/events/new'
+    | '/admin/opportunities/new'
+    | '/admin/events/$id/edit'
+    | '/admin/opportunities/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -191,14 +272,22 @@ export interface FileRouteTypes {
     | '/room'
     | '/saved'
     | '/submit'
+    | '/admin/events'
+    | '/admin/login'
+    | '/admin/opportunities'
     | '/ambassadors/$id'
     | '/builders/$id'
     | '/opportunities/$id'
     | '/projects/$id'
+    | '/admin'
     | '/ambassadors'
     | '/builders'
     | '/opportunities'
     | '/projects'
+    | '/admin/events/new'
+    | '/admin/opportunities/new'
+    | '/admin/events/$id/edit'
+    | '/admin/opportunities/$id/edit'
   id:
     | '__root__'
     | '/'
@@ -209,14 +298,22 @@ export interface FileRouteTypes {
     | '/room'
     | '/saved'
     | '/submit'
+    | '/admin/events'
+    | '/admin/login'
+    | '/admin/opportunities'
     | '/ambassadors/$id'
     | '/builders/$id'
     | '/opportunities/$id'
     | '/projects/$id'
+    | '/admin/'
     | '/ambassadors/'
     | '/builders/'
     | '/opportunities/'
     | '/projects/'
+    | '/admin/events/new'
+    | '/admin/opportunities/new'
+    | '/admin/events/$id/edit'
+    | '/admin/opportunities/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -228,10 +325,14 @@ export interface RootRouteChildren {
   RoomRoute: typeof RoomRoute
   SavedRoute: typeof SavedRoute
   SubmitRoute: typeof SubmitRoute
+  AdminEventsRoute: typeof AdminEventsRouteWithChildren
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminOpportunitiesRoute: typeof AdminOpportunitiesRouteWithChildren
   AmbassadorsIdRoute: typeof AmbassadorsIdRoute
   BuildersIdRoute: typeof BuildersIdRoute
   OpportunitiesIdRoute: typeof OpportunitiesIdRoute
   ProjectsIdRoute: typeof ProjectsIdRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   AmbassadorsIndexRoute: typeof AmbassadorsIndexRoute
   BuildersIndexRoute: typeof BuildersIndexRoute
   OpportunitiesIndexRoute: typeof OpportunitiesIndexRoute
@@ -296,6 +397,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SubmitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/events': {
+      id: '/admin/events'
+      path: '/admin/events'
+      fullPath: '/admin/events'
+      preLoaderRoute: typeof AdminEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/opportunities': {
+      id: '/admin/opportunities'
+      path: '/admin/opportunities'
+      fullPath: '/admin/opportunities'
+      preLoaderRoute: typeof AdminOpportunitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ambassadors/': {
       id: '/ambassadors/'
       path: '/ambassadors'
@@ -352,8 +481,63 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/events/new': {
+      id: '/admin/events/new'
+      path: '/new'
+      fullPath: '/admin/events/new'
+      preLoaderRoute: typeof AdminEventsNewRouteImport
+      parentRoute: typeof AdminEventsRoute
+    }
+    '/admin/opportunities/new': {
+      id: '/admin/opportunities/new'
+      path: '/new'
+      fullPath: '/admin/opportunities/new'
+      preLoaderRoute: typeof AdminOpportunitiesNewRouteImport
+      parentRoute: typeof AdminOpportunitiesRoute
+    }
+    '/admin/events/$id/edit': {
+      id: '/admin/events/$id/edit'
+      path: '/$id/edit'
+      fullPath: '/admin/events/$id/edit'
+      preLoaderRoute: typeof AdminEventsIdEditRouteImport
+      parentRoute: typeof AdminEventsRoute
+    }
+    '/admin/opportunities/$id/edit': {
+      id: '/admin/opportunities/$id/edit'
+      path: '/$id/edit'
+      fullPath: '/admin/opportunities/$id/edit'
+      preLoaderRoute: typeof AdminOpportunitiesIdEditRouteImport
+      parentRoute: typeof AdminOpportunitiesRoute
+    }
   }
 }
+
+interface AdminEventsRouteChildren {
+  AdminEventsNewRoute: typeof AdminEventsNewRoute
+  AdminEventsIdEditRoute: typeof AdminEventsIdEditRoute
+}
+
+const AdminEventsRouteChildren: AdminEventsRouteChildren = {
+  AdminEventsNewRoute: AdminEventsNewRoute,
+  AdminEventsIdEditRoute: AdminEventsIdEditRoute,
+}
+
+const AdminEventsRouteWithChildren = AdminEventsRoute._addFileChildren(
+  AdminEventsRouteChildren,
+)
+
+interface AdminOpportunitiesRouteChildren {
+  AdminOpportunitiesNewRoute: typeof AdminOpportunitiesNewRoute
+  AdminOpportunitiesIdEditRoute: typeof AdminOpportunitiesIdEditRoute
+}
+
+const AdminOpportunitiesRouteChildren: AdminOpportunitiesRouteChildren = {
+  AdminOpportunitiesNewRoute: AdminOpportunitiesNewRoute,
+  AdminOpportunitiesIdEditRoute: AdminOpportunitiesIdEditRoute,
+}
+
+const AdminOpportunitiesRouteWithChildren =
+  AdminOpportunitiesRoute._addFileChildren(AdminOpportunitiesRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -364,10 +548,14 @@ const rootRouteChildren: RootRouteChildren = {
   RoomRoute: RoomRoute,
   SavedRoute: SavedRoute,
   SubmitRoute: SubmitRoute,
+  AdminEventsRoute: AdminEventsRouteWithChildren,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminOpportunitiesRoute: AdminOpportunitiesRouteWithChildren,
   AmbassadorsIdRoute: AmbassadorsIdRoute,
   BuildersIdRoute: BuildersIdRoute,
   OpportunitiesIdRoute: OpportunitiesIdRoute,
   ProjectsIdRoute: ProjectsIdRoute,
+  AdminIndexRoute: AdminIndexRoute,
   AmbassadorsIndexRoute: AmbassadorsIndexRoute,
   BuildersIndexRoute: BuildersIndexRoute,
   OpportunitiesIndexRoute: OpportunitiesIndexRoute,

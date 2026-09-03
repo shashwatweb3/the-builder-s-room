@@ -8,11 +8,6 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { HeroRoom } from "@/components/HeroRoom";
 import { JoinCTA } from "@/components/JoinCTA";
 import { FAQ } from "@/components/FAQ";
-import { projects, projectStatusLabel } from "@/data/projects";
-import { events, eventKindLabel } from "@/data/events";
-import { opportunities, categoryMeta } from "@/data/opportunities";
-import { ambassadorPrograms, programTypeLabel } from "@/data/ambassadors";
-import { deadlineLabel, isClosingSoon } from "@/lib/format";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -34,6 +29,47 @@ export const Route = createFileRoute("/")({
       },
     ],
   }),
+  loader: async () => {
+    try {
+      if (!import.meta.env["VITE_SUPABASE_URL"] || !import.meta.env["VITE_SUPABASE_ANON_KEY"]) {
+        return { events: [], opportunities: [] };
+      }
+      const { createServerClient } = await import("@supabase/ssr");
+      const supabase = createServerClient(
+        import.meta.env["VITE_SUPABASE_URL"],
+        import.meta.env["VITE_SUPABASE_ANON_KEY"],
+        {
+          cookies: {
+            getAll() {
+              return [];
+            },
+            setAll() {},
+          },
+        },
+      );
+      const [eventsResult, oppsResult] = await Promise.all([
+        supabase
+          .from("events")
+          .select(
+            "id, title, slug, description, event_date, location, is_online, registration_url, featured",
+          )
+          .eq("status", "published")
+          .order("event_date", { ascending: true })
+          .limit(3),
+        supabase
+          .from("opportunities")
+          .select(
+            "id, title, slug, type, organization, description, location, deadline, application_url, featured",
+          )
+          .eq("status", "published")
+          .order("created_at", { ascending: false })
+          .limit(3),
+      ]);
+      return { events: eventsResult.data ?? [], opportunities: oppsResult.data ?? [] };
+    } catch {
+      return { events: [], opportunities: [] };
+    }
+  },
   component: Home,
 });
 
@@ -79,15 +115,7 @@ const faqs = [
 ];
 
 function Home() {
-  const featuredProjects = projects.slice(0, 3);
-  const featuredEvents = events.slice(0, 3);
-  const featuredOpportunities = [
-    ...opportunities.slice(0, 2),
-    {
-      ...ambassadorPrograms[0],
-      _isAmbassador: true as const,
-    },
-  ];
+  const { events, opportunities } = Route.useLoaderData();
 
   return (
     <>
@@ -149,7 +177,7 @@ function Home() {
         </div>
       </section>
 
-      {/* FEATURED PROJECTS */}
+      {/* FEATURED PROJECTS — empty state */}
       <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
@@ -173,159 +201,125 @@ function Home() {
           </Link>
         </div>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-          {featuredProjects.map((p) => (
-            <Link
-              key={p.id}
-              to="/projects/$id"
-              params={{ id: p.id }}
-              className="group block rounded-2xl border-2 border-border bg-card p-5 shadow-offset-sm transition-colors hover:bg-lavender/30"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <Tag tone="purple">{projectStatusLabel[p.status]}</Tag>
-                <span className="label-mono text-muted-foreground">{p.category}</span>
-              </div>
-              <h3 className="mt-4 text-xl leading-tight font-extrabold tracking-tight group-hover:underline">
-                {p.name}
-              </h3>
-              <p className="mt-1.5 line-clamp-2 text-sm text-muted-foreground">{p.pitch}</p>
-            </Link>
-          ))}
+        <div className="mt-10 rounded-2xl border-2 border-dashed border-border bg-card/50 p-10 text-center">
+          <p className="text-muted-foreground">Projects are coming soon.</p>
         </div>
       </section>
 
       {/* UPCOMING EVENTS */}
-      <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <SectionLabel>Events</SectionLabel>
-            <h2 className="mt-4 text-[clamp(2rem,6vw,4rem)] leading-[1] font-extrabold tracking-tight">
-              Come hang out.
-            </h2>
-            <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
-              Weekly community sessions, workshops and demo nights.
-            </p>
-          </div>
-          <Link
-            to="/events"
-            className="group inline-flex items-center gap-2 font-semibold underline-offset-4 hover:underline"
-          >
-            See all Events
-            <ArrowRight
-              className="size-4 transition-transform group-hover:translate-x-1"
-              aria-hidden
-            />
-          </Link>
-        </div>
-
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-          {featuredEvents.map((e) => (
-            <article
-              key={e.id}
-              className="group flex flex-col rounded-2xl border-2 border-border bg-card p-5 shadow-offset-sm"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <Tag tone="purple">{eventKindLabel[e.kind]}</Tag>
-                <StatusBadge
-                  label={e.online ? "Online" : "In person"}
-                  tone={e.online ? "live" : "neutral"}
-                />
-              </div>
-              <h3 className="mt-4 text-xl leading-tight font-extrabold tracking-tight">{e.name}</h3>
-              <p className="mt-1.5 label-mono text-muted-foreground">
-                {e.date} · {e.time}
+      {events.length > 0 && (
+        <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <SectionLabel>Events</SectionLabel>
+              <h2 className="mt-4 text-[clamp(2rem,6vw,4rem)] leading-[1] font-extrabold tracking-tight">
+                Come hang out.
+              </h2>
+              <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
+                Weekly community sessions, workshops and demo nights.
               </p>
-              <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{e.summary}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+            </div>
+            <Link
+              to="/events"
+              className="group inline-flex items-center gap-2 font-semibold underline-offset-4 hover:underline"
+            >
+              See all Events
+              <ArrowRight
+                className="size-4 transition-transform group-hover:translate-x-1"
+                aria-hidden
+              />
+            </Link>
+          </div>
+
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {events.map((e) => (
+              <article
+                key={e.id}
+                className="group flex flex-col rounded-2xl border-2 border-border bg-card p-5 shadow-offset-sm"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <Tag tone="purple">{e.is_online ? "Online" : "In person"}</Tag>
+                  <StatusBadge
+                    label={e.is_online ? "Online" : "In person"}
+                    tone={e.is_online ? "live" : "neutral"}
+                  />
+                </div>
+                <h3 className="mt-4 text-xl leading-tight font-extrabold tracking-tight">
+                  {e.title}
+                </h3>
+                <p className="mt-1.5 label-mono text-muted-foreground">
+                  {new Date(e.event_date).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </p>
+                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{e.description}</p>
+                {e.location && (
+                  <p className="mt-1.5 label-mono text-muted-foreground">{e.location}</p>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* FEATURED OPPORTUNITIES */}
-      <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <SectionLabel>Opportunities</SectionLabel>
-            <h2 className="mt-4 text-[clamp(2rem,6vw,4rem)] leading-[1] font-extrabold tracking-tight">
-              Something worth applying to.
-            </h2>
-            <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
-              Jobs, hackathons, residencies, grants and ambassador programs.
-            </p>
+      {opportunities.length > 0 && (
+        <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <SectionLabel>Opportunities</SectionLabel>
+              <h2 className="mt-4 text-[clamp(2rem,6vw,4rem)] leading-[1] font-extrabold tracking-tight">
+                Something worth applying to.
+              </h2>
+              <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
+                Jobs, hackathons, residencies, grants and ambassador programs.
+              </p>
+            </div>
+            <Link
+              to="/opportunities"
+              search={{ category: undefined }}
+              className="group inline-flex items-center gap-2 font-semibold underline-offset-4 hover:underline"
+            >
+              View all Opportunities
+              <ArrowRight
+                className="size-4 transition-transform group-hover:translate-x-1"
+                aria-hidden
+              />
+            </Link>
           </div>
-          <Link
-            to="/opportunities"
-            search={{ category: undefined }}
-            className="group inline-flex items-center gap-2 font-semibold underline-offset-4 hover:underline"
-          >
-            View all Opportunities
-            <ArrowRight
-              className="size-4 transition-transform group-hover:translate-x-1"
-              aria-hidden
-            />
-          </Link>
-        </div>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-          {featuredOpportunities.map((o) => {
-            if ("_isAmbassador" in o) {
-              const a = o as (typeof ambassadorPrograms)[0] & {
-                _isAmbassador: true;
-              };
-              return (
-                <Link
-                  key={a.id}
-                  to="/opportunities"
-                  search={{ category: "ambassador" }}
-                  className="group flex flex-col rounded-2xl border-2 border-border bg-card p-5 shadow-offset-sm transition-colors hover:bg-lavender/30"
-                >
-                  <Tag tone="purple">Ambassador</Tag>
-                  <h3 className="mt-4 text-xl leading-tight font-extrabold tracking-tight group-hover:underline">
-                    {a.name}
-                  </h3>
-                  <p className="mt-1.5 label-mono text-muted-foreground">{a.organization}</p>
-                  <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{a.summary}</p>
-                  <div className="mt-3 flex items-center gap-2">
-                    <StatusBadge
-                      label={a.open ? "Open" : "Closed"}
-                      tone={a.open ? "live" : "closed"}
-                      dot={a.open}
-                    />
-                    <span className="label-mono text-muted-foreground">
-                      {programTypeLabel[a.type]}
-                    </span>
-                  </div>
-                </Link>
-              );
-            }
-            const opp = o as (typeof opportunities)[0];
-            const closing = isClosingSoon(opp.deadline);
-            return (
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {opportunities.map((o) => (
               <Link
-                key={opp.id}
+                key={o.id}
                 to="/opportunities/$id"
-                params={{ id: opp.id }}
+                params={{ id: o.id }}
                 className="group flex flex-col rounded-2xl border-2 border-border bg-card p-5 shadow-offset-sm transition-colors hover:bg-lavender/30"
               >
-                <Tag tone="purple">{categoryMeta[opp.category].label}</Tag>
+                <Tag tone="purple">{o.type}</Tag>
                 <h3 className="mt-4 text-xl leading-tight font-extrabold tracking-tight group-hover:underline">
-                  {opp.title}
+                  {o.title}
                 </h3>
-                <p className="mt-1.5 label-mono text-muted-foreground">{opp.organization}</p>
-                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{opp.summary}</p>
+                <p className="mt-1.5 label-mono text-muted-foreground">{o.organization}</p>
+                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{o.description}</p>
                 <div className="mt-3 flex items-center gap-2">
-                  <StatusBadge
-                    label={deadlineLabel(opp.deadline)}
-                    tone={closing ? "purple" : "neutral"}
-                    dot={closing}
-                  />
-                  <span className="label-mono text-muted-foreground">{opp.location}</span>
+                  {o.deadline && (
+                    <StatusBadge
+                      label={`Due ${new Date(o.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`}
+                      tone="neutral"
+                    />
+                  )}
+                  {o.location && (
+                    <span className="label-mono text-muted-foreground">{o.location}</span>
+                  )}
                 </div>
               </Link>
-            );
-          })}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* JOIN */}
       <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">

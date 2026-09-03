@@ -1,11 +1,14 @@
 import { useNavigate } from "@tanstack/react-router";
 import { Search, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { opportunities, categoryMeta } from "@/data/opportunities";
-import { builders } from "@/data/builders";
-import { projects } from "@/data/projects";
-import { ambassadorPrograms } from "@/data/ambassadors";
-import { events } from "@/data/events";
+import type {
+  Opportunity,
+  Builder,
+  Project,
+  AmbassadorProgram,
+  RecEvent,
+  OpportunityCategory,
+} from "@/data/types";
 import { cn } from "@/lib/utils";
 
 interface Hit {
@@ -16,58 +19,74 @@ interface Hit {
   to: string;
 }
 
-function buildIndex(): Hit[] {
-  return [
-    ...opportunities.map((o) => ({
-      id: `o-${o.id}`,
-      group: "Opportunities",
-      title: o.title,
-      subtitle: `${categoryMeta[o.category].label} · ${o.organization}`,
-      to: `/opportunities/${o.id}`,
-    })),
-    ...builders.map((b) => ({
-      id: `b-${b.id}`,
-      group: "Builders",
-      title: b.name,
-      subtitle: `${b.roleLabel} · ${b.location}`,
-      to: `/builders/${b.id}`,
-    })),
-    ...projects.map((p) => ({
-      id: `p-${p.id}`,
-      group: "Projects",
-      title: p.name,
-      subtitle: p.pitch,
-      to: `/projects/${p.id}`,
-    })),
-    ...ambassadorPrograms.map((a) => ({
-      id: `a-${a.id}`,
-      group: "Programs",
-      title: a.name,
-      subtitle: a.organization,
-      to: `/ambassadors/${a.id}`,
-    })),
-    ...events.map((e) => ({
-      id: `e-${e.id}`,
-      group: "Events",
-      title: e.name,
-      subtitle: `${e.location} · ${e.date}`,
-      to: "/events",
-    })),
-  ];
-}
+const categoryLabel: Record<OpportunityCategory, string> = {
+  job: "Job",
+  hackathon: "Hackathon",
+  residency: "Residency",
+  grant: "Grant",
+};
 
 export function SearchModal({
   open,
   onClose,
+  opportunities = [],
+  builders = [],
+  projects = [],
+  ambassadorPrograms = [],
+  events = [],
 }: {
   open: boolean;
   onClose: () => void;
+  opportunities?: Opportunity[];
+  builders?: Builder[];
+  projects?: Project[];
+  ambassadorPrograms?: AmbassadorProgram[];
+  events?: RecEvent[];
 }) {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-  const index = useMemo(buildIndex, []);
+
+  const index = useMemo<Hit[]>(() => {
+    return [
+      ...opportunities.map((o) => ({
+        id: `o-${o.id}`,
+        group: "Opportunities",
+        title: o.title,
+        subtitle: `${categoryLabel[o.category] ?? o.category} · ${o.organization}`,
+        to: `/opportunities/${o.id}`,
+      })),
+      ...builders.map((b) => ({
+        id: `b-${b.id}`,
+        group: "Builders",
+        title: b.name,
+        subtitle: `${b.roleLabel} · ${b.location}`,
+        to: `/builders/${b.id}`,
+      })),
+      ...projects.map((p) => ({
+        id: `p-${p.id}`,
+        group: "Projects",
+        title: p.name,
+        subtitle: p.pitch,
+        to: `/projects/${p.id}`,
+      })),
+      ...ambassadorPrograms.map((a) => ({
+        id: `a-${a.id}`,
+        group: "Programs",
+        title: a.name,
+        subtitle: a.organization,
+        to: `/ambassadors/${a.id}`,
+      })),
+      ...events.map((e) => ({
+        id: `e-${e.id}`,
+        group: "Events",
+        title: e.name,
+        subtitle: `${e.location} · ${e.date}`,
+        to: "/events",
+      })),
+    ];
+  }, [opportunities, builders, projects, ambassadorPrograms, events]);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -166,14 +185,12 @@ export function SearchModal({
         <div className="max-h-[60vh] overflow-y-auto p-2">
           {flat.length === 0 ? (
             <p className="px-4 py-10 text-center text-muted-foreground">
-              Nothing matches “{query}”. Try something looser.
+              Nothing matches "{query}". Try something looser.
             </p>
           ) : (
             grouped.map(([group, hits]) => (
               <div key={group} className="mb-2">
-                <p className="label-mono px-3 py-2 text-muted-foreground">
-                  {group}
-                </p>
+                <p className="label-mono px-3 py-2 text-muted-foreground">{group}</p>
                 <ul>
                   {hits.map((hit) => {
                     const i = flat.indexOf(hit);
@@ -189,16 +206,12 @@ export function SearchModal({
                           )}
                         >
                           <span className="min-w-0">
-                            <span className="block truncate font-semibold">
-                              {hit.title}
-                            </span>
+                            <span className="block truncate font-semibold">{hit.title}</span>
                             <span className="block truncate text-sm text-muted-foreground">
                               {hit.subtitle}
                             </span>
                           </span>
-                          <span className="label-mono shrink-0 text-muted-foreground">
-                            ↵
-                          </span>
+                          <span className="label-mono shrink-0 text-muted-foreground">↵</span>
                         </button>
                       </li>
                     );

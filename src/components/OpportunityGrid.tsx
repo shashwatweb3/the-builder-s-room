@@ -12,7 +12,9 @@ export function OpportunityGrid({ items }: { items: Opportunity[] }) {
         body="Loosen a filter or two. The room is bigger than it looks."
         action={
           <Button asChild variant="outline">
-            <Link to="/opportunities" search={{ category: undefined }}>Explore everything →</Link>
+            <Link to="/opportunities" search={{ category: undefined }}>
+              Explore everything →
+            </Link>
           </Button>
         }
       />
