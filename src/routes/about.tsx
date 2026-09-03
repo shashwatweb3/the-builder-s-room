@@ -5,6 +5,7 @@ import { OffsetCard } from "@/components/OffsetCard";
 import { SectionLabel } from "@/components/SectionLabel";
 import { Button } from "@/components/Button";
 import { JoinCTA } from "@/components/JoinCTA";
+import { TELEGRAM_INVITE_URL } from "@/lib/community";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -81,7 +82,9 @@ function AboutPage() {
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <a href="#join">Join the community</a>
+              <a href={TELEGRAM_INVITE_URL} target="_blank" rel="noopener noreferrer">
+                Join the community
+              </a>
             </Button>
           </div>
         </div>

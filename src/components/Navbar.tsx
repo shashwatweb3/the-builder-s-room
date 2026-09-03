@@ -5,7 +5,7 @@ import { Button } from "./Button";
 import { Dot } from "./StatusBadge";
 import { MobileMenu } from "./MobileMenu";
 import { useSaved } from "@/lib/saved";
-import { useJoinRoom } from "@/lib/useJoinRoom";
+import { TELEGRAM_INVITE_URL } from "@/lib/community";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -28,7 +28,6 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
   const moreRef = useRef<HTMLLIElement>(null);
   const { count, hydrated } = useSaved();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const joinRoom = useJoinRoom();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -164,8 +163,10 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
               )}
             </Link>
 
-            <Button size="sm" className="hidden xl:inline-flex" onClick={joinRoom}>
-              Join the Room
+            <Button asChild size="sm" className="hidden xl:inline-flex">
+              <a href={TELEGRAM_INVITE_URL} target="_blank" rel="noopener noreferrer">
+                Join the Room
+              </a>
             </Button>
 
             <button

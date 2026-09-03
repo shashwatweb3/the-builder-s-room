@@ -3,7 +3,7 @@ import { X, ArrowUpRight } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { Button } from "./Button";
 import { Dot } from "./StatusBadge";
-import { useJoinRoom } from "@/lib/useJoinRoom";
+import { TELEGRAM_INVITE_URL } from "@/lib/community";
 
 const items = [
   { to: "/projects", label: "Projects" },
@@ -20,7 +20,6 @@ const secondary = [
 
 export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const panelRef = useRef<HTMLDivElement>(null);
-  const joinRoom = useJoinRoom();
 
   useEffect(() => {
     if (!open) return;
@@ -107,15 +106,10 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
           </ul>
         </nav>
 
-        <Button
-          size="lg"
-          className="mt-5 w-full"
-          onClick={() => {
-            onClose();
-            joinRoom();
-          }}
-        >
-          Join the Room
+        <Button asChild size="lg" className="mt-5 w-full">
+          <a href={TELEGRAM_INVITE_URL} target="_blank" rel="noopener noreferrer" onClick={onClose}>
+            Join the Room
+          </a>
         </Button>
       </div>
     </div>

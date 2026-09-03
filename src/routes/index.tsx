@@ -8,6 +8,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { HeroRoom } from "@/components/HeroRoom";
 import { JoinCTA } from "@/components/JoinCTA";
 import { FAQ } from "@/components/FAQ";
+import { TELEGRAM_INVITE_URL } from "@/lib/community";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -106,7 +107,7 @@ const faqs = [
   },
   {
     q: "How do I join the community?",
-    a: "Drop your email below and you're in. No paywall, no waiting list.",
+    a: "Join the Telegram room. No paywall, no waiting list.",
   },
   {
     q: "Is it free?",
@@ -143,7 +144,9 @@ function Home() {
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg">
-                <a href="#join">Join the Room</a>
+                <a href={TELEGRAM_INVITE_URL} target="_blank" rel="noopener noreferrer">
+                  Join the Room
+                </a>
               </Button>
               <Button asChild variant="outline" size="lg">
                 <Link to="/projects">Explore Projects</Link>

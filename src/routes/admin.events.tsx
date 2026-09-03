@@ -1,4 +1,11 @@
-import { createFileRoute, Link, redirect, useRouter } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  redirect,
+  useRouter,
+  useRouterState,
+} from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { createServerClient } from "@supabase/ssr";
@@ -147,6 +154,7 @@ const statusTones: Record<string, "default" | "purple" | "ghost"> = {
 function AdminEvents() {
   const { events } = Route.useLoaderData();
   const router = useRouter();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [search, setSearch] = useState("");
   const [pendingId, setPendingId] = useState<string | null>(null);
 
@@ -182,6 +190,17 @@ function AdminEvents() {
       setPendingId(null);
     }
   };
+
+  // `admin.events.new` and `admin.events.$id.edit` are nested file routes.
+  // Render their matched component instead of leaving it unreachable behind
+  // this route's list page.
+  if (pathname !== "/admin/events") {
+    return (
+      <AdminLayout>
+        <Outlet />
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>

@@ -5,7 +5,6 @@ import { createServerClient } from "@supabase/ssr";
 import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
-import { AdminLayout } from "@/components/AdminLayout";
 import { Tag } from "@/components/Tag";
 
 export const Route = createFileRoute("/admin/events/$id/edit")({
@@ -259,7 +258,7 @@ function EditEvent() {
   };
 
   return (
-    <AdminLayout>
+    <>
       <div>
         <Link
           to="/admin/events"
@@ -488,7 +487,7 @@ function EditEvent() {
           </Link>
         </div>
       </form>
-    </AdminLayout>
+    </>
   );
 }
 

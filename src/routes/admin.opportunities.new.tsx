@@ -5,7 +5,6 @@ import { createServerClient } from "@supabase/ssr";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
-import { AdminLayout } from "@/components/AdminLayout";
 
 export const Route = createFileRoute("/admin/opportunities/new")({
   beforeLoad: async () => {
@@ -227,7 +226,7 @@ function NewOpportunity() {
   };
 
   return (
-    <AdminLayout>
+    <>
       <div>
         <Link
           to="/admin/opportunities"
@@ -470,6 +469,6 @@ function NewOpportunity() {
           </Link>
         </div>
       </form>
-    </AdminLayout>
+    </>
   );
 }

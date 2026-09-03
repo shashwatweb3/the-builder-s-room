@@ -1,4 +1,11 @@
-import { createFileRoute, Link, redirect, useRouter } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  redirect,
+  useRouter,
+  useRouterState,
+} from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { createServerClient } from "@supabase/ssr";
@@ -167,6 +174,7 @@ const statusTones: Record<string, "default" | "purple" | "ghost"> = {
 function AdminOpportunities() {
   const { opportunities } = Route.useLoaderData();
   const router = useRouter();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [pendingId, setPendingId] = useState<string | null>(null);
@@ -205,6 +213,16 @@ function AdminOpportunities() {
   };
 
   const types = ["all", "job", "hackathon", "grant", "residency", "ambassador"] as const;
+
+  // `admin.opportunities.new` and `admin.opportunities.$id.edit` are nested
+  // file routes and must be rendered through this parent's outlet.
+  if (pathname !== "/admin/opportunities") {
+    return (
+      <AdminLayout>
+        <Outlet />
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>

@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Dot } from "./StatusBadge";
 import { Button } from "./Button";
+import { TELEGRAM_INVITE_URL } from "@/lib/community";
 
 const room = [
   { to: "/projects", label: "Projects" },
@@ -88,7 +89,9 @@ export function Footer() {
           <div>
             <p className="label-mono text-muted-foreground">Join</p>
             <Button asChild size="lg" className="mt-4">
-              <a href="/#join">Pull up a chair →</a>
+              <a href={TELEGRAM_INVITE_URL} target="_blank" rel="noopener noreferrer">
+                Pull up a chair →
+              </a>
             </Button>
           </div>
         </div>

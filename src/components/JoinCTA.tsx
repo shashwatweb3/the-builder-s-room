@@ -1,25 +1,10 @@
-import { useState, type FormEvent } from "react";
-import { Check } from "lucide-react";
 import { Button } from "./Button";
 import { OffsetCard } from "./OffsetCard";
 import { SectionLabel } from "./SectionLabel";
 import { cn } from "@/lib/utils";
+import { TELEGRAM_INVITE_URL } from "@/lib/community";
 
 export function JoinCTA({ className }: { className?: string }) {
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
-
-  const submit = (e: FormEvent) => {
-    e.preventDefault();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) {
-      setError("That email doesn't look right.");
-      return;
-    }
-    setError(null);
-    setDone(true);
-  };
-
   return (
     <OffsetCard
       as="section"
@@ -40,44 +25,13 @@ export function JoinCTA({ className }: { className?: string }) {
           </p>
         </div>
 
-        {done ? (
-          <div className="rounded-2xl border-2 border-border bg-card p-6 shadow-offset">
-            <span className="grid size-11 place-items-center rounded-full border-2 border-border bg-primary text-primary-foreground">
-              <Check className="size-5" aria-hidden />
-            </span>
-            <p className="mt-4 text-2xl font-extrabold tracking-tight">You're in the room.</p>
-            <p className="mt-2 text-base text-muted-foreground">You'll hear from us soon.</p>
-          </div>
-        ) : (
-          <form
-            onSubmit={submit}
-            noValidate
-            className="rounded-2xl border-2 border-border bg-card p-5 shadow-offset sm:p-6"
-          >
-            <label htmlFor="join-email" className="label-mono text-muted-foreground">
-              Your email
-            </label>
-            <input
-              id="join-email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              aria-invalid={!!error}
-              aria-describedby={error ? "join-error" : undefined}
-              className="mt-2 min-h-12 w-full rounded-full border-2 border-border bg-background px-4 text-base outline-none placeholder:text-muted-foreground"
-            />
-            {error && (
-              <p id="join-error" role="alert" className="mt-2 text-sm font-medium text-destructive">
-                {error}
-              </p>
-            )}
-
-            <Button type="submit" size="lg" className="mt-5 w-full">
+        <div className="rounded-2xl border-2 border-border bg-card p-5 shadow-offset sm:p-6">
+          <Button asChild size="lg" className="w-full">
+            <a href={TELEGRAM_INVITE_URL} target="_blank" rel="noopener noreferrer">
               Join the Room
-            </Button>
-          </form>
-        )}
+            </a>
+          </Button>
+        </div>
       </div>
     </OffsetCard>
   );
