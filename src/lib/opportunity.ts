@@ -9,7 +9,7 @@
  * application), so we surface them with a "View Details" CTA instead.
  * Keyed by opportunity slug.
  */
-const NON_APPLICATION_URL_SLUGS = new Set(["fiber-community-ambassador"]);
+const NON_APPLICATION_URL_SLUGS = new Set<string>([]);
 
 export function isDirectApplication(
   slug: string,

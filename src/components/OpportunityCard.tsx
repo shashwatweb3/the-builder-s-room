@@ -65,7 +65,7 @@ export function OpportunityCard({ item }: { item: Opportunity }) {
 
       <div className="mt-5 flex items-center justify-between gap-3 pt-1">
         <StatusBadge
-          label={item.deadline ? deadlineLabel(item.deadline) : "No deadline"}
+          label={item.deadline ? deadlineLabel(item.deadline) : "ROLLING"}
           tone={closing ? "purple" : "neutral"}
           dot={closing}
         />

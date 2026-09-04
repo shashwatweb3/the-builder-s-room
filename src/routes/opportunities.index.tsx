@@ -424,7 +424,7 @@ function OpportunityItem({ item }: { item: UIOpportunity }) {
 
       <div className="mt-5 flex items-center justify-between gap-3 border-t-2 border-dashed border-foreground/15 pt-4">
         <StatusBadge
-          label={item.deadline ? deadlineLabel(item.deadline) : "No deadline"}
+          label={item.deadline ? deadlineLabel(item.deadline) : "ROLLING"}
           tone={closing ? "purple" : "neutral"}
           dot={closing}
         />
@@ -494,7 +494,7 @@ function AmbassadorCard({ program }: { program: UIAmbassador }) {
 
       <div className="mt-5 flex items-center justify-between gap-3 border-t-2 border-dashed border-foreground/15 pt-4">
         <span className="label-mono text-muted-foreground">
-          {program.deadline ? deadlineLabel(program.deadline) : "No deadline"}
+          {program.deadline ? deadlineLabel(program.deadline) : "ROLLING"}
         </span>
         {program.applyUrl ? (
           <a

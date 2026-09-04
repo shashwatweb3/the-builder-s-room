@@ -139,7 +139,7 @@ function OpportunityDetail() {
                   dot={closing}
                 />
               ) : (
-                <StatusBadge label="No deadline" tone="neutral" />
+                <StatusBadge label="Open · Rolling" tone="live" dot />
               )}
               {row.remote && <Tag tone="ghost">Remote</Tag>}
               {row.location && (
