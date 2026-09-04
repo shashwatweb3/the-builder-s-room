@@ -14,9 +14,13 @@ import { OffsetCard } from "./OffsetCard";
 import { Tag } from "./Tag";
 import { StatusBadge } from "./StatusBadge";
 import { SaveButton } from "./SaveButton";
+import { ShareButton } from "./ShareButton";
 
 export function OpportunityCard({ item }: { item: Opportunity }) {
   const closing = item.deadline ? isClosingSoon(item.deadline) : false;
+  const slug = item.slug ?? item.id;
+  const shareSlug = item.slug ?? "";
+  const canShare = shareSlug.length > 0;
 
   return (
     <OffsetCard as="article" interactive className="group relative flex h-full flex-col p-5 sm:p-6">
@@ -28,7 +32,7 @@ export function OpportunityCard({ item }: { item: Opportunity }) {
       <h3 className="mt-4 text-xl font-extrabold tracking-tight sm:text-2xl">
         <Link
           to="/opportunities/$id"
-          params={{ id: item.id }}
+          params={{ id: slug }}
           className="after:absolute after:inset-0 after:content-['']"
         >
           {item.title}
@@ -69,32 +73,35 @@ export function OpportunityCard({ item }: { item: Opportunity }) {
           tone={closing ? "purple" : "neutral"}
           dot={closing}
         />
-        {item.applyUrl ? (
-          <a
-            href={item.applyUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
-          >
-            Apply
-            <ArrowRight
-              className="size-4 transition-transform group-hover:translate-x-1"
-              aria-hidden
-            />
-          </a>
-        ) : (
-          <Link
-            to="/opportunities/$id"
-            params={{ id: item.id }}
-            className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
-          >
-            View Details
-            <ArrowRight
-              className="size-4 transition-transform group-hover:translate-x-1"
-              aria-hidden
-            />
-          </Link>
-        )}
+        <div className="flex items-center gap-4">
+          {canShare && <ShareButton title={item.title} slug={shareSlug} />}
+          {item.applyUrl ? (
+            <a
+              href={item.applyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
+            >
+              Apply
+              <ArrowRight
+                className="size-4 transition-transform group-hover:translate-x-1"
+                aria-hidden
+              />
+            </a>
+          ) : (
+            <Link
+              to="/opportunities/$id"
+              params={{ id: slug }}
+              className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
+            >
+              View Details
+              <ArrowRight
+                className="size-4 transition-transform group-hover:translate-x-1"
+                aria-hidden
+              />
+            </Link>
+          )}
+        </div>
       </div>
     </OffsetCard>
   );

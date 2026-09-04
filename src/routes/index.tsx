@@ -300,7 +300,7 @@ function Home() {
               <Link
                 key={o.id}
                 to="/opportunities/$id"
-                params={{ id: o.id }}
+                params={{ id: o.slug }}
                 className="group flex flex-col rounded-2xl border-2 border-border bg-card p-5 shadow-offset-sm transition-colors hover:bg-lavender/30"
               >
                 <Tag tone="purple">{o.type}</Tag>

@@ -17,3 +17,15 @@ export function isDirectApplication(
 ): boolean {
   return Boolean(applicationUrl) && !NON_APPLICATION_URL_SLUGS.has(slug);
 }
+
+/**
+ * Canonical public origin for the production site. Used for Open Graph URLs on
+ * the deployed detail pages (crawlers hit the live domain, not localhost).
+ */
+const SITE_ORIGIN = "https://www.krew3.site";
+
+/** Path to an opportunity's public detail page. Keyed by slug. */
+export const opportunityPath = (slug: string) => `/opportunities/${slug}`;
+
+/** Absolute canonical URL for an opportunity detail page. */
+export const opportunityPublicUrl = (slug: string) => `${SITE_ORIGIN}${opportunityPath(slug)}`;

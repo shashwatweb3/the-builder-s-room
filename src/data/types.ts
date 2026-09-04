@@ -8,6 +8,7 @@ export type OpportunityCategory = "job" | "hackathon" | "residency" | "grant";
 
 export interface Opportunity {
   id: string;
+  slug?: string;
   category: OpportunityCategory;
   title: string;
   organization: string;

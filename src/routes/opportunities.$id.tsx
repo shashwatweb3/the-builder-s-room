@@ -8,7 +8,7 @@ import { OffsetCard } from "@/components/OffsetCard";
 import { Tag } from "@/components/Tag";
 import { StatusBadge } from "@/components/StatusBadge";
 import { deadlineLabel, isClosingSoon } from "@/lib/format";
-import { isDirectApplication } from "@/lib/opportunity";
+import { isDirectApplication, opportunityPublicUrl } from "@/lib/opportunity";
 import type { OpportunityCategory } from "@/data/types";
 
 const categoryMeta: Record<OpportunityCategory, { label: string; plural: string }> = {
@@ -60,8 +60,8 @@ function createSupabaseClient(request: Request) {
 }
 
 const getOpportunity = createServerFn({ method: "GET" })
-  .validator((id: string) => id)
-  .handler(async ({ data: id }) => {
+  .validator((slug: string) => slug)
+  .handler(async ({ data: slug }) => {
     const request = getRequest();
     if (!request) return null;
     const supabase = createSupabaseClient(request);
@@ -69,7 +69,7 @@ const getOpportunity = createServerFn({ method: "GET" })
     const { data, error } = await supabase
       .from("opportunities")
       .select("*")
-      .eq("id", id)
+      .eq("slug", slug)
       .eq("status", "published")
       .maybeSingle();
     if (error || !data) return null;
@@ -82,11 +82,27 @@ export const Route = createFileRoute("/opportunities/$id")({
     if (!row) throw notFound();
     return { row };
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [{ title: `${loaderData.row.title} — Krew3` }]
-      : [{ title: "Opportunity — Krew3" }],
-  }),
+  head: ({ loaderData }) => {
+    if (!loaderData) return { meta: [{ title: "Opportunity — Krew3" }] };
+    const { row } = loaderData;
+    const url = opportunityPublicUrl(row.slug);
+    const image = row.image_url
+      ? /^https?:\/\//.test(row.image_url)
+        ? row.image_url
+        : opportunityPublicUrl(row.image_url)
+      : undefined;
+    return {
+      meta: [
+        { title: `${row.title} — Krew3` },
+        { name: "description", content: row.description },
+        { property: "og:title", content: `${row.title} — Krew3` },
+        { property: "og:description", content: row.description },
+        { property: "og:url", content: url },
+        { property: "og:type", content: "article" },
+        ...(image ? [{ property: "og:image", content: image }] : []),
+      ],
+    };
+  },
   component: OpportunityDetail,
 });
 

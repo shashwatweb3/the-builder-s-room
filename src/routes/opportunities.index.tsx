@@ -20,6 +20,7 @@ import {
 import { JoinCTA } from "@/components/JoinCTA";
 import { daysUntil, isClosingSoon, deadlineLabel } from "@/lib/format";
 import { isDirectApplication } from "@/lib/opportunity";
+import { ShareButton } from "@/components/ShareButton";
 import { EmptyState } from "@/components/EmptyState";
 import type { OpportunityCategory } from "@/data/types";
 
@@ -46,6 +47,7 @@ type SupabaseRow = {
 
 type UIOpportunity = {
   id: string;
+  slug: string;
   category: string;
   title: string;
   organization: string;
@@ -68,6 +70,7 @@ type UIOpportunity = {
 
 type UIAmbassador = {
   id: string;
+  slug: string;
   name: string;
   organization: string;
   summary: string;
@@ -137,6 +140,7 @@ const getPublishedOpportunities = createServerFn({ method: "GET" }).handler(asyn
 function rowToUI(row: SupabaseRow): UIOpportunity {
   return {
     id: row.id,
+    slug: row.slug,
     category: row.type as UIOpportunity["category"],
     title: row.title,
     organization: row.organization,
@@ -161,6 +165,7 @@ function rowToUI(row: SupabaseRow): UIOpportunity {
 function rowToAmbassador(row: SupabaseRow): UIAmbassador {
   return {
     id: row.id,
+    slug: row.slug,
     name: row.title,
     organization: row.organization,
     summary: row.description,
@@ -404,7 +409,7 @@ function OpportunityItem({ item }: { item: UIOpportunity }) {
       <h3 className="mt-4 text-xl font-extrabold tracking-tight sm:text-2xl">
         <Link
           to="/opportunities/$id"
-          params={{ id: item.id }}
+          params={{ id: item.slug }}
           className="after:absolute after:inset-0 after:content-['']"
         >
           {item.title}
@@ -428,32 +433,35 @@ function OpportunityItem({ item }: { item: UIOpportunity }) {
           tone={closing ? "purple" : "neutral"}
           dot={closing}
         />
-        {item.applyUrl ? (
-          <a
-            href={item.applyUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
-          >
-            Apply
-            <ArrowRight
-              className="size-4 transition-transform group-hover:translate-x-1"
-              aria-hidden
-            />
-          </a>
-        ) : (
-          <Link
-            to="/opportunities/$id"
-            params={{ id: item.id }}
-            className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
-          >
-            View Details
-            <ArrowRight
-              className="size-4 transition-transform group-hover:translate-x-1"
-              aria-hidden
-            />
-          </Link>
-        )}
+        <div className="flex items-center gap-4">
+          <ShareButton title={item.title} slug={item.slug} />
+          {item.applyUrl ? (
+            <a
+              href={item.applyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
+            >
+              Apply
+              <ArrowRight
+                className="size-4 transition-transform group-hover:translate-x-1"
+                aria-hidden
+              />
+            </a>
+          ) : (
+            <Link
+              to="/opportunities/$id"
+              params={{ id: item.slug }}
+              className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
+            >
+              View Details
+              <ArrowRight
+                className="size-4 transition-transform group-hover:translate-x-1"
+                aria-hidden
+              />
+            </Link>
+          )}
+        </div>
       </div>
     </OffsetCard>
   );
@@ -474,7 +482,7 @@ function AmbassadorCard({ program }: { program: UIAmbassador }) {
       <h3 className="mt-4 text-xl font-extrabold tracking-tight sm:text-2xl">
         <Link
           to="/opportunities/$id"
-          params={{ id: program.id }}
+          params={{ id: program.slug }}
           className="after:absolute after:inset-0 after:content-['']"
         >
           {program.name}
@@ -496,32 +504,35 @@ function AmbassadorCard({ program }: { program: UIAmbassador }) {
         <span className="label-mono text-muted-foreground">
           {program.deadline ? deadlineLabel(program.deadline) : "ROLLING"}
         </span>
-        {program.applyUrl ? (
-          <a
-            href={program.applyUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
-          >
-            Apply
-            <ArrowRight
-              className="size-4 transition-transform group-hover:translate-x-1"
-              aria-hidden
-            />
-          </a>
-        ) : (
-          <Link
-            to="/opportunities/$id"
-            params={{ id: program.id }}
-            className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
-          >
-            View Details
-            <ArrowRight
-              className="size-4 transition-transform group-hover:translate-x-1"
-              aria-hidden
-            />
-          </Link>
-        )}
+        <div className="flex items-center gap-4">
+          <ShareButton title={program.name} slug={program.slug} />
+          {program.applyUrl ? (
+            <a
+              href={program.applyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
+            >
+              Apply
+              <ArrowRight
+                className="size-4 transition-transform group-hover:translate-x-1"
+                aria-hidden
+              />
+            </a>
+          ) : (
+            <Link
+              to="/opportunities/$id"
+              params={{ id: program.slug }}
+              className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
+            >
+              View Details
+              <ArrowRight
+                className="size-4 transition-transform group-hover:translate-x-1"
+                aria-hidden
+              />
+            </Link>
+          )}
+        </div>
       </div>
     </OffsetCard>
   );
