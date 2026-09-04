@@ -19,6 +19,7 @@ import {
 } from "@/components/OpportunityFilters";
 import { JoinCTA } from "@/components/JoinCTA";
 import { daysUntil, isClosingSoon, deadlineLabel } from "@/lib/format";
+import { isDirectApplication } from "@/lib/opportunity";
 import { EmptyState } from "@/components/EmptyState";
 import type { OpportunityCategory } from "@/data/types";
 
@@ -78,7 +79,7 @@ type UIAmbassador = {
   open: boolean;
   perks: string[];
   applyUrl: string;
-  deadline: string;
+  deadline: string | null;
 };
 
 type MergedItem =
@@ -145,10 +146,10 @@ function rowToUI(row: SupabaseRow): UIOpportunity {
     location: row.location ?? "Remote",
     remote: row.remote,
     paid: !!row.compensation,
-    deadline: row.deadline ?? "2099-01-01",
+    deadline: row.deadline ?? "",
     postedAt: row.created_at,
     popularity: 0,
-    applyUrl: row.application_url ?? "#",
+    applyUrl: isDirectApplication(row.slug, row.application_url) ? (row.application_url ?? "") : "",
     compensation: row.compensation ?? "",
     ecosystem: "",
     skills: [],
@@ -170,8 +171,8 @@ function rowToAmbassador(row: SupabaseRow): UIAmbassador {
     paid: !!row.compensation,
     open: !row.deadline || new Date(row.deadline) > new Date(),
     perks: row.tags ?? [],
-    applyUrl: row.application_url ?? "#",
-    deadline: row.deadline ?? "2099-01-01",
+    applyUrl: isDirectApplication(row.slug, row.application_url) ? (row.application_url ?? "") : "",
+    deadline: row.deadline,
   };
 }
 
@@ -383,7 +384,7 @@ function OpportunitiesPage() {
 }
 
 function OpportunityItem({ item }: { item: UIOpportunity }) {
-  const closing = isClosingSoon(item.deadline);
+  const closing = item.deadline ? isClosingSoon(item.deadline) : false;
   const meta =
     item.category === "ambassador"
       ? ambassadorCategoryMeta
@@ -423,17 +424,36 @@ function OpportunityItem({ item }: { item: UIOpportunity }) {
 
       <div className="mt-5 flex items-center justify-between gap-3 border-t-2 border-dashed border-foreground/15 pt-4">
         <StatusBadge
-          label={deadlineLabel(item.deadline)}
+          label={item.deadline ? deadlineLabel(item.deadline) : "No deadline"}
           tone={closing ? "purple" : "neutral"}
           dot={closing}
         />
-        <span className="inline-flex items-center gap-1.5 text-sm font-semibold">
-          Apply
-          <ArrowRight
-            className="size-4 transition-transform group-hover:translate-x-1"
-            aria-hidden
-          />
-        </span>
+        {item.applyUrl ? (
+          <a
+            href={item.applyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
+          >
+            Apply
+            <ArrowRight
+              className="size-4 transition-transform group-hover:translate-x-1"
+              aria-hidden
+            />
+          </a>
+        ) : (
+          <Link
+            to="/opportunities/$id"
+            params={{ id: item.id }}
+            className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
+          >
+            View Details
+            <ArrowRight
+              className="size-4 transition-transform group-hover:translate-x-1"
+              aria-hidden
+            />
+          </Link>
+        )}
       </div>
     </OffsetCard>
   );
@@ -451,7 +471,15 @@ function AmbassadorCard({ program }: { program: UIAmbassador }) {
         />
       </div>
 
-      <h3 className="mt-4 text-xl font-extrabold tracking-tight sm:text-2xl">{program.name}</h3>
+      <h3 className="mt-4 text-xl font-extrabold tracking-tight sm:text-2xl">
+        <Link
+          to="/opportunities/$id"
+          params={{ id: program.id }}
+          className="after:absolute after:inset-0 after:content-['']"
+        >
+          {program.name}
+        </Link>
+      </h3>
       <p className="label-mono mt-1.5 text-muted-foreground">{program.organization}</p>
 
       <p className="mt-3 line-clamp-2 text-sm text-muted-foreground sm:text-base">
@@ -466,15 +494,34 @@ function AmbassadorCard({ program }: { program: UIAmbassador }) {
 
       <div className="mt-5 flex items-center justify-between gap-3 border-t-2 border-dashed border-foreground/15 pt-4">
         <span className="label-mono text-muted-foreground">
-          {program.deadline ? deadlineLabel(program.deadline) : ""}
+          {program.deadline ? deadlineLabel(program.deadline) : "No deadline"}
         </span>
-        <span className="inline-flex items-center gap-1.5 text-sm font-semibold">
-          Apply
-          <ArrowRight
-            className="size-4 transition-transform group-hover:translate-x-1"
-            aria-hidden
-          />
-        </span>
+        {program.applyUrl ? (
+          <a
+            href={program.applyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
+          >
+            Apply
+            <ArrowRight
+              className="size-4 transition-transform group-hover:translate-x-1"
+              aria-hidden
+            />
+          </a>
+        ) : (
+          <Link
+            to="/opportunities/$id"
+            params={{ id: program.id }}
+            className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
+          >
+            View Details
+            <ArrowRight
+              className="size-4 transition-transform group-hover:translate-x-1"
+              aria-hidden
+            />
+          </Link>
+        )}
       </div>
     </OffsetCard>
   );

@@ -16,7 +16,7 @@ import { StatusBadge } from "./StatusBadge";
 import { SaveButton } from "./SaveButton";
 
 export function OpportunityCard({ item }: { item: Opportunity }) {
-  const closing = isClosingSoon(item.deadline);
+  const closing = item.deadline ? isClosingSoon(item.deadline) : false;
 
   return (
     <OffsetCard as="article" interactive className="group relative flex h-full flex-col p-5 sm:p-6">
@@ -65,17 +65,36 @@ export function OpportunityCard({ item }: { item: Opportunity }) {
 
       <div className="mt-5 flex items-center justify-between gap-3 pt-1">
         <StatusBadge
-          label={deadlineLabel(item.deadline)}
+          label={item.deadline ? deadlineLabel(item.deadline) : "No deadline"}
           tone={closing ? "purple" : "neutral"}
           dot={closing}
         />
-        <span className="inline-flex items-center gap-1.5 text-sm font-semibold">
-          Apply
-          <ArrowRight
-            className="size-4 transition-transform group-hover:translate-x-1"
-            aria-hidden
-          />
-        </span>
+        {item.applyUrl ? (
+          <a
+            href={item.applyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
+          >
+            Apply
+            <ArrowRight
+              className="size-4 transition-transform group-hover:translate-x-1"
+              aria-hidden
+            />
+          </a>
+        ) : (
+          <Link
+            to="/opportunities/$id"
+            params={{ id: item.id }}
+            className="relative z-10 inline-flex items-center gap-1.5 text-sm font-semibold"
+          >
+            View Details
+            <ArrowRight
+              className="size-4 transition-transform group-hover:translate-x-1"
+              aria-hidden
+            />
+          </Link>
+        )}
       </div>
     </OffsetCard>
   );

@@ -15,7 +15,9 @@ export const formatShortDate = (iso: string) =>
 
 /** Days between now and an ISO date. Negative means it already passed. */
 export const daysUntil = (iso: string) => {
+  if (!iso) return Infinity;
   const target = new Date(iso + "T00:00:00Z").getTime();
+  if (Number.isNaN(target)) return Infinity;
   const now = Date.now();
   return Math.ceil((target - now) / 86_400_000);
 };
