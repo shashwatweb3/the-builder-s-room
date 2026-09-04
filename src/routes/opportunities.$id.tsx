@@ -25,10 +25,7 @@ export const Route = createFileRoute("/opportunities/$id")({
     throw notFound();
   },
   head: () => ({
-    meta: [
-      { title: "Opportunity not found — The Rec Room" },
-      { name: "robots", content: "noindex" },
-    ],
+    meta: [{ title: "Opportunity not found — Krew3" }, { name: "robots", content: "noindex" }],
   }),
   component: OpportunityDetail,
 });

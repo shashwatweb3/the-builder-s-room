@@ -29,7 +29,7 @@ export function SaveButton({
         e.preventDefault();
         e.stopPropagation();
         const nowSaved = toggleSaved(kind, id);
-        toast(nowSaved ? "Saved to your room." : "Removed from saved.", {
+        toast(nowSaved ? "Saved to your Krew." : "Removed from saved.", {
           description: nowSaved ? label : undefined,
         });
       }}

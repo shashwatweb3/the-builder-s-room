@@ -9,7 +9,7 @@ export function OpportunityGrid({ items }: { items: Opportunity[] }) {
     return (
       <EmptyState
         title="Nothing matches that."
-        body="Loosen a filter or two. The room is bigger than it looks."
+        body="Loosen a filter or two. The Krew is bigger than it looks."
         action={
           <Button asChild variant="outline">
             <Link to="/opportunities" search={{ category: undefined }}>

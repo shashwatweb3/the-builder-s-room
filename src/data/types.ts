@@ -1,5 +1,5 @@
 /**
- * Domain models for The Rec Room.
+ * Domain models for Krew3.
  *
  * These types are the contract between the UI and the data layer.
  */

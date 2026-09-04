@@ -8,7 +8,7 @@ export const Route = createFileRoute("/builders/$id")({
     throw new Error("not found");
   },
   head: () => ({
-    meta: [{ title: "Builder not found — The Rec Room" }],
+    meta: [{ title: "Builder not found — Krew3" }],
   }),
   component: BuilderProfile,
 });

@@ -17,16 +17,16 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/room")({
   head: () => ({
     meta: [
-      { title: "The Room — The Rec Room" },
+      { title: "The Krew — Krew3" },
       {
         name: "description",
         content:
-          "The living room of the community. Builders share what they're making, ask questions, find collaborators and post what's happening.",
+          "The Krew feed. Builders share what they're making, ask questions, find collaborators and post what's happening.",
       },
-      { property: "og:title", content: "The Room — The Rec Room" },
+      { property: "og:title", content: "The Krew — Krew3" },
       {
         property: "og:description",
-        content: "Pull up a chair. See what everyone's working on.",
+        content: "See what everyone's working on.",
       },
     ],
   }),
@@ -107,7 +107,7 @@ function RoomPage() {
     };
     setPosts((p) => [post, ...p]);
     setDraft("");
-    toast("Posted to the room.", { description: "The room sees you now." });
+    toast("Posted to the Krew.", { description: "The Krew sees you now." });
   };
 
   const addComment = (id: string, text: string) => {
@@ -126,19 +126,19 @@ function RoomPage() {
   return (
     <>
       <PageHero
-        label="The room"
-        title="Welcome to the room."
+        label="The Krew"
+        title="Welcome to the Krew."
         aside={
           <OffsetCard size="sm" className="flex items-center gap-3 px-5 py-4">
             <Dot />
             <div>
-              <p className="label-mono text-muted-foreground">In the room</p>
+              <p className="label-mono text-muted-foreground">In the Krew</p>
               <p className="text-2xl font-extrabold tracking-tight">{posts.length}</p>
             </div>
           </OffsetCard>
         }
       >
-        Pull up a chair. See what everyone's working on.
+        See what everyone's working on.
       </PageHero>
 
       <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
@@ -147,7 +147,7 @@ function RoomPage() {
           <div className="min-w-0">
             {/* COMPOSER */}
             <OffsetCard tone="lavender" className="p-5 sm:p-6">
-              <p className="label-mono text-muted-foreground">Post something in the room</p>
+              <p className="label-mono text-muted-foreground">Post something in the Krew</p>
               <FilterBar
                 ariaLabel="Choose post type"
                 className="mt-4"
@@ -167,10 +167,10 @@ function RoomPage() {
               />
               <div className="mt-3 flex items-center justify-between gap-3">
                 <span className="label-mono text-muted-foreground">
-                  Be kind. The room remembers.
+                  Be kind. The Krew remembers.
                 </span>
                 <Button size="md" onClick={addPost} disabled={!draft.trim()}>
-                  Post to the room →
+                  Post to the Krew →
                 </Button>
               </div>
             </OffsetCard>
@@ -180,12 +180,12 @@ function RoomPage() {
               {posts.length === 0 ? (
                 <OffsetCard className="p-8 text-center">
                   <p className="label-mono text-muted-foreground">
-                    The room is quiet. Be the first to post something.
+                    The Krew is quiet. Be the first to post something.
                   </p>
                 </OffsetCard>
               ) : (
                 posts.map((post) => {
-                  const name = post.authorName ?? "Someone in the room";
+                  const name = post.authorName ?? "Someone in the Krew";
                   const handle = post.authorHandle;
                   const role = post.authorRole;
                   const kindMeta = feedKindMeta[post.kind];

@@ -26,13 +26,13 @@ function NotFoundComponent() {
         404
       </p>
       <h1 className="mt-6 text-3xl font-extrabold tracking-tight sm:text-5xl">
-        You wandered into the wrong room.
+        You wandered into the wrong place.
       </h1>
       <p className="mt-3 max-w-md text-muted-foreground">
         Nothing here but folding chairs and a broken ping-pong table.
       </p>
       <Button asChild size="lg" className="mt-8">
-        <Link to="/">Back to The Rec Room →</Link>
+        <Link to="/">Back to Krew3 →</Link>
       </Button>
     </div>
   );
@@ -51,7 +51,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
       <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-6xl">
         Well, that didn't work.
       </h1>
-      <p className="mt-3 text-muted-foreground">The room lost the signal.</p>
+      <p className="mt-3 text-muted-foreground">Something went wrong.</p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <Button
           onClick={() => {
@@ -75,14 +75,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "The Rec Room — A Recreation Room for Builders" },
+      { title: "Krew3 — Not a community. A Krew." },
       {
         name: "description",
-        content:
-          "The Rec Room is a community for builders and creators — a place to meet people, learn together, share what you're building and discover things worth making.",
+        content: "Web3's Krew of builders and creators learning, helping, and building together.",
       },
-      { name: "author", content: "The Rec Room" },
-      { property: "og:site_name", content: "The Rec Room" },
+      { name: "author", content: "Krew3" },
+      { property: "og:site_name", content: "Krew3" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "theme-color", content: "#F5F3EF" },

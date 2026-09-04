@@ -181,16 +181,17 @@ export const Route = createFileRoute("/opportunities/")({
   }),
   head: () => ({
     meta: [
-      { title: "Opportunities — The Rec Room" },
+      { title: "Opportunities — Krew3" },
       {
         name: "description",
         content:
-          "Jobs, hackathons, residencies, grants and ambassador programs for people who build.",
+          "Jobs, hackathons, grants, residencies and ambassador programs for people who build.",
       },
-      { property: "og:title", content: "Opportunities — The Rec Room" },
+      { property: "og:title", content: "Opportunities — Krew3" },
       {
         property: "og:description",
-        content: "Jobs, hackathons, residencies, grants and ambassador programs worth applying to.",
+        content:
+          "Jobs, hackathons, grants, residencies and ambassador programs worth checking out.",
       },
     ],
   }),
@@ -293,7 +294,7 @@ function OpportunitiesPage() {
     <>
       <PageHero
         label="Opportunities"
-        title="Things worth applying to."
+        title="Opportunities for the Krew."
         aside={
           <OffsetCard size="sm" className="px-5 py-4">
             <p className="label-mono flex items-center gap-2">
@@ -304,7 +305,7 @@ function OpportunitiesPage() {
           </OffsetCard>
         }
       >
-        Jobs, hackathons, residencies, grants and ambassador programs for people who build.
+        Jobs, hackathons, grants, residencies and ambassador programs worth checking out.
       </PageHero>
 
       <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
@@ -333,11 +334,11 @@ function OpportunitiesPage() {
         <div className="mt-10">
           {shown.length === 0 ? (
             <EmptyState
-              title={items.length === 0 ? "Nothing here yet." : "Nothing matches that."}
+              title={items.length === 0 ? "No open opportunities yet." : "Nothing matches that."}
               body={
                 items.length === 0
-                  ? "New opportunities are coming soon."
-                  : "Loosen a filter or two. The room is bigger than it looks."
+                  ? "Check back soon."
+                  : "Loosen a filter or two. The Krew is bigger than it looks."
               }
               action={
                 items.length === 0 ? undefined : (

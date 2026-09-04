@@ -26,7 +26,7 @@ export function CardSkeleton() {
 export function LoadingState({ count = 6 }: { count?: number }) {
   return (
     <div role="status" aria-live="polite" className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-      <span className="sr-only">Loading the room…</span>
+      <span className="sr-only">Loading the Krew…</span>
       {Array.from({ length: count }).map((_, i) => (
         <CardSkeleton key={i} />
       ))}

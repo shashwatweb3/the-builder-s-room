@@ -15,7 +15,7 @@ import type { SavedKind } from "@/data/types";
  * table later without changing a single consumer.
  */
 
-const STORAGE_KEY = "recroom.saved.v1";
+const STORAGE_KEY = "krew3.saved.v1";
 
 type SavedMap = Record<SavedKind, string[]>;
 

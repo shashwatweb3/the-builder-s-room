@@ -25,7 +25,7 @@ const feedKindMeta: Record<FeedKind, { label: string; tag: "purple" | "ghost" }>
 };
 
 export function FeedPostCard({ post, className }: { post: FeedPost; className?: string }) {
-  const name = post.authorName ?? "Someone in the room";
+  const name = post.authorName ?? "Someone in the Krew";
   const handle = post.authorHandle;
   const role = post.authorRole;
   const kind = feedKindMeta[post.kind];
@@ -66,7 +66,7 @@ export function FeedPostCard({ post, className }: { post: FeedPost; className?: 
           to="/room"
           className="label-mono inline-flex items-center gap-1 font-semibold text-foreground underline-offset-4 hover:underline"
         >
-          In the room
+          In the Krew
           <ArrowUpRight className="size-3.5" aria-hidden />
         </Link>
       </div>

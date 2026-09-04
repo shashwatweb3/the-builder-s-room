@@ -83,16 +83,15 @@ const getPublishedEvents = createServerFn({ method: "GET" }).handler(async () =>
 export const Route = createFileRoute("/events")({
   head: () => ({
     meta: [
-      { title: "Events — The Rec Room" },
+      { title: "Events — Krew3" },
       {
         name: "description",
-        content:
-          "Community sessions, workshops, meetups, demo days and build nights. Come hang out.",
+        content: "Sessions, meetups, workshops, AMAs and things worth showing up for.",
       },
-      { property: "og:title", content: "Events — The Rec Room" },
+      { property: "og:title", content: "Events — Krew3" },
       {
         property: "og:description",
-        content: "Learn something. Meet someone. Workshops, meetups and more.",
+        content: "What's happening in the Krew.",
       },
     ],
   }),
@@ -143,8 +142,8 @@ function EventsPage() {
           </OffsetCard>
         }
       >
-        Workshops, community calls, meetups, demo days and build sessions. The learning half of the
-        room.
+        Workshops, community calls, meetups, demo days and build sessions. What's happening in the
+        Krew.
       </PageHero>
 
       <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
@@ -196,7 +195,7 @@ function EventsPage() {
           ) : (
             <EmptyState
               title="Nothing on the calendar yet."
-              body="Someone should fix that. Host the first one."
+              body="More soon."
               action={
                 <a
                   href="https://t.me/Lucky_sc0"

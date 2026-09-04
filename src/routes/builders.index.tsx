@@ -7,13 +7,13 @@ import { JoinCTA } from "@/components/JoinCTA";
 export const Route = createFileRoute("/builders/")({
   head: () => ({
     meta: [
-      { title: "Builders — The Rec Room" },
+      { title: "Builders — Krew3" },
       {
         name: "description",
         content:
-          "Meet the people in the room. Developers, designers, founders, researchers, writers and community builders making things.",
+          "Meet the people in the Krew. Developers, designers, founders, researchers, writers and community builders making things.",
       },
-      { property: "og:title", content: "Builders — The Rec Room" },
+      { property: "og:title", content: "Builders — Krew3" },
       {
         property: "og:description",
         content: "The people are the point. Find someone worth building with.",
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/builders/")({
 function BuildersPage() {
   return (
     <>
-      <PageHero label="Builders" title="Meet the people in the room.">
+      <PageHero label="Builders" title="Meet the people in the Krew.">
         Developers, designers, founders, researchers, writers, community builders and curious people
         making things.
       </PageHero>
@@ -34,7 +34,7 @@ function BuildersPage() {
       <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
         <EmptyState
           title="No builders listed yet."
-          body="Check back soon — the room is just getting started."
+          body="Check back soon — the Krew is just getting started."
           action={null}
         />
       </section>

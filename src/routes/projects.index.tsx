@@ -8,16 +8,16 @@ import { JoinCTA } from "@/components/JoinCTA";
 export const Route = createFileRoute("/projects/")({
   head: () => ({
     meta: [
-      { title: "Projects — The Rec Room" },
+      { title: "Projects — Krew3" },
       {
         name: "description",
         content:
-          "Things people are building in the room. Interesting projects worth following, contributing to and collaborating on.",
+          "What the Krew is building. Interesting projects worth following, contributing to and collaborating on.",
       },
-      { property: "og:title", content: "Projects — The Rec Room" },
+      { property: "og:title", content: "Projects — Krew3" },
       {
         property: "og:description",
-        content: "See what people are building, and what they need help with.",
+        content: "Interesting things built by people in the Krew.",
       },
     ],
   }),
@@ -27,8 +27,8 @@ export const Route = createFileRoute("/projects/")({
 function ProjectsPage() {
   return (
     <>
-      <PageHero label="Projects" title="Things people are building.">
-        Interesting things made by people in the room. Follow them, help them, steal the ideas that
+      <PageHero label="Projects" title="What the Krew is building.">
+        Interesting things built by people in the Krew. Follow them, help them, steal the ideas that
         deserve stealing.
       </PageHero>
 
@@ -45,7 +45,7 @@ function ProjectsPage() {
         </div>
 
         <div className="mt-10">
-          <EmptyState title="No projects yet." body="Things are coming soon." action={null} />
+          <EmptyState title="Nothing here yet." body="The Krew is cooking." action={null} />
         </div>
       </section>
 

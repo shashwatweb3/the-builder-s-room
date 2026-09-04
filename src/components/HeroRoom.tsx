@@ -7,17 +7,14 @@ export function HeroRoom() {
       {/* Subtle lavender glow behind the sign */}
       <span className="pointer-events-none absolute top-1/2 left-1/2 size-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-lavender/60 blur-3xl sm:size-80" />
 
-      {/* The main object: physical Rec Room sign */}
+      {/* The main object: physical Krew3 sign */}
       <div className="relative z-10 flex flex-col items-center rounded-2xl border-2 border-border bg-lavender px-8 py-7 text-center shadow-offset-lg sm:rounded-3xl sm:border-[3px] sm:px-14 sm:py-10 sm:rotate-[-1.5deg] lg:px-16">
         <p className="text-center text-3xl leading-[0.92] font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
-          THE
-          <br />
-          REC
-          <br />
-          ROOM
+          KREW
+          <br />3
         </p>
         <p className="label-mono mt-4 text-muted-foreground sm:mt-5 sm:text-sm">
-          BUILD · LEARN · SHARE
+          BUILD · LEARN · HELP
         </p>
       </div>
 

@@ -10,11 +10,11 @@ import { TELEGRAM_INVITE_URL } from "@/lib/community";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — The Rec Room" },
+      { title: "About — Krew3" },
       {
         name: "description",
         content:
-          "The Rec Room is a community for builders and creators to learn, build, share ideas, and discover opportunities together.",
+          "Krew3 is a krew of builders and creators learning, helping, and building together.",
       },
     ],
   }),
@@ -39,29 +39,29 @@ const values = [
 function AboutPage() {
   return (
     <>
-      <PageHero label="About" title="What is The Rec Room?">
-        A recreation room for builders and creators. A place to meet people, learn together, share
-        what you're building and find your next rabbit hole.
+      <PageHero label="About" title="What is Krew3?">
+        Web3's Krew of builders and creators. A place to meet people, learn together, share what
+        you're building and find your next rabbit hole.
       </PageHero>
 
       <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
         <div className="max-w-3xl space-y-8">
           <div className="space-y-4 text-lg leading-relaxed text-muted-foreground">
             <p>
-              The Rec Room started as a simple idea: what if there was a place online that felt like
-              a real community — where builders and creators could meet, share what they're working
-              on, and help each other ship?
+              Krew3 started as a simple idea: what if there was a place online that felt like a real
+              krew — where builders and creators could meet, share what they're working on, and help
+              each other ship?
             </p>
             <p>
-              Not a job board. Not a directory. Not a social network. A room where people come to
+              Not a job board. Not a directory. Not a social network. A krew where people come to
               build things together.
             </p>
           </div>
 
           <OffsetCard tone="purple" size="lg" className="grid-paper p-6 sm:p-10">
             <p className="text-[clamp(1.5rem,4vw,3rem)] leading-[1] font-extrabold tracking-tight">
-              Not a platform.
-              <br />A community.
+              Not a community.
+              <br />A Krew.
             </p>
           </OffsetCard>
 
@@ -83,7 +83,7 @@ function AboutPage() {
             </Button>
             <Button asChild variant="outline" size="lg">
               <a href={TELEGRAM_INVITE_URL} target="_blank" rel="noopener noreferrer">
-                Join the community
+                Join the Krew →
               </a>
             </Button>
           </div>

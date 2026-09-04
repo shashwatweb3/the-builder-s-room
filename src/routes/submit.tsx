@@ -8,11 +8,11 @@ import { Button } from "@/components/Button";
 export const Route = createFileRoute("/submit")({
   head: () => ({
     meta: [
-      { title: "Submit — The Rec Room" },
+      { title: "Submit — Krew3" },
       {
         name: "description",
         content:
-          "Got something worth sharing with the room? DM us on Telegram and we'll review it before it hits the floor.",
+          "Got something worth sharing with the Krew? DM us on Telegram and we'll review it before it goes live.",
       },
     ],
   }),
@@ -26,7 +26,7 @@ function SubmitPage() {
     <>
       <PageHero label="Submit" title="Got something worth sharing?">
         A job, a hackathon, a residency, a grant, an ambassador program, a project or an event. If
-        it makes the room more interesting, we want it.
+        it makes the Krew more interesting, we want it.
       </PageHero>
 
       <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
@@ -59,7 +59,7 @@ function SubmitPage() {
 
         <div className="mt-10">
           <Link to="/" className="label-mono text-muted-foreground hover:text-foreground">
-            ← Back to The Rec Room
+            ← Back to Krew3
           </Link>
         </div>
       </section>

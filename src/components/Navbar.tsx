@@ -74,12 +74,12 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
           <Link
             to="/"
             className="flex shrink-0 items-center gap-2 rounded-full"
-            aria-label="The Rec Room — home"
+            aria-label="Krew3 — home"
           >
             <span className="grid size-8 place-items-center rounded-lg border-2 border-border bg-primary text-primary-foreground shadow-offset-sm">
-              <span className="font-mono text-xs font-bold">RR</span>
+              <span className="font-mono text-xs font-bold">K3</span>
             </span>
-            <span className="text-lg font-extrabold tracking-tight lg:text-xl">The Rec Room</span>
+            <span className="text-lg font-extrabold tracking-tight lg:text-xl">Krew3</span>
           </Link>
 
           <ul className="ml-6 hidden items-center gap-1 xl:flex">
@@ -137,13 +137,13 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
 
           <div className="ml-auto flex items-center gap-2">
             <span className="label-mono mr-1 hidden items-center gap-1.5 text-muted-foreground xl:flex">
-              <Dot /> Room open
+              <Dot /> Krew open
             </span>
 
             <button
               type="button"
               onClick={onOpenSearch}
-              aria-label="Search The Rec Room"
+              aria-label="Search Krew3"
               className="press flex min-h-10 items-center gap-2 rounded-full border-2 border-border bg-card px-3 shadow-offset-sm sm:px-3.5"
             >
               <Search className="size-4" aria-hidden />
@@ -165,7 +165,7 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
 
             <Button asChild size="sm" className="hidden xl:inline-flex">
               <a href={TELEGRAM_INVITE_URL} target="_blank" rel="noopener noreferrer">
-                Join the Room
+                Join the Krew
               </a>
             </Button>
 

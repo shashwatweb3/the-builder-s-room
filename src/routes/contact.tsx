@@ -9,7 +9,7 @@ const TELEGRAM_CONTACT_URL = "https://t.me/Lucky_sc0";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — The Rec Room" },
+      { title: "Contact — Krew3" },
       {
         name: "description",
         content: "Have a question, suggestion, or just want to say hi? We'd love to hear from you.",
@@ -28,7 +28,7 @@ const links = [
   {
     label: "Community Guidelines",
     to: "/guidelines" as const,
-    description: "How we keep the room a good place to be.",
+    description: "How we keep the Krew a good place to be.",
   },
 ];
 

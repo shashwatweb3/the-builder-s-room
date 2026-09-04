@@ -141,7 +141,7 @@ export function SearchModal({
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Search The Rec Room"
+        aria-label="Search Krew3"
         className="rise-in absolute inset-x-3 top-[8vh] mx-auto max-w-2xl overflow-hidden rounded-3xl border-2 border-border bg-background shadow-offset-lg sm:inset-x-6"
         onKeyDown={(e) => {
           if (e.key === "Escape") onClose();

@@ -13,20 +13,19 @@ import { TELEGRAM_INVITE_URL } from "@/lib/community";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "The Rec Room — A Community for Builders" },
+      { title: "Krew3 — Not a community. A Krew." },
       {
         name: "description",
-        content:
-          "The Rec Room is a community where builders and creators learn, build, share ideas, and discover opportunities together.",
+        content: "Web3's Krew of builders and creators learning, helping, and building together.",
       },
       {
         property: "og:title",
-        content: "The Rec Room — A Community for Builders",
+        content: "Krew3 — Not a community. A Krew.",
       },
       {
         property: "og:description",
         content:
-          "A room full of interesting people building interesting things. Come for the ideas. Stay for the people.",
+          "Builders and creators learning, helping, and building together. Find your people. Make something.",
       },
     ],
   }),
@@ -94,20 +93,20 @@ const learnCards = [
 
 const faqs = [
   {
-    q: "What actually is The Rec Room?",
-    a: "A recreation room for builders and creators. A place to meet people, learn together, share what you're building and find your next rabbit hole.",
+    q: "What actually is Krew3?",
+    a: "Web3's Krew of builders and creators. A place to meet people, learn together, share what you're building and find your next rabbit hole.",
   },
   {
     q: "Who is it for?",
     a: "Developers, designers, founders, researchers, writers, community people, and anyone who likes making things. If you build stuff, you're in.",
   },
   {
-    q: "What happens inside the room?",
+    q: "What happens inside the Krew?",
     a: "People introduce themselves, post what they're building, ask questions, find collaborators, run events and share the good and the messy.",
   },
   {
-    q: "How do I join the community?",
-    a: "Join the Telegram room. No paywall, no waiting list.",
+    q: "How do I join the Krew?",
+    a: "Join the Telegram group. No paywall, no waiting list.",
   },
   {
     q: "Is it free?",
@@ -124,13 +123,13 @@ function Home() {
       <section className="mx-auto w-full max-w-[1400px] px-4 pt-8 pb-8 sm:px-6 sm:pt-12 lg:px-10 lg:pt-20 lg:pb-10">
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
           <div className="rise-in">
-            <SectionLabel>A community for builders</SectionLabel>
+            <SectionLabel>WEB3'S KREW FOR BUILDERS + CREATORS</SectionLabel>
             <h1 className="mt-6 text-[clamp(2.5rem,7vw,5.5rem)] leading-[0.95] font-extrabold tracking-tight">
-              <span className="block">Come for the ideas.</span>
+              <span className="block">Not a community.</span>
               <span className="block">
-                Stay for the{" "}
+                A{" "}
                 <span className="relative">
-                  people.
+                  Krew.
                   <span
                     aria-hidden
                     className="absolute inset-x-0 bottom-[0.06em] -z-10 h-[0.32em] rounded-full bg-lavender"
@@ -139,13 +138,15 @@ function Home() {
               </span>
             </h1>
             <p className="mt-7 max-w-xl text-lg font-medium text-muted-foreground sm:text-xl">
-              The Rec Room is a community where builders and creators learn, build, share ideas, and
-              discover opportunities together.
+              Builders and creators learning, helping, and building together.
+            </p>
+            <p className="mt-3 max-w-xl text-base text-muted-foreground">
+              Find your people. Make something.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg">
                 <a href={TELEGRAM_INVITE_URL} target="_blank" rel="noopener noreferrer">
-                  Join the Room
+                  Join the Krew →
                 </a>
               </Button>
               <Button asChild variant="outline" size="lg">
@@ -158,15 +159,16 @@ function Home() {
         </div>
       </section>
 
-      {/* WHAT IS THE REC ROOM */}
+      {/* WHAT IS KREW3 */}
       <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
         <OffsetCard tone="purple" size="lg" className="grid-paper p-6 sm:p-12">
           <p className="text-[clamp(2rem,6vw,4.5rem)] leading-[0.98] font-extrabold tracking-tight">
-            Not a platform.
-            <br />A <span className="text-primary-foreground">community.</span>
+            Not a community.
+            <br />A <span className="text-primary-foreground">Krew.</span>
           </p>
           <p className="mt-4 max-w-xl text-base text-primary-foreground/85 sm:text-xl">
-            Meet people. Learn together. Build together. Discover opportunities worth your time.
+            A place for builders and creators to learn, share, help each other, and build things
+            together.
           </p>
         </OffsetCard>
 
@@ -189,7 +191,7 @@ function Home() {
               What people are building.
             </h2>
             <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
-              Interesting ideas from the community.
+              Interesting things built by people in the Krew.
             </p>
           </div>
           <Link
@@ -205,7 +207,7 @@ function Home() {
         </div>
 
         <div className="mt-10 rounded-2xl border-2 border-dashed border-border bg-card/50 p-10 text-center">
-          <p className="text-muted-foreground">Projects are coming soon.</p>
+          <p className="text-muted-foreground">Nothing here yet. The Krew is cooking.</p>
         </div>
       </section>
 

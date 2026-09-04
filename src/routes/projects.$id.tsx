@@ -8,7 +8,7 @@ export const Route = createFileRoute("/projects/$id")({
     throw new Error("not found");
   },
   head: () => ({
-    meta: [{ title: "Project not found — The Rec Room" }],
+    meta: [{ title: "Project not found — Krew3" }],
   }),
   component: ProjectDetail,
 });

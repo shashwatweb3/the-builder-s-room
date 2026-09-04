@@ -8,7 +8,7 @@ export const Route = createFileRoute("/ambassadors/$id")({
     throw new Error("not found");
   },
   head: () => ({
-    meta: [{ title: "Program not found — The Rec Room" }, { name: "robots", content: "noindex" }],
+    meta: [{ title: "Program not found — Krew3" }, { name: "robots", content: "noindex" }],
   }),
   component: ProgramDetail,
 });

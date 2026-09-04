@@ -56,9 +56,9 @@ function AdminLogin() {
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <Link to="/" className="label-mono text-muted-foreground hover:text-foreground">
-            The Rec Room
+            Krew3
           </Link>
-          <h1 className="mt-4 text-3xl font-extrabold tracking-tight">Admin</h1>
+          <h1 className="mt-4 text-3xl font-extrabold tracking-tight">Krew3 Admin</h1>
         </div>
 
         <form

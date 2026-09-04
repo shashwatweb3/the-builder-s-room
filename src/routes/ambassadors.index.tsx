@@ -6,13 +6,12 @@ import { JoinCTA } from "@/components/JoinCTA";
 export const Route = createFileRoute("/ambassadors/")({
   head: () => ({
     meta: [
-      { title: "Ambassadors — The Rec Room" },
+      { title: "Ambassadors — Krew3" },
       {
         name: "description",
-        content:
-          "Help shape the room. Ambassador and community programs worth joining to grow interesting projects.",
+        content: "Ambassador and community programs worth joining to grow interesting projects.",
       },
-      { property: "og:title", content: "Ambassadors — The Rec Room" },
+      { property: "og:title", content: "Ambassadors — Krew3" },
       {
         property: "og:description",
         content:
@@ -26,9 +25,9 @@ export const Route = createFileRoute("/ambassadors/")({
 function AmbassadorsPage() {
   return (
     <>
-      <PageHero label="Ambassadors" title="Help shape the room.">
-        Interesting communities are built by people who care. Find ambassador and community programs
-        worth joining.
+      <PageHero label="Ambassadors" title="Help shape the Krew.">
+        Interesting krews are built by people who care. Find ambassador and community programs worth
+        joining.
       </PageHero>
 
       <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">

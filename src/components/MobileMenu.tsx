@@ -53,7 +53,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
       >
         <div className="flex items-center justify-between">
           <span className="label-mono flex items-center gap-2 text-muted-foreground">
-            <Dot /> Room open
+            <Dot /> Krew open
           </span>
           <button
             type="button"
@@ -108,7 +108,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
 
         <Button asChild size="lg" className="mt-5 w-full">
           <a href={TELEGRAM_INVITE_URL} target="_blank" rel="noopener noreferrer" onClick={onClose}>
-            Join the Room
+            Join the Krew
           </a>
         </Button>
       </div>
