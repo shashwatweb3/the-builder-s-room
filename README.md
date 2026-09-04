@@ -1517,17 +1517,7 @@ Build the complete frontend now with all routes, reusable components, realistic 
 
 Do not stop after creating the homepage.
 
-The goal is a complete, navigable The Rec Room community platform MVP.
-
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/90678743-dbe5-4f71-8eff-4befa10f2983).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+The goal is a complete, navigable Krew3 community platform MVP.
 
 ## Development
 
