@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
+import { Twitter } from "lucide-react";
 import { Dot } from "./StatusBadge";
 import { Button } from "./Button";
-import { TELEGRAM_INVITE_URL } from "@/lib/community";
+import { TELEGRAM_INVITE_URL, X_PROFILE_URL } from "@/lib/community";
 
 const discover = [
   { to: "/projects", label: "Projects" },
@@ -68,6 +69,14 @@ export function Footer() {
                 Join the Krew →
               </a>
             </Button>
+            <a
+              href={X_PROFILE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex items-center gap-2 font-medium underline-offset-4 transition-colors hover:text-primary hover:underline"
+            >
+              <Twitter className="size-4" aria-hidden />X · @Krew3HQ
+            </a>
           </div>
         </div>
 
