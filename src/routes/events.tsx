@@ -2,17 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { createServerClient } from "@supabase/ssr";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import { SectionLabel } from "@/components/SectionLabel";
 import { OffsetCard } from "@/components/OffsetCard";
-import { Dot } from "@/components/StatusBadge";
 import { EventCard } from "@/components/EventCard";
-import { FilterBar } from "@/components/FilterBar";
 import { EmptyState } from "@/components/EmptyState";
 import { JoinCTA } from "@/components/JoinCTA";
-import type { EventKind, RecEvent } from "@/data/types";
+import type { RecEvent } from "@/data/types";
 
 type EventRow = {
   id: string;
@@ -29,6 +27,7 @@ type EventRow = {
   image_url: string | null;
   featured: boolean;
   status: "draft" | "published" | "cancelled" | "completed";
+  organizer: string;
   created_at: string;
   updated_at: string;
 };
@@ -59,7 +58,8 @@ const getPublishedEvents = createServerFn({ method: "GET" }).handler(async () =>
     .from("events")
     .select("*")
     .eq("status", "published")
-    .order("event_date", { ascending: true });
+    .order("event_date", { ascending: true })
+    .order("created_at", { ascending: true });
 
   if (error) {
     console.error("Failed to fetch events:", error);
@@ -68,13 +68,14 @@ const getPublishedEvents = createServerFn({ method: "GET" }).handler(async () =>
 
   return ((data ?? []) as EventRow[]).map((row): RecEvent => ({
     id: row.id,
+    slug: row.slug,
     name: row.title,
-    kind: "community-call",
+    kind: "meetup",
     date: row.event_date.split("T")[0] ?? row.event_date,
     time: "",
     location: row.location,
     online: row.is_online,
-    organizer: "",
+    organizer: row.organizer ?? "",
     summary: row.description,
     url: row.registration_url || row.meeting_url || "#",
   }));
@@ -83,15 +84,17 @@ const getPublishedEvents = createServerFn({ method: "GET" }).handler(async () =>
 export const Route = createFileRoute("/events")({
   head: () => ({
     meta: [
-      { title: "Events — Krew3" },
+      { title: "Devcon 8 Mumbai Side Events | Krew3" },
       {
         name: "description",
-        content: "Sessions, meetups, workshops, AMAs and things worth showing up for.",
+        content:
+          "Discover community side events happening around Devcon 8 and India Blockchain Week in Mumbai.",
       },
-      { property: "og:title", content: "Events — Krew3" },
+      { property: "og:title", content: "Devcon 8 Mumbai Side Events | Krew3" },
       {
         property: "og:description",
-        content: "What's happening in the Krew.",
+        content:
+          "Discover community side events happening around Devcon 8 and India Blockchain Week in Mumbai.",
       },
     ],
   }),
@@ -102,67 +105,48 @@ export const Route = createFileRoute("/events")({
   component: EventsPage,
 });
 
-const kindLabels: { value: EventKind | "all"; label: string }[] = [
-  { value: "all", label: "All" },
-  { value: "meetup", label: "Meetups" },
-  { value: "workshop", label: "Workshops" },
-  { value: "community-call", label: "Community calls" },
-  { value: "demo-day", label: "Demo days" },
-  { value: "hackathon", label: "Hackathons" },
-];
-
 function EventsPage() {
   const { events } = Route.useLoaderData();
-  const [filter, setFilter] = useState<EventKind | "all">("all");
 
-  const results = useMemo(
-    () =>
-      events
-        .filter((e) => filter === "all" || e.kind === filter)
-        .sort((a, b) => a.date.localeCompare(b.date)),
-    [events, filter],
-  );
-
-  const online = events.filter((e) => e.online).length;
+  const results = useMemo(() => [...events].sort((a, b) => a.date.localeCompare(b.date)), [events]);
 
   return (
     <>
       <PageHero
-        label="Events"
-        title="Come hang out."
+        label="DEVCON 8 • MUMBAI, INDIA 🇮🇳"
+        title="SIDE EVENTS."
         aside={
           <OffsetCard size="sm" className="px-5 py-4">
-            <p className="label-mono flex items-center gap-2">
-              <Dot /> On the calendar
-            </p>
-            <p className="mt-2 text-4xl font-extrabold tracking-tight">{events.length}</p>
-            <p className="label-mono text-muted-foreground">
-              {online} online · {events.length - online} in person
-            </p>
+            <p className="text-4xl font-extrabold tracking-tight">{events.length}</p>
+            <p className="label-mono mt-1 text-muted-foreground">COMMUNITY EVENTS</p>
           </OffsetCard>
         }
       >
-        Workshops, community calls, meetups, demo days and build sessions. What's happening in the
-        Krew.
+        A community list of events happening around Devcon 8 and India Blockchain Week.
       </PageHero>
 
       <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <SectionLabel>What's on</SectionLabel>
+            <SectionLabel>THE LIST</SectionLabel>
             <h2 className="mt-4 text-[clamp(1.75rem,4vw,3rem)] leading-tight font-extrabold tracking-tight">
-              Pick a night to show up to.
+              {events.length} EVENTS. ONE CITY.
             </h2>
           </div>
           <a
             href="https://t.me/Lucky_sc0"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full border-2 border-border bg-card px-6 text-base font-semibold text-foreground shadow-offset transition-colors hover:bg-lavender/40"
+            className="label-mono inline-flex items-center gap-1 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
           >
-            Host an event <ArrowRight className="size-4" aria-hidden />
+            Add an event <ArrowRight className="size-3.5" aria-hidden />
           </a>
         </div>
+
+        <p className="mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg">
+          Devcon 8 is bringing builders, founders, researchers and communities together across
+          Mumbai.
+        </p>
 
         <p className="mt-5 text-sm text-muted-foreground">
           Want to add an opportunity or event? DM{" "}
@@ -177,37 +161,36 @@ function EventsPage() {
           on Telegram.
         </p>
 
-        <FilterBar
-          ariaLabel="Filter events by type"
-          className="mt-8"
-          value={filter}
-          onChange={(v) => setFilter(v as EventKind | "all")}
-          options={kindLabels}
-        />
+        <div className="mt-12 border-t-2 border-border pt-8">
+          <SectionLabel>COMMUNITY SIDE EVENTS</SectionLabel>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Events listed by their respective organizers. Krew3 is the directory, not the host.
+          </p>
 
-        <div className="mt-10">
-          {results.length ? (
-            <div className="grid gap-6">
-              {results.map((e) => (
-                <EventCard key={e.id} event={e} />
-              ))}
-            </div>
-          ) : (
-            <EmptyState
-              title="Nothing on the calendar yet."
-              body="More soon."
-              action={
-                <a
-                  href="https://t.me/Lucky_sc0"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border-2 border-border bg-card px-5 text-base font-semibold text-foreground shadow-offset transition-colors hover:bg-lavender/40"
-                >
-                  Host an event →
-                </a>
-              }
-            />
-          )}
+          <div className="mt-8">
+            {results.length ? (
+              <div className="grid gap-6">
+                {results.map((e) => (
+                  <EventCard key={e.id} event={e} />
+                ))}
+              </div>
+            ) : (
+              <EmptyState
+                title="Nothing on the calendar yet."
+                body="More soon."
+                action={
+                  <a
+                    href="https://t.me/Lucky_sc0"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full border-2 border-border bg-card px-5 text-base font-semibold text-foreground shadow-offset transition-colors hover:bg-lavender/40"
+                  >
+                    Add an event →
+                  </a>
+                }
+              />
+            )}
+          </div>
         </div>
       </section>
 

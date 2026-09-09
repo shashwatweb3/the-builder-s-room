@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 import type { RecEvent, EventKind } from "@/data/types";
 
@@ -11,6 +12,7 @@ const eventKindLabel: Record<EventKind, string> = {
 import { formatDate } from "@/lib/format";
 import { OffsetCard } from "./OffsetCard";
 import { Tag } from "./Tag";
+import { ShareButton } from "./ShareButton";
 
 export function EventCard({ event }: { event: RecEvent }) {
   const d = new Date(event.date + "T00:00:00Z");
@@ -34,31 +36,42 @@ export function EventCard({ event }: { event: RecEvent }) {
         <div className="flex flex-wrap items-center gap-2">
           <Tag tone="purple">{eventKindLabel[event.kind]}</Tag>
           <Tag tone="ghost">{event.online ? "Online" : "In person"}</Tag>
+          <Tag tone="ghost">Community event</Tag>
         </div>
         <h3 className="mt-3 text-xl font-extrabold tracking-tight">
-          <a
-            href={event.url}
-            target="_blank"
-            rel="noreferrer noopener"
+          <Link
+            to="/events/$id"
+            params={{ id: event.slug }}
             className="after:absolute after:inset-0 after:content-['']"
           >
             {event.name}
-          </a>
+          </Link>
         </h3>
         <p className="mt-2 text-sm text-muted-foreground sm:text-base">{event.summary}</p>
         <p className="label-mono mt-3 text-muted-foreground">
-          {formatDate(event.date)} · {event.time} · {event.location}
+          {formatDate(event.date)}
+          {event.location ? ` · ${event.location}` : ""}
         </p>
-        <p className="label-mono mt-1 text-muted-foreground">Hosted by {event.organizer}</p>
+        {event.organizer && (
+          <p className="label-mono mt-1 text-muted-foreground">Hosted by {event.organizer}</p>
+        )}
       </div>
 
-      <span className="label-mono inline-flex shrink-0 items-center gap-1 self-start rounded-full border-2 border-border bg-background px-3 py-1.5 shadow-offset-sm">
-        RSVP
-        <ArrowUpRight
-          className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-          aria-hidden
-        />
-      </span>
+      <div className="flex shrink-0 items-center gap-3 self-start">
+        <ShareButton title={event.name} slug={event.slug} path={`/events/${event.slug}`} />
+        <a
+          href={event.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="label-mono relative z-10 inline-flex items-center gap-1 rounded-full border-2 border-border bg-background px-3 py-1.5 shadow-offset-sm"
+        >
+          RSVP
+          <ArrowUpRight
+            className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            aria-hidden
+          />
+        </a>
+      </div>
     </OffsetCard>
   );
 }

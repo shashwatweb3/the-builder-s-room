@@ -25,6 +25,7 @@ import { Route as AmbassadorsIndexRouteImport } from './routes/ambassadors.index
 import { Route as AmbassadorsIdRouteImport } from './routes/ambassadors.$id'
 import { Route as BuildersIndexRouteImport } from './routes/builders.index'
 import { Route as BuildersIdRouteImport } from './routes/builders.$id'
+import { Route as EventsIdRouteImport } from './routes/events.$id'
 import { Route as OpportunitiesIndexRouteImport } from './routes/opportunities.index'
 import { Route as OpportunitiesIdRouteImport } from './routes/opportunities.$id'
 import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
@@ -114,6 +115,11 @@ const BuildersIdRoute = BuildersIdRouteImport.update({
   path: '/builders/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsIdRoute = EventsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => EventsRoute,
+} as any)
 const OpportunitiesIndexRoute = OpportunitiesIndexRouteImport.update({
   id: '/opportunities/',
   path: '/opportunities/',
@@ -160,7 +166,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/events': typeof EventsRoute
+  '/events': typeof EventsRouteWithChildren
   '/guidelines': typeof GuidelinesRoute
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
@@ -170,6 +176,7 @@ export interface FileRoutesByFullPath {
   '/admin/opportunities': typeof AdminOpportunitiesRouteWithChildren
   '/ambassadors/$id': typeof AmbassadorsIdRoute
   '/builders/$id': typeof BuildersIdRoute
+  '/events/$id': typeof EventsIdRoute
   '/opportunities/$id': typeof OpportunitiesIdRoute
   '/projects/$id': typeof ProjectsIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -186,7 +193,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/events': typeof EventsRoute
+  '/events': typeof EventsRouteWithChildren
   '/guidelines': typeof GuidelinesRoute
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
@@ -196,6 +203,7 @@ export interface FileRoutesByTo {
   '/admin/opportunities': typeof AdminOpportunitiesRouteWithChildren
   '/ambassadors/$id': typeof AmbassadorsIdRoute
   '/builders/$id': typeof BuildersIdRoute
+  '/events/$id': typeof EventsIdRoute
   '/opportunities/$id': typeof OpportunitiesIdRoute
   '/projects/$id': typeof ProjectsIdRoute
   '/admin': typeof AdminIndexRoute
@@ -213,7 +221,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/events': typeof EventsRoute
+  '/events': typeof EventsRouteWithChildren
   '/guidelines': typeof GuidelinesRoute
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
@@ -223,6 +231,7 @@ export interface FileRoutesById {
   '/admin/opportunities': typeof AdminOpportunitiesRouteWithChildren
   '/ambassadors/$id': typeof AmbassadorsIdRoute
   '/builders/$id': typeof BuildersIdRoute
+  '/events/$id': typeof EventsIdRoute
   '/opportunities/$id': typeof OpportunitiesIdRoute
   '/projects/$id': typeof ProjectsIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -251,6 +260,7 @@ export interface FileRouteTypes {
     | '/admin/opportunities'
     | '/ambassadors/$id'
     | '/builders/$id'
+    | '/events/$id'
     | '/opportunities/$id'
     | '/projects/$id'
     | '/admin/'
@@ -277,6 +287,7 @@ export interface FileRouteTypes {
     | '/admin/opportunities'
     | '/ambassadors/$id'
     | '/builders/$id'
+    | '/events/$id'
     | '/opportunities/$id'
     | '/projects/$id'
     | '/admin'
@@ -303,6 +314,7 @@ export interface FileRouteTypes {
     | '/admin/opportunities'
     | '/ambassadors/$id'
     | '/builders/$id'
+    | '/events/$id'
     | '/opportunities/$id'
     | '/projects/$id'
     | '/admin/'
@@ -320,7 +332,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
-  EventsRoute: typeof EventsRoute
+  EventsRoute: typeof EventsRouteWithChildren
   GuidelinesRoute: typeof GuidelinesRoute
   RoomRoute: typeof RoomRoute
   SavedRoute: typeof SavedRoute
@@ -453,6 +465,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuildersIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events/$id': {
+      id: '/events/$id'
+      path: '/$id'
+      fullPath: '/events/$id'
+      preLoaderRoute: typeof EventsIdRouteImport
+      parentRoute: typeof EventsRoute
+    }
     '/opportunities/': {
       id: '/opportunities/'
       path: '/opportunities'
@@ -512,6 +531,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface EventsRouteChildren {
+  EventsIdRoute: typeof EventsIdRoute
+}
+
+const EventsRouteChildren: EventsRouteChildren = {
+  EventsIdRoute: EventsIdRoute,
+}
+
+const EventsRouteWithChildren =
+  EventsRoute._addFileChildren(EventsRouteChildren)
+
 interface AdminEventsRouteChildren {
   AdminEventsNewRoute: typeof AdminEventsNewRoute
   AdminEventsIdEditRoute: typeof AdminEventsIdEditRoute
@@ -543,7 +573,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
-  EventsRoute: EventsRoute,
+  EventsRoute: EventsRouteWithChildren,
   GuidelinesRoute: GuidelinesRoute,
   RoomRoute: RoomRoute,
   SavedRoute: SavedRoute,

@@ -114,6 +114,7 @@ export type EventKind = "meetup" | "hackathon" | "workshop" | "demo-day" | "comm
 
 export interface RecEvent {
   id: string;
+  slug: string;
   name: string;
   kind: EventKind;
   date: string;
