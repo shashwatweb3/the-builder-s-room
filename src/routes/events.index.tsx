@@ -73,6 +73,11 @@ const FILTER_OPTIONS: { value: EventFilter; label: string }[] = [
   { value: "hacker-houses", label: "HACKER HOUSES" },
 ];
 
+const VIEW_FILTERS: Record<EventView, EventFilter[]> = {
+  devcon: ["all", "mumbai", "side-events", "devcon", "ibw"],
+  "pre-devcon": ["all", "goa", "residencies", "hacker-houses"],
+};
+
 function matchesFilter(event: RecEvent, filter: EventFilter) {
   switch (filter) {
     case "mumbai":
@@ -137,6 +142,7 @@ const getPublishedEvents = createServerFn({ method: "GET" }).handler(async () =>
     time: "",
     startTime: row.start_time,
     endTime: row.end_time,
+    
     location: row.location,
     online: row.is_online,
     organizer: row.organizer ?? "",
@@ -217,12 +223,14 @@ function EventsPage() {
 
   const options = useMemo(
     () =>
-      FILTER_OPTIONS.map((o) => ({
-        value: o.value,
-        label: o.label,
-        count: counts.get(o.value) ?? 0,
-      })),
-    [counts],
+      VIEW_FILTERS[view]
+        .map((value) => ({
+          value,
+          label: FILTER_OPTIONS.find((o) => o.value === value)?.label ?? value,
+          count: counts.get(value) ?? 0,
+        }))
+        .filter((o) => o.count > 0),
+    [counts, view],
   );
 
   const results = useMemo(
@@ -240,8 +248,49 @@ function EventsPage() {
 
   return (
     <>
-      <section className="border-b-2 border-border">
-        <div className="mx-auto w-full max-w-[1400px] px-4 py-8 sm:px-6 lg:px-10 lg:py-10">
+      <section className="mx-auto w-full max-w-[1400px] px-4 py-6 sm:px-6 lg:px-10">
+        <div role="tablist" aria-label="Event view" className="flex flex-wrap gap-2">
+          {EVENT_VIEWS.map((option) => {
+            const active = view === option.value;
+            return (
+              <button
+                key={option.value}
+                role="tab"
+                type="button"
+                aria-selected={active}
+                onClick={() => switchView(option.value)}
+                className={cn(
+                  "label-mono press min-h-11 shrink-0 rounded-full border-2 border-border px-5 py-2.5 shadow-offset-sm",
+                  active ? "bg-foreground text-background" : "bg-card hover:bg-lavender/50",
+                )}
+              >
+                {option.label}
+                <span className={cn("ml-1.5", active ? "opacity-70" : "text-muted-foreground")}>
+                  · {viewCounts[option.value]}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <p className="label-mono text-muted-foreground">{results.length} EVENTS</p>
+          <p className="text-xs text-muted-foreground sm:text-sm">
+            Events are listed by their respective organizers. Krew3 is the directory, not the host.
+          </p>
+        </div>
+
+        <div className="mt-2.5">
+          <FilterBar
+            compact
+            options={options}
+            value={filter}
+            onChange={(v) => setFilter(v as EventFilter)}
+            ariaLabel="Filter events"
+          />
+        </div>
+
+        <div className="mt-10 border-t-2 border-border pt-8">
           <SectionLabel>{meta.eyebrow}</SectionLabel>
           <h1 className="mt-2 text-[clamp(2rem,5vw,3rem)] leading-[0.95] font-extrabold tracking-tight">
             {meta.title}
@@ -262,48 +311,6 @@ function EventsPage() {
             </a>{" "}
             on Telegram.
           </p>
-        </div>
-      </section>
-
-      <section className="mx-auto w-full max-w-[1400px] px-4 py-6 sm:px-6 lg:px-10">
-        <div role="tablist" aria-label="Event view" className="flex flex-wrap gap-2">
-          {EVENT_VIEWS.map((option) => {
-            const active = view === option.value;
-            return (
-              <button
-                key={option.value}
-                role="tab"
-                type="button"
-                aria-selected={active}
-                onClick={() => switchView(option.value)}
-                className={cn(
-                  "label-mono press min-h-10 shrink-0 rounded-full border-2 border-border px-4 py-2 shadow-offset-sm",
-                  active ? "bg-foreground text-background" : "bg-card hover:bg-lavender/50",
-                )}
-              >
-                {option.label}
-                <span className={cn("ml-1.5", active ? "opacity-70" : "text-muted-foreground")}>
-                  {viewCounts[option.value]}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <p className="label-mono text-muted-foreground">{results.length} EVENTS</p>
-          <p className="text-xs text-muted-foreground sm:text-sm">
-            Events are listed by their respective organizers. Krew3 is the directory, not the host.
-          </p>
-        </div>
-
-        <div className="mt-3">
-          <FilterBar
-            options={options}
-            value={filter}
-            onChange={(v) => setFilter(v as EventFilter)}
-            ariaLabel="Filter events"
-          />
         </div>
 
         <div className="mt-8">
