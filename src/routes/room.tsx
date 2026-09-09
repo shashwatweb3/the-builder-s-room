@@ -328,6 +328,7 @@ function RoomPage() {
                 <SectionLabel>Up next</SectionLabel>
                 <Link
                   to="/events"
+                  search={{ view: undefined }}
                   className="label-mono font-semibold underline-offset-4 hover:underline"
                 >
                   All events

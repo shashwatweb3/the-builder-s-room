@@ -113,6 +113,7 @@ function EventDetail() {
       <div className="mx-auto w-full max-w-[1400px] px-4 pt-8 sm:px-6 lg:px-10">
         <Link
           to="/events"
+          search={{ view: undefined }}
           className="label-mono inline-flex items-center gap-2 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
         >
           <ArrowLeft className="size-3.5" aria-hidden /> Back to events

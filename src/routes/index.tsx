@@ -226,6 +226,7 @@ function Home() {
             </div>
             <Link
               to="/events"
+              search={{ view: undefined }}
               className="group inline-flex items-center gap-2 font-semibold underline-offset-4 hover:underline"
             >
               See all Events
