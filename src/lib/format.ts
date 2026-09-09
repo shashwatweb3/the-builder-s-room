@@ -13,6 +13,32 @@ export const formatShortDate = (iso: string) =>
     timeZone: "UTC",
   });
 
+/** '5–6 NOV' for same-month multi-day events, otherwise a short date (no year). */
+export const formatShortDateRange = (start: string, end?: string | null) => {
+  const short = formatShortDate(start);
+  if (!end || end === start) return short;
+  const s = new Date(start + "T00:00:00Z");
+  const e = new Date(end + "T00:00:00Z");
+  if (s.getUTCMonth() === e.getUTCMonth() && s.getUTCFullYear() === e.getUTCFullYear()) {
+    const month = s.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" }).toUpperCase();
+    return `${s.getUTCDate()}–${e.getUTCDate()} ${month}`;
+  }
+  return `${short} – ${formatShortDate(end)}`;
+};
+
+/** '5–6 NOV 2026' for same-month multi-day events, otherwise a plain date. */
+export const formatDateRange = (start: string, end?: string | null) => {
+  const s = new Date(start + "T00:00:00Z");
+  const startLabel = formatDate(start);
+  if (!end || end === start) return startLabel;
+  const e = new Date(end + "T00:00:00Z");
+  if (s.getUTCMonth() === e.getUTCMonth() && s.getUTCFullYear() === e.getUTCFullYear()) {
+    const month = s.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" }).toUpperCase();
+    return `${s.getUTCDate()}–${e.getUTCDate()} ${month} ${s.getUTCFullYear()}`;
+  }
+  return `${startLabel} – ${formatDate(end)}`;
+};
+
 /** Days between now and an ISO date. Negative means it already passed. */
 export const daysUntil = (iso: string) => {
   if (!iso) return Infinity;

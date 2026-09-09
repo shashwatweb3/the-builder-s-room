@@ -1,6 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 import type { RecEvent, EventKind } from "@/data/types";
+import { formatDateRange, formatShortDateRange, formatTimeRange } from "@/lib/format";
+import { OffsetCard } from "./OffsetCard";
+import { Tag } from "./Tag";
+import { ShareButton } from "./ShareButton";
 
 const eventKindLabel: Record<EventKind, string> = {
   meetup: "Meetup",
@@ -9,65 +13,91 @@ const eventKindLabel: Record<EventKind, string> = {
   "demo-day": "Demo Day",
   "community-call": "Community Call",
 };
-import { formatDate, formatTimeRange } from "@/lib/format";
-import { OffsetCard } from "./OffsetCard";
-import { Tag } from "./Tag";
-import { ShareButton } from "./ShareButton";
 
 export function EventCard({ event }: { event: RecEvent }) {
   const d = new Date(event.date + "T00:00:00Z");
+  const end = event.endDate ? new Date(event.endDate + "T00:00:00Z") : null;
+  const month = d.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" }).toUpperCase();
+  const sameMonth =
+    end && d.getUTCMonth() === end.getUTCMonth() && d.getUTCFullYear() === end.getUTCFullYear();
+  const dayLabel = sameMonth ? `${d.getUTCDate()}–${end!.getUTCDate()}` : String(d.getUTCDate());
+
   const timeRange = formatTimeRange(event.startTime, event.endTime);
+  const metaMobile = [formatShortDateRange(event.date, event.endDate), timeRange, event.location]
+    .filter(Boolean)
+    .join(" · ");
+  const metaDesktop = [formatDateRange(event.date, event.endDate), timeRange, event.location]
+    .filter(Boolean)
+    .join(" · ");
+
   return (
     <OffsetCard
       as="article"
-      interactive
-      className="group relative flex h-full flex-col gap-4 p-5 sm:flex-row sm:items-start sm:gap-6 sm:p-6"
+      size="sm"
+      className="group relative flex flex-col gap-3 p-4 transition-[transform,box-shadow] duration-200 sm:grid sm:grid-cols-[auto_auto_minmax(0,1fr)_auto] sm:grid-rows-[auto_auto_auto] sm:[grid-template-areas:'date_tags_title_actions'_'.org_desc_actions'_'meta_meta_meta_meta'] sm:gap-x-6 sm:gap-y-2 sm:p-5 sm:hover:-translate-y-0.5 sm:hover:shadow-offset sm:focus-within:-translate-y-0.5 sm:focus-within:shadow-offset"
     >
-      <div
-        aria-hidden
-        className="grid w-16 shrink-0 place-items-center rounded-xl border-2 border-border bg-lavender py-2 shadow-offset-sm"
-      >
-        <span className="label-mono">
-          {d.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" })}
-        </span>
-        <span className="text-2xl leading-none font-extrabold">{d.getUTCDate()}</span>
-      </div>
-
-      <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-2">
-          <Tag tone="purple">{eventKindLabel[event.kind]}</Tag>
-          <Tag tone="ghost">{event.online ? "Online" : "In person"}</Tag>
-          {event.region === "mumbai" && <Tag tone="ghost">Mumbai</Tag>}
-          {event.region === "goa" && <Tag tone="ghost">Goa</Tag>}
+      <div className="order-1 flex items-start justify-between gap-3 sm:contents">
+        <div
+          aria-hidden
+          className="grid w-14 shrink-0 place-items-center rounded-lg border-2 border-border bg-lavender py-1.5 leading-none shadow-offset-sm sm:[grid-area:date]"
+        >
+          <span className="label-mono">{month}</span>
+          <span className="text-lg font-extrabold">{dayLabel}</span>
         </div>
-        <h3 className="mt-3 text-xl font-extrabold tracking-tight">
-          <Link
-            to="/events/$id"
-            params={{ id: event.slug }}
-            className="after:absolute after:inset-0 after:content-['']"
-          >
-            {event.name}
-          </Link>
-        </h3>
-        <p className="mt-2 text-sm text-muted-foreground sm:text-base">{event.summary}</p>
-        <p className="label-mono mt-3 text-muted-foreground">
-          {formatDate(event.date)}
-          {timeRange ? ` · ${timeRange}` : ""}
-          {event.location ? ` · ${event.location}` : ""}
-        </p>
-        {event.organizer && (
-          <p className="label-mono mt-1 text-muted-foreground">Hosted by {event.organizer}</p>
-        )}
+
+        <div className="flex flex-col items-end gap-1.5 sm:[grid-area:tags] sm:flex-row sm:flex-wrap sm:items-start">
+          <Tag compact tone="purple">
+            {eventKindLabel[event.kind]}
+          </Tag>
+          <Tag compact tone="ghost">
+            {event.online ? "Online" : "In person"}
+          </Tag>
+          {event.region === "mumbai" && (
+            <Tag compact tone="ghost">
+              Mumbai
+            </Tag>
+          )}
+          {event.region === "goa" && (
+            <Tag compact tone="ghost">
+              Goa
+            </Tag>
+          )}
+        </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-3 self-start">
+      <h3 className="order-2 line-clamp-3 text-lg font-extrabold leading-snug tracking-tight sm:[grid-area:title] sm:line-clamp-2">
+        <Link
+          to="/events/$id"
+          params={{ id: event.slug }}
+          className="after:absolute after:inset-0 after:content-['']"
+        >
+          {event.name}
+        </Link>
+      </h3>
+
+      {event.organizer && (
+        <p className="order-3 label-mono text-muted-foreground sm:[grid-area:org]">
+          Hosted by {event.organizer}
+        </p>
+      )}
+
+      <p className="order-4 line-clamp-3 text-sm leading-relaxed text-muted-foreground sm:[grid-area:desc] sm:line-clamp-2">
+        {event.summary}
+      </p>
+
+      <p className="order-5 label-mono text-muted-foreground sm:[grid-area:meta]">
+        <span className="sm:hidden">{metaMobile}</span>
+        <span className="hidden sm:inline">{metaDesktop}</span>
+      </p>
+
+      <div className="order-6 flex items-center justify-between gap-3 sm:[grid-area:actions] sm:flex-col sm:items-end sm:gap-2 sm:justify-start">
         <ShareButton title={event.name} slug={event.slug} path={`/events/${event.slug}`} />
         {event.url ? (
           <a
             href={event.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="label-mono relative z-10 inline-flex items-center gap-1 rounded-full border-2 border-border bg-background px-3 py-1.5 shadow-offset-sm"
+            className="label-mono relative z-10 inline-flex items-center gap-1 rounded-full border-2 border-border bg-foreground px-3 py-1.5 text-background shadow-offset-sm"
           >
             RSVP
             <ArrowUpRight

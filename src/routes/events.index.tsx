@@ -142,7 +142,7 @@ const getPublishedEvents = createServerFn({ method: "GET" }).handler(async () =>
     time: "",
     startTime: row.start_time,
     endTime: row.end_time,
-    
+    endDate: row.end_date ? (row.end_date.split("T")[0] ?? row.end_date) : null,
     location: row.location,
     online: row.is_online,
     organizer: row.organizer ?? "",
@@ -315,7 +315,7 @@ function EventsPage() {
 
         <div className="mt-8">
           {results.length ? (
-            <div className="grid gap-6">
+            <div className="grid gap-4">
               {results.map((e) => (
                 <EventCard key={e.id} event={e} />
               ))}

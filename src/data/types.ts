@@ -121,6 +121,7 @@ export interface RecEvent {
   time: string;
   startTime?: string | null;
   endTime?: string | null;
+  endDate?: string | null;
   location: string;
   online: boolean;
   organizer: string;
