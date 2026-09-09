@@ -119,11 +119,15 @@ export interface RecEvent {
   kind: EventKind;
   date: string;
   time: string;
+  startTime?: string | null;
+  endTime?: string | null;
   location: string;
   online: boolean;
   organizer: string;
   summary: string;
   url: string;
+  region?: string;
+  category?: string;
 }
 
 export type SavedKind = "opportunity" | "project" | "builder";

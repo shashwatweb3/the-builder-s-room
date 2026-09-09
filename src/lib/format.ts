@@ -35,3 +35,21 @@ export const isClosingSoon = (iso: string) => {
   const d = daysUntil(iso);
   return d >= 0 && d <= 14;
 };
+
+/** 'HH:MM' (or '') from a Postgres time value like "19:00:00". */
+export const formatTime = (value: string | null | undefined) => {
+  if (!value) return "";
+  const parts = value.split(":");
+  if (parts.length >= 2) return `${parts[0]}:${parts[1]}`;
+  return value;
+};
+
+export const formatTimeRange = (
+  start: string | null | undefined,
+  end: string | null | undefined,
+) => {
+  const s = formatTime(start);
+  if (!s) return "";
+  const e = formatTime(end);
+  return e ? `${s}–${e}` : s;
+};

@@ -7,7 +7,7 @@ import { Button } from "@/components/Button";
 import { OffsetCard } from "@/components/OffsetCard";
 import { Tag } from "@/components/Tag";
 import { ShareButton } from "@/components/ShareButton";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatTimeRange } from "@/lib/format";
 import { eventPublicUrl } from "@/lib/event";
 
 type DetailRow = {
@@ -26,6 +26,9 @@ type DetailRow = {
   featured: boolean;
   status: "draft" | "published" | "cancelled" | "completed";
   organizer: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  region: string | null;
 };
 
 function createSupabaseClient(request: Request) {
@@ -103,6 +106,7 @@ function EventDetail() {
   const organizerLine = organizer ? `Hosted by ${organizer}` : "Community event";
   const detailText = row.long_description ?? row.description;
   const registerUrl = row.registration_url || row.meeting_url;
+  const timeRange = formatTimeRange(row.start_time, row.end_time);
 
   return (
     <>
@@ -127,15 +131,20 @@ function EventDetail() {
 
             <div className="mt-5 flex flex-wrap gap-2">
               <Tag tone="ghost">{eventDateLabel(row.event_date, row.end_date)}</Tag>
+              {timeRange && <Tag tone="ghost">{timeRange}</Tag>}
               <Tag tone="ghost">{row.is_online ? "Online" : "In person"}</Tag>
+              {row.region === "mumbai" && <Tag tone="ghost">Mumbai</Tag>}
+              {row.region === "goa" && <Tag tone="ghost">Goa</Tag>}
               {row.location && (
                 <Tag tone="ghost">
                   <MapPin className="size-3.5" aria-hidden /> {row.location}
                 </Tag>
               )}
-              <Tag tone="ghost">
-                <ExternalLink className="size-3.5" aria-hidden /> Details on organizer site
-              </Tag>
+              {registerUrl && (
+                <Tag tone="ghost">
+                  <ExternalLink className="size-3.5" aria-hidden /> Details on organizer site
+                </Tag>
+              )}
             </div>
 
             <div className="mt-8 space-y-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
@@ -154,9 +163,7 @@ function EventDetail() {
                 </a>
               </Button>
             ) : (
-              <p className="mt-4 text-sm text-muted-foreground">
-                Registration details have not been posted yet.
-              </p>
+              <p className="mt-4 text-sm text-muted-foreground">Details TBA. Invite only.</p>
             )}
             <p className="label-mono mt-6 text-muted-foreground">Organized by</p>
             <p className="mt-1 text-sm font-semibold">{organizer}</p>
