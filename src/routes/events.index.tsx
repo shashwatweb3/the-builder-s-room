@@ -81,7 +81,7 @@ const getPublishedEvents = createServerFn({ method: "GET" }).handler(async () =>
   }));
 });
 
-export const Route = createFileRoute("/events")({
+export const Route = createFileRoute("/events/")({
   head: () => ({
     meta: [
       { title: "Devcon 8 Mumbai Side Events | Krew3" },

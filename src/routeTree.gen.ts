@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ContactRouteImport } from './routes/contact'
-import { Route as EventsRouteImport } from './routes/events'
 import { Route as GuidelinesRouteImport } from './routes/guidelines'
 import { Route as RoomRouteImport } from './routes/room'
 import { Route as SavedRouteImport } from './routes/saved'
@@ -25,6 +24,7 @@ import { Route as AmbassadorsIndexRouteImport } from './routes/ambassadors.index
 import { Route as AmbassadorsIdRouteImport } from './routes/ambassadors.$id'
 import { Route as BuildersIndexRouteImport } from './routes/builders.index'
 import { Route as BuildersIdRouteImport } from './routes/builders.$id'
+import { Route as EventsIndexRouteImport } from './routes/events.index'
 import { Route as EventsIdRouteImport } from './routes/events.$id'
 import { Route as OpportunitiesIndexRouteImport } from './routes/opportunities.index'
 import { Route as OpportunitiesIdRouteImport } from './routes/opportunities.$id'
@@ -48,11 +48,6 @@ const AboutRoute = AboutRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EventsRoute = EventsRouteImport.update({
-  id: '/events',
-  path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GuidelinesRoute = GuidelinesRouteImport.update({
@@ -115,10 +110,15 @@ const BuildersIdRoute = BuildersIdRouteImport.update({
   path: '/builders/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsIndexRoute = EventsIndexRouteImport.update({
+  id: '/events/',
+  path: '/events/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EventsIdRoute = EventsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => EventsRoute,
+  id: '/events/$id',
+  path: '/events/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const OpportunitiesIndexRoute = OpportunitiesIndexRouteImport.update({
   id: '/opportunities/',
@@ -166,7 +166,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/events': typeof EventsRouteWithChildren
   '/guidelines': typeof GuidelinesRoute
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
@@ -182,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/ambassadors/': typeof AmbassadorsIndexRoute
   '/builders/': typeof BuildersIndexRoute
+  '/events/': typeof EventsIndexRoute
   '/opportunities/': typeof OpportunitiesIndexRoute
   '/projects/': typeof ProjectsIndexRoute
   '/admin/events/new': typeof AdminEventsNewRoute
@@ -193,7 +193,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/events': typeof EventsRouteWithChildren
   '/guidelines': typeof GuidelinesRoute
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
@@ -209,6 +208,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/ambassadors': typeof AmbassadorsIndexRoute
   '/builders': typeof BuildersIndexRoute
+  '/events': typeof EventsIndexRoute
   '/opportunities': typeof OpportunitiesIndexRoute
   '/projects': typeof ProjectsIndexRoute
   '/admin/events/new': typeof AdminEventsNewRoute
@@ -221,7 +221,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/events': typeof EventsRouteWithChildren
   '/guidelines': typeof GuidelinesRoute
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
@@ -237,6 +236,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/ambassadors/': typeof AmbassadorsIndexRoute
   '/builders/': typeof BuildersIndexRoute
+  '/events/': typeof EventsIndexRoute
   '/opportunities/': typeof OpportunitiesIndexRoute
   '/projects/': typeof ProjectsIndexRoute
   '/admin/events/new': typeof AdminEventsNewRoute
@@ -250,7 +250,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
-    | '/events'
     | '/guidelines'
     | '/room'
     | '/saved'
@@ -266,6 +265,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/ambassadors/'
     | '/builders/'
+    | '/events/'
     | '/opportunities/'
     | '/projects/'
     | '/admin/events/new'
@@ -277,7 +277,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
-    | '/events'
     | '/guidelines'
     | '/room'
     | '/saved'
@@ -293,6 +292,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/ambassadors'
     | '/builders'
+    | '/events'
     | '/opportunities'
     | '/projects'
     | '/admin/events/new'
@@ -304,7 +304,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
-    | '/events'
     | '/guidelines'
     | '/room'
     | '/saved'
@@ -320,6 +319,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/ambassadors/'
     | '/builders/'
+    | '/events/'
     | '/opportunities/'
     | '/projects/'
     | '/admin/events/new'
@@ -332,7 +332,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
-  EventsRoute: typeof EventsRouteWithChildren
   GuidelinesRoute: typeof GuidelinesRoute
   RoomRoute: typeof RoomRoute
   SavedRoute: typeof SavedRoute
@@ -342,11 +341,13 @@ export interface RootRouteChildren {
   AdminOpportunitiesRoute: typeof AdminOpportunitiesRouteWithChildren
   AmbassadorsIdRoute: typeof AmbassadorsIdRoute
   BuildersIdRoute: typeof BuildersIdRoute
+  EventsIdRoute: typeof EventsIdRoute
   OpportunitiesIdRoute: typeof OpportunitiesIdRoute
   ProjectsIdRoute: typeof ProjectsIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AmbassadorsIndexRoute: typeof AmbassadorsIndexRoute
   BuildersIndexRoute: typeof BuildersIndexRoute
+  EventsIndexRoute: typeof EventsIndexRoute
   OpportunitiesIndexRoute: typeof OpportunitiesIndexRoute
   ProjectsIndexRoute: typeof ProjectsIndexRoute
 }
@@ -372,13 +373,6 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/events': {
-      id: '/events'
-      path: '/events'
-      fullPath: '/events'
-      preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/guidelines': {
@@ -465,12 +459,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuildersIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events/': {
+      id: '/events/'
+      path: '/events'
+      fullPath: '/events/'
+      preLoaderRoute: typeof EventsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/events/$id': {
       id: '/events/$id'
-      path: '/$id'
+      path: '/events/$id'
       fullPath: '/events/$id'
       preLoaderRoute: typeof EventsIdRouteImport
-      parentRoute: typeof EventsRoute
+      parentRoute: typeof rootRouteImport
     }
     '/opportunities/': {
       id: '/opportunities/'
@@ -531,17 +532,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface EventsRouteChildren {
-  EventsIdRoute: typeof EventsIdRoute
-}
-
-const EventsRouteChildren: EventsRouteChildren = {
-  EventsIdRoute: EventsIdRoute,
-}
-
-const EventsRouteWithChildren =
-  EventsRoute._addFileChildren(EventsRouteChildren)
-
 interface AdminEventsRouteChildren {
   AdminEventsNewRoute: typeof AdminEventsNewRoute
   AdminEventsIdEditRoute: typeof AdminEventsIdEditRoute
@@ -573,7 +563,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
-  EventsRoute: EventsRouteWithChildren,
   GuidelinesRoute: GuidelinesRoute,
   RoomRoute: RoomRoute,
   SavedRoute: SavedRoute,
@@ -583,11 +572,13 @@ const rootRouteChildren: RootRouteChildren = {
   AdminOpportunitiesRoute: AdminOpportunitiesRouteWithChildren,
   AmbassadorsIdRoute: AmbassadorsIdRoute,
   BuildersIdRoute: BuildersIdRoute,
+  EventsIdRoute: EventsIdRoute,
   OpportunitiesIdRoute: OpportunitiesIdRoute,
   ProjectsIdRoute: ProjectsIdRoute,
   AdminIndexRoute: AdminIndexRoute,
   AmbassadorsIndexRoute: AmbassadorsIndexRoute,
   BuildersIndexRoute: BuildersIndexRoute,
+  EventsIndexRoute: EventsIndexRoute,
   OpportunitiesIndexRoute: OpportunitiesIndexRoute,
   ProjectsIndexRoute: ProjectsIndexRoute,
 }
