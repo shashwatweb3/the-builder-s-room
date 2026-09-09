@@ -3,9 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { createServerClient } from "@supabase/ssr";
 import { useMemo, useState } from "react";
-import { PageHero } from "@/components/PageHero";
 import { SectionLabel } from "@/components/SectionLabel";
-import { OffsetCard } from "@/components/OffsetCard";
 import { EventCard } from "@/components/EventCard";
 import { EmptyState } from "@/components/EmptyState";
 import { FilterBar } from "@/components/FilterBar";
@@ -226,49 +224,47 @@ function EventsPage() {
     [events, filter],
   );
 
-  const goaCount = events.filter((e) => e.region === "goa").length;
-  const mumbaiCount = events.filter((e) => e.region === "mumbai").length;
   const hasResults = goaEvents.length > 0 || mumbaiEvents.length > 0;
 
   return (
     <>
-      <PageHero
-        label="DEVCON 8 • MUMBAI, INDIA 🇮🇳"
-        title="SIDE EVENTS."
-        aside={
-          <OffsetCard size="sm" className="px-5 py-4">
-            <p className="text-4xl font-extrabold tracking-tight">{events.length}</p>
-            <p className="label-mono mt-1 text-muted-foreground">COMMUNITY EVENTS</p>
-            <p className="label-mono mt-1 text-muted-foreground">
-              {goaCount} PRE-DEVCON · {mumbaiCount} MUMBAI
+      <section className="border-b-2 border-border">
+        <div className="mx-auto w-full max-w-[1400px] px-4 py-8 sm:px-6 lg:px-10 lg:py-10">
+          <SectionLabel>DEVCON 8 • MUMBAI, INDIA 🇮🇳</SectionLabel>
+          <h1 className="mt-2 text-[clamp(2rem,5vw,3rem)] leading-[0.95] font-extrabold tracking-tight">
+            SIDE EVENTS.
+          </h1>
+          <div className="mt-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+            <p className="max-w-2xl text-base text-muted-foreground sm:text-lg">
+              A community list of events happening around Devcon 8 and India Blockchain Week.
             </p>
-          </OffsetCard>
-        }
-      >
-        <p>A community list of events happening around Devcon 8 and India Blockchain Week.</p>
-        <p className="label-mono mt-4 text-muted-foreground">
-          {events.length} EVENTS. PRE-DEVCON → DEVCON 8.
-        </p>
-        <p className="mt-4 text-sm text-muted-foreground">
-          Want to add an opportunity or event? DM{" "}
-          <a
-            href="https://t.me/Lucky_sc0"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-semibold text-primary underline decoration-2 underline-offset-2 hover:opacity-80"
-          >
-            @Lucky_sc0
-          </a>{" "}
-          on Telegram.
-        </p>
-      </PageHero>
+            <p className="label-mono text-muted-foreground">
+              {events.length} EVENTS · PRE-DEVCON → DEVCON 8
+            </p>
+          </div>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Want to add an opportunity or event? DM{" "}
+            <a
+              href="https://t.me/Lucky_sc0"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-primary underline decoration-2 underline-offset-2 hover:opacity-80"
+            >
+              @Lucky_sc0
+            </a>{" "}
+            on Telegram.
+          </p>
+        </div>
+      </section>
 
-      <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
-        <p className="text-sm text-muted-foreground">
-          Events are listed by their respective organizers. Krew3 is the directory, not the host.
-        </p>
+      <section className="mx-auto w-full max-w-[1400px] px-4 py-8 sm:px-6 lg:px-10">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <p className="text-xs text-muted-foreground sm:text-sm">
+            Events are listed by their respective organizers. Krew3 is the directory, not the host.
+          </p>
+        </div>
 
-        <div className="mt-4">
+        <div className="mt-3">
           <FilterBar
             options={options}
             value={filter}
@@ -277,9 +273,9 @@ function EventsPage() {
           />
         </div>
 
-        <div className="mt-10">
+        <div className="mt-8">
           {hasResults ? (
-            <div className="space-y-12">
+            <>
               {goaEvents.length > 0 && (
                 <EventSection
                   label="PRE-DEVCON"
@@ -291,7 +287,7 @@ function EventsPage() {
                 />
               )}
               {mumbaiEvents.length > 0 && (
-                <div className="border-t-2 border-border pt-12">
+                <div className="mt-10 border-t-2 border-border pt-10">
                   <EventSection
                     label="DEVCON 8 • MUMBAI 🇮🇳"
                     title="THE MAIN EVENT."
@@ -301,7 +297,7 @@ function EventsPage() {
                   />
                 </div>
               )}
-            </div>
+            </>
           ) : (
             <EmptyState
               title="Nothing on the calendar yet."
