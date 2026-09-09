@@ -3,7 +3,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { createServerClient } from "@supabase/ssr";
 import { useMemo } from "react";
-import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import { SectionLabel } from "@/components/SectionLabel";
 import { OffsetCard } from "@/components/OffsetCard";
@@ -122,33 +121,9 @@ function EventsPage() {
           </OffsetCard>
         }
       >
-        A community list of events happening around Devcon 8 and India Blockchain Week.
-      </PageHero>
-
-      <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <SectionLabel>THE LIST</SectionLabel>
-            <h2 className="mt-4 text-[clamp(1.75rem,4vw,3rem)] leading-tight font-extrabold tracking-tight">
-              {events.length} EVENTS. ONE CITY.
-            </h2>
-          </div>
-          <a
-            href="https://t.me/Lucky_sc0"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="label-mono inline-flex items-center gap-1 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-          >
-            Add an event <ArrowRight className="size-3.5" aria-hidden />
-          </a>
-        </div>
-
-        <p className="mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg">
-          Devcon 8 is bringing builders, founders, researchers and communities together across
-          Mumbai.
-        </p>
-
-        <p className="mt-5 text-sm text-muted-foreground">
+        <p>A community list of events happening around Devcon 8 and India Blockchain Week.</p>
+        <p className="label-mono mt-4 text-muted-foreground">{events.length} events. One city.</p>
+        <p className="mt-4 text-sm text-muted-foreground">
           Want to add an opportunity or event? DM{" "}
           <a
             href="https://t.me/Lucky_sc0"
@@ -160,37 +135,37 @@ function EventsPage() {
           </a>{" "}
           on Telegram.
         </p>
+      </PageHero>
 
-        <div className="mt-12 border-t-2 border-border pt-8">
-          <SectionLabel>COMMUNITY SIDE EVENTS</SectionLabel>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Events listed by their respective organizers. Krew3 is the directory, not the host.
-          </p>
+      <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
+        <SectionLabel>COMMUNITY SIDE EVENTS</SectionLabel>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Events listed by their respective organizers. Krew3 is the directory, not the host.
+        </p>
 
-          <div className="mt-8">
-            {results.length ? (
-              <div className="grid gap-6">
-                {results.map((e) => (
-                  <EventCard key={e.id} event={e} />
-                ))}
-              </div>
-            ) : (
-              <EmptyState
-                title="Nothing on the calendar yet."
-                body="More soon."
-                action={
-                  <a
-                    href="https://t.me/Lucky_sc0"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full border-2 border-border bg-card px-5 text-base font-semibold text-foreground shadow-offset transition-colors hover:bg-lavender/40"
-                  >
-                    Add an event →
-                  </a>
-                }
-              />
-            )}
-          </div>
+        <div className="mt-8">
+          {results.length ? (
+            <div className="grid gap-6">
+              {results.map((e) => (
+                <EventCard key={e.id} event={e} />
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              title="Nothing on the calendar yet."
+              body="More soon."
+              action={
+                <a
+                  href="https://t.me/Lucky_sc0"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border-2 border-border bg-card px-5 text-base font-semibold text-foreground shadow-offset transition-colors hover:bg-lavender/40"
+                >
+                  Add an event →
+                </a>
+              }
+            />
+          )}
         </div>
       </section>
 
