@@ -245,11 +245,10 @@ function EventsPage() {
           </OffsetCard>
         }
       >
-        <p>
-          A community list of events running in two phases around Devcon 8: the warm-up in Goa, then
-          the main event and side events in Mumbai.
+        <p>A community list of events happening around Devcon 8 and India Blockchain Week.</p>
+        <p className="label-mono mt-4 text-muted-foreground">
+          {events.length} EVENTS. PRE-DEVCON → DEVCON 8.
         </p>
-        <p className="label-mono mt-4 text-muted-foreground">GOA → MUMBAI</p>
         <p className="mt-4 text-sm text-muted-foreground">
           Want to add an opportunity or event? DM{" "}
           <a
@@ -265,12 +264,11 @@ function EventsPage() {
       </PageHero>
 
       <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
-        <SectionLabel>COMMUNITY SIDE EVENTS</SectionLabel>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Events listed by their respective organizers. Krew3 is the directory, not the host.
+        <p className="text-sm text-muted-foreground">
+          Events are listed by their respective organizers. Krew3 is the directory, not the host.
         </p>
 
-        <div className="mt-6">
+        <div className="mt-4">
           <FilterBar
             options={options}
             value={filter}
@@ -284,10 +282,10 @@ function EventsPage() {
             <div className="space-y-12">
               {goaEvents.length > 0 && (
                 <EventSection
-                  label="PRE-DEVCON • GOA"
+                  label="PRE-DEVCON"
                   title="THE WARM-UP."
-                  copy="Builder residencies, hacker houses and communities gathering in Goa before Devcon."
-                  note="Bangalore → Goa → Mumbai"
+                  copy="Builder residencies, hacker houses, fellowships and events leading into Devcon."
+                  note="BANGALORE → GOA → MUMBAI"
                   count={goaEvents.length}
                   events={goaEvents}
                 />
@@ -295,9 +293,9 @@ function EventsPage() {
               {mumbaiEvents.length > 0 && (
                 <div className="border-t-2 border-border pt-12">
                   <EventSection
-                    label="DEVCON 8 • MUMBAI"
+                    label="DEVCON 8 • MUMBAI 🇮🇳"
                     title="THE MAIN EVENT."
-                    copy="Devcon, India Blockchain Week, ETHGlobal and community side events across Mumbai."
+                    copy="Devcon, India Blockchain Week and the wider community taking over Mumbai."
                     count={mumbaiEvents.length}
                     events={mumbaiEvents}
                   />
