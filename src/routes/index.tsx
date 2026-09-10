@@ -216,12 +216,12 @@ function Home() {
         <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
-              <SectionLabel>Events</SectionLabel>
+              <SectionLabel>DEVCON 8 • MUMBAI, INDIA 🇮🇳</SectionLabel>
               <h2 className="mt-4 text-[clamp(2rem,6vw,4rem)] leading-[1] font-extrabold tracking-tight">
-                Come hang out.
+                Don't miss the good stuff.
               </h2>
               <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
-                Weekly community sessions, workshops and demo nights.
+                Devcon, IBW, ETHGlobal and community side events, all in one place.
               </p>
             </div>
             <Link
@@ -229,7 +229,7 @@ function Home() {
               search={{ view: undefined }}
               className="group inline-flex items-center gap-2 font-semibold underline-offset-4 hover:underline"
             >
-              See all Events
+              See the full calendar
               <ArrowRight
                 className="size-4 transition-transform group-hover:translate-x-1"
                 aria-hidden
