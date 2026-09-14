@@ -3,6 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { createServerClient } from "@supabase/ssr";
 import { useMemo, useState } from "react";
+import { AccessGate } from "@/components/AccessGate";
 import { SectionLabel } from "@/components/SectionLabel";
 import { EventCard } from "@/components/EventCard";
 import { EmptyState } from "@/components/EmptyState";
@@ -247,7 +248,7 @@ function EventsPage() {
   }, [events]);
 
   return (
-    <>
+    <AccessGate>
       <section className="mx-auto w-full max-w-[1400px] px-4 py-6 sm:px-6 lg:px-10">
         <div role="tablist" aria-label="Event view" className="flex flex-wrap gap-2">
           {EVENT_VIEWS.map((option) => {
@@ -342,6 +343,6 @@ function EventsPage() {
       <section className="mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-10">
         <JoinCTA />
       </section>
-    </>
+    </AccessGate>
   );
 }

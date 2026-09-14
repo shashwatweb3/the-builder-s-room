@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { createServerClient } from "@supabase/ssr";
+import { AccessGate } from "@/components/AccessGate";
 import { Button } from "@/components/Button";
 import { PageHero } from "@/components/PageHero";
 import { OffsetCard } from "@/components/OffsetCard";
@@ -297,7 +298,7 @@ function OpportunitiesPage() {
   const shown = results.slice(0, visible);
 
   return (
-    <>
+    <AccessGate>
       <PageHero
         label="Opportunities"
         title="Opportunities for the Krew."
@@ -384,7 +385,7 @@ function OpportunitiesPage() {
       <section className="mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-10">
         <JoinCTA />
       </section>
-    </>
+    </AccessGate>
   );
 }
 
