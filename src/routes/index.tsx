@@ -8,6 +8,8 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { HeroRoom } from "@/components/HeroRoom";
 import { JoinCTA } from "@/components/JoinCTA";
 import { FAQ } from "@/components/FAQ";
+import { AccessGateCard } from "@/components/AccessGate";
+import { useKrewAccess } from "@/lib/krew-access";
 import { TELEGRAM_INVITE_URL } from "@/lib/community";
 
 export const Route = createFileRoute("/")({
@@ -116,6 +118,19 @@ const faqs = [
 
 function Home() {
   const { events, opportunities } = Route.useLoaderData();
+  const { unlocked, hydrated, error, unlock } = useKrewAccess();
+
+  const gateCard = (
+    <div className="mt-10 flex justify-center">
+      <AccessGateCard onUnlock={unlock} error={error} headingLevel="h2" />
+    </div>
+  );
+
+  const gateLoading = (
+    <div className="mt-10 flex min-h-[220px] items-center justify-center rounded-2xl border-2 border-dashed border-border">
+      <span className="label-mono text-muted-foreground">Loading…</span>
+    </div>
+  );
 
   return (
     <>
@@ -212,7 +227,7 @@ function Home() {
       </section>
 
       {/* UPCOMING EVENTS */}
-      {events.length > 0 && (
+      {(!unlocked || events.length > 0) && (
         <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
@@ -237,41 +252,47 @@ function Home() {
             </Link>
           </div>
 
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            {events.map((e) => (
-              <article
-                key={e.id}
-                className="group flex flex-col rounded-2xl border-2 border-border bg-card p-5 shadow-offset-sm"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <Tag tone="purple">{e.is_online ? "Online" : "In person"}</Tag>
-                  <StatusBadge
-                    label={e.is_online ? "Online" : "In person"}
-                    tone={e.is_online ? "live" : "neutral"}
-                  />
-                </div>
-                <h3 className="mt-4 text-xl leading-tight font-extrabold tracking-tight">
-                  {e.title}
-                </h3>
-                <p className="mt-1.5 label-mono text-muted-foreground">
-                  {new Date(e.event_date).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </p>
-                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{e.description}</p>
-                {e.location && (
-                  <p className="mt-1.5 label-mono text-muted-foreground">{e.location}</p>
-                )}
-              </article>
-            ))}
-          </div>
+          {unlocked ? (
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {events.map((e) => (
+                <article
+                  key={e.id}
+                  className="group flex flex-col rounded-2xl border-2 border-border bg-card p-5 shadow-offset-sm"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <Tag tone="purple">{e.is_online ? "Online" : "In person"}</Tag>
+                    <StatusBadge
+                      label={e.is_online ? "Online" : "In person"}
+                      tone={e.is_online ? "live" : "neutral"}
+                    />
+                  </div>
+                  <h3 className="mt-4 text-xl leading-tight font-extrabold tracking-tight">
+                    {e.title}
+                  </h3>
+                  <p className="mt-1.5 label-mono text-muted-foreground">
+                    {new Date(e.event_date).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </p>
+                  <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{e.description}</p>
+                  {e.location && (
+                    <p className="mt-1.5 label-mono text-muted-foreground">{e.location}</p>
+                  )}
+                </article>
+              ))}
+            </div>
+          ) : hydrated ? (
+            gateCard
+          ) : (
+            gateLoading
+          )}
         </section>
       )}
 
       {/* FEATURED OPPORTUNITIES */}
-      {opportunities.length > 0 && (
+      {(!unlocked || opportunities.length > 0) && (
         <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
@@ -296,34 +317,40 @@ function Home() {
             </Link>
           </div>
 
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            {opportunities.map((o) => (
-              <Link
-                key={o.id}
-                to="/opportunities/$id"
-                params={{ id: o.slug }}
-                className="group flex flex-col rounded-2xl border-2 border-border bg-card p-5 shadow-offset-sm transition-colors hover:bg-lavender/30"
-              >
-                <Tag tone="purple">{o.type}</Tag>
-                <h3 className="mt-4 text-xl leading-tight font-extrabold tracking-tight group-hover:underline">
-                  {o.title}
-                </h3>
-                <p className="mt-1.5 label-mono text-muted-foreground">{o.organization}</p>
-                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{o.description}</p>
-                <div className="mt-3 flex items-center gap-2">
-                  {o.deadline && (
-                    <StatusBadge
-                      label={`Due ${new Date(o.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`}
-                      tone="neutral"
-                    />
-                  )}
-                  {o.location && (
-                    <span className="label-mono text-muted-foreground">{o.location}</span>
-                  )}
-                </div>
-              </Link>
-            ))}
-          </div>
+          {unlocked ? (
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {opportunities.map((o) => (
+                <Link
+                  key={o.id}
+                  to="/opportunities/$id"
+                  params={{ id: o.slug }}
+                  className="group flex flex-col rounded-2xl border-2 border-border bg-card p-5 shadow-offset-sm transition-colors hover:bg-lavender/30"
+                >
+                  <Tag tone="purple">{o.type}</Tag>
+                  <h3 className="mt-4 text-xl leading-tight font-extrabold tracking-tight group-hover:underline">
+                    {o.title}
+                  </h3>
+                  <p className="mt-1.5 label-mono text-muted-foreground">{o.organization}</p>
+                  <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{o.description}</p>
+                  <div className="mt-3 flex items-center gap-2">
+                    {o.deadline && (
+                      <StatusBadge
+                        label={`Due ${new Date(o.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`}
+                        tone="neutral"
+                      />
+                    )}
+                    {o.location && (
+                      <span className="label-mono text-muted-foreground">{o.location}</span>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : hydrated ? (
+            gateCard
+          ) : (
+            gateLoading
+          )}
         </section>
       )}
 

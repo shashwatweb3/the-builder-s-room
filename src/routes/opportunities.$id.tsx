@@ -9,6 +9,7 @@ import { Tag } from "@/components/Tag";
 import { StatusBadge } from "@/components/StatusBadge";
 import { deadlineLabel, isClosingSoon } from "@/lib/format";
 import { isDirectApplication, opportunityPublicUrl } from "@/lib/opportunity";
+import { AccessGate } from "@/components/AccessGate";
 import type { OpportunityCategory } from "@/data/types";
 
 const categoryMeta: Record<OpportunityCategory, { label: string; plural: string }> = {
@@ -118,87 +119,89 @@ function OpportunityDetail() {
   const detailText = row.long_description ?? row.description;
 
   return (
-    <>
-      <div className="mx-auto w-full max-w-[1400px] px-4 pt-8 sm:px-6 lg:px-10">
-        <Link
-          to="/opportunities"
-          search={{ category: undefined }}
-          className="label-mono inline-flex items-center gap-2 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-        >
-          <ArrowLeft className="size-3.5" aria-hidden /> Back to opportunities
-        </Link>
-      </div>
-
-      <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
-        <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-          <div>
-            <Tag tone="purple">{typeLabel}</Tag>
-
-            <h1 className="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
-              {row.title}
-            </h1>
-            <p className="label-mono mt-2 text-muted-foreground">
-              {row.organization}
-              {row.featured && (
-                <>
-                  {" "}
-                  <span className="font-semibold text-primary">· Featured</span>
-                </>
-              )}
-            </p>
-
-            <div className="mt-5 flex flex-wrap gap-2">
-              {row.deadline ? (
-                <StatusBadge
-                  label={deadlineLabel(row.deadline)}
-                  tone={closing ? "purple" : "neutral"}
-                  dot={closing}
-                />
-              ) : (
-                <StatusBadge label="Open · Rolling" tone="live" dot />
-              )}
-              {row.remote && <Tag tone="ghost">Remote</Tag>}
-              {row.location && (
-                <Tag tone="ghost">
-                  <MapPin className="size-3.5" aria-hidden /> {row.location}
-                </Tag>
-              )}
-              {row.compensation && <Tag tone="ghost">Paid</Tag>}
-              {row.tags.map((t) => (
-                <Tag key={t} tone="ghost">
-                  {t}
-                </Tag>
-              ))}
-            </div>
-
-            {row.compensation && <p className="mt-6 text-lg font-semibold">{row.compensation}</p>}
-
-            <div className="mt-8 space-y-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-              {detailText.split("\n\n").map((paragraph, i) => (
-                <p key={i}>{paragraph}</p>
-              ))}
-            </div>
-          </div>
-
-          <OffsetCard size="sm" className="p-6 lg:sticky lg:top-24 self-start">
-            <p className="label-mono text-muted-foreground">Application</p>
-            {applyUrl ? (
-              <Button asChild className="mt-4 w-full" size="lg">
-                <a href={applyUrl} target="_blank" rel="noopener noreferrer">
-                  Apply now <ArrowUpRight className="size-4" aria-hidden />
-                </a>
-              </Button>
-            ) : (
-              <p className="mt-4 text-sm text-muted-foreground">
-                There is no direct application link. Follow the application instructions described
-                above to apply.
-              </p>
-            )}
-            <p className="label-mono mt-6 text-muted-foreground">Applied via</p>
-            <p className="mt-1 text-sm font-semibold">{row.organization}</p>
-          </OffsetCard>
+    <AccessGate>
+      <>
+        <div className="mx-auto w-full max-w-[1400px] px-4 pt-8 sm:px-6 lg:px-10">
+          <Link
+            to="/opportunities"
+            search={{ category: undefined }}
+            className="label-mono inline-flex items-center gap-2 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          >
+            <ArrowLeft className="size-3.5" aria-hidden /> Back to opportunities
+          </Link>
         </div>
-      </section>
-    </>
+
+        <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
+          <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
+            <div>
+              <Tag tone="purple">{typeLabel}</Tag>
+
+              <h1 className="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
+                {row.title}
+              </h1>
+              <p className="label-mono mt-2 text-muted-foreground">
+                {row.organization}
+                {row.featured && (
+                  <>
+                    {" "}
+                    <span className="font-semibold text-primary">· Featured</span>
+                  </>
+                )}
+              </p>
+
+              <div className="mt-5 flex flex-wrap gap-2">
+                {row.deadline ? (
+                  <StatusBadge
+                    label={deadlineLabel(row.deadline)}
+                    tone={closing ? "purple" : "neutral"}
+                    dot={closing}
+                  />
+                ) : (
+                  <StatusBadge label="Open · Rolling" tone="live" dot />
+                )}
+                {row.remote && <Tag tone="ghost">Remote</Tag>}
+                {row.location && (
+                  <Tag tone="ghost">
+                    <MapPin className="size-3.5" aria-hidden /> {row.location}
+                  </Tag>
+                )}
+                {row.compensation && <Tag tone="ghost">Paid</Tag>}
+                {row.tags.map((t) => (
+                  <Tag key={t} tone="ghost">
+                    {t}
+                  </Tag>
+                ))}
+              </div>
+
+              {row.compensation && <p className="mt-6 text-lg font-semibold">{row.compensation}</p>}
+
+              <div className="mt-8 space-y-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
+                {detailText.split("\n\n").map((paragraph, i) => (
+                  <p key={i}>{paragraph}</p>
+                ))}
+              </div>
+            </div>
+
+            <OffsetCard size="sm" className="p-6 lg:sticky lg:top-24 self-start">
+              <p className="label-mono text-muted-foreground">Application</p>
+              {applyUrl ? (
+                <Button asChild className="mt-4 w-full" size="lg">
+                  <a href={applyUrl} target="_blank" rel="noopener noreferrer">
+                    Apply now <ArrowUpRight className="size-4" aria-hidden />
+                  </a>
+                </Button>
+              ) : (
+                <p className="mt-4 text-sm text-muted-foreground">
+                  There is no direct application link. Follow the application instructions described
+                  above to apply.
+                </p>
+              )}
+              <p className="label-mono mt-6 text-muted-foreground">Applied via</p>
+              <p className="mt-1 text-sm font-semibold">{row.organization}</p>
+            </OffsetCard>
+          </div>
+        </section>
+      </>
+    </AccessGate>
   );
 }

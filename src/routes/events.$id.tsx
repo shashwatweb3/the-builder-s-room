@@ -9,6 +9,7 @@ import { Tag } from "@/components/Tag";
 import { ShareButton } from "@/components/ShareButton";
 import { formatDate, formatTimeRange } from "@/lib/format";
 import { eventPublicUrl } from "@/lib/event";
+import { AccessGate } from "@/components/AccessGate";
 
 type DetailRow = {
   id: string;
@@ -109,71 +110,73 @@ function EventDetail() {
   const timeRange = formatTimeRange(row.start_time, row.end_time);
 
   return (
-    <>
-      <div className="mx-auto w-full max-w-[1400px] px-4 pt-8 sm:px-6 lg:px-10">
-        <Link
-          to="/events"
-          search={{ view: undefined }}
-          className="label-mono inline-flex items-center gap-2 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-        >
-          <ArrowLeft className="size-3.5" aria-hidden /> Back to events
-        </Link>
-      </div>
-
-      <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
-        <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-          <div>
-            <Tag tone="purple">Community event</Tag>
-
-            <h1 className="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
-              {row.title}
-            </h1>
-            <p className="label-mono mt-2 text-muted-foreground">{organizerLine}</p>
-
-            <div className="mt-5 flex flex-wrap gap-2">
-              <Tag tone="ghost">{eventDateLabel(row.event_date, row.end_date)}</Tag>
-              {timeRange && <Tag tone="ghost">{timeRange}</Tag>}
-              <Tag tone="ghost">{row.is_online ? "Online" : "In person"}</Tag>
-              {row.region === "mumbai" && <Tag tone="ghost">Mumbai</Tag>}
-              {row.region === "goa" && <Tag tone="ghost">Goa</Tag>}
-              {row.location && (
-                <Tag tone="ghost">
-                  <MapPin className="size-3.5" aria-hidden /> {row.location}
-                </Tag>
-              )}
-              {registerUrl && (
-                <Tag tone="ghost">
-                  <ExternalLink className="size-3.5" aria-hidden /> Details on organizer site
-                </Tag>
-              )}
-            </div>
-
-            <div className="mt-8 space-y-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-              {detailText.split("\n\n").map((paragraph, i) => (
-                <p key={i}>{paragraph}</p>
-              ))}
-            </div>
-          </div>
-
-          <OffsetCard size="sm" className="p-6 lg:sticky lg:top-24 self-start">
-            <p className="label-mono text-muted-foreground">Event page</p>
-            {registerUrl ? (
-              <Button asChild className="mt-4 w-full" size="lg">
-                <a href={registerUrl} target="_blank" rel="noopener noreferrer">
-                  RSVP <ArrowUpRight className="size-4" aria-hidden />
-                </a>
-              </Button>
-            ) : (
-              <p className="mt-4 text-sm text-muted-foreground">Details TBA. Invite only.</p>
-            )}
-            <p className="label-mono mt-6 text-muted-foreground">Organized by</p>
-            <p className="mt-1 text-sm font-semibold">{organizer}</p>
-            <div className="mt-6">
-              <ShareButton title={row.title} slug={row.slug} path={`/events/${row.slug}`} />
-            </div>
-          </OffsetCard>
+    <AccessGate>
+      <>
+        <div className="mx-auto w-full max-w-[1400px] px-4 pt-8 sm:px-6 lg:px-10">
+          <Link
+            to="/events"
+            search={{ view: undefined }}
+            className="label-mono inline-flex items-center gap-2 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          >
+            <ArrowLeft className="size-3.5" aria-hidden /> Back to events
+          </Link>
         </div>
-      </section>
-    </>
+
+        <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
+          <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
+            <div>
+              <Tag tone="purple">Community event</Tag>
+
+              <h1 className="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
+                {row.title}
+              </h1>
+              <p className="label-mono mt-2 text-muted-foreground">{organizerLine}</p>
+
+              <div className="mt-5 flex flex-wrap gap-2">
+                <Tag tone="ghost">{eventDateLabel(row.event_date, row.end_date)}</Tag>
+                {timeRange && <Tag tone="ghost">{timeRange}</Tag>}
+                <Tag tone="ghost">{row.is_online ? "Online" : "In person"}</Tag>
+                {row.region === "mumbai" && <Tag tone="ghost">Mumbai</Tag>}
+                {row.region === "goa" && <Tag tone="ghost">Goa</Tag>}
+                {row.location && (
+                  <Tag tone="ghost">
+                    <MapPin className="size-3.5" aria-hidden /> {row.location}
+                  </Tag>
+                )}
+                {registerUrl && (
+                  <Tag tone="ghost">
+                    <ExternalLink className="size-3.5" aria-hidden /> Details on organizer site
+                  </Tag>
+                )}
+              </div>
+
+              <div className="mt-8 space-y-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
+                {detailText.split("\n\n").map((paragraph, i) => (
+                  <p key={i}>{paragraph}</p>
+                ))}
+              </div>
+            </div>
+
+            <OffsetCard size="sm" className="p-6 lg:sticky lg:top-24 self-start">
+              <p className="label-mono text-muted-foreground">Event page</p>
+              {registerUrl ? (
+                <Button asChild className="mt-4 w-full" size="lg">
+                  <a href={registerUrl} target="_blank" rel="noopener noreferrer">
+                    RSVP <ArrowUpRight className="size-4" aria-hidden />
+                  </a>
+                </Button>
+              ) : (
+                <p className="mt-4 text-sm text-muted-foreground">Details TBA. Invite only.</p>
+              )}
+              <p className="label-mono mt-6 text-muted-foreground">Organized by</p>
+              <p className="mt-1 text-sm font-semibold">{organizer}</p>
+              <div className="mt-6">
+                <ShareButton title={row.title} slug={row.slug} path={`/events/${row.slug}`} />
+              </div>
+            </OffsetCard>
+          </div>
+        </section>
+      </>
+    </AccessGate>
   );
 }
