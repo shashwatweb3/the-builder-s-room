@@ -16,6 +16,7 @@ import { Route as GuidelinesRouteImport } from './routes/guidelines'
 import { Route as RoomRouteImport } from './routes/room'
 import { Route as SavedRouteImport } from './routes/saved'
 import { Route as SubmitRouteImport } from './routes/submit'
+import { Route as XCardTestRouteImport } from './routes/x-card-test'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminEventsRouteImport } from './routes/admin.events'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
@@ -70,6 +71,11 @@ const SavedRoute = SavedRouteImport.update({
 const SubmitRoute = SubmitRouteImport.update({
   id: '/submit',
   path: '/submit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const XCardTestRoute = XCardTestRouteImport.update({
+  id: '/x-card-test',
+  path: '/x-card-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -182,6 +188,7 @@ export interface FileRoutesByFullPath {
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
+  '/x-card-test': typeof XCardTestRoute
   '/admin/events': typeof AdminEventsRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
   '/admin/opportunities': typeof AdminOpportunitiesRouteWithChildren
@@ -211,6 +218,7 @@ export interface FileRoutesByTo {
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
+  '/x-card-test': typeof XCardTestRoute
   '/admin/events': typeof AdminEventsRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
   '/admin/opportunities': typeof AdminOpportunitiesRouteWithChildren
@@ -241,6 +249,7 @@ export interface FileRoutesById {
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
+  '/x-card-test': typeof XCardTestRoute
   '/admin/events': typeof AdminEventsRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
   '/admin/opportunities': typeof AdminOpportunitiesRouteWithChildren
@@ -272,6 +281,7 @@ export interface FileRouteTypes {
     | '/room'
     | '/saved'
     | '/submit'
+    | '/x-card-test'
     | '/admin/events'
     | '/admin/login'
     | '/admin/opportunities'
@@ -301,6 +311,7 @@ export interface FileRouteTypes {
     | '/room'
     | '/saved'
     | '/submit'
+    | '/x-card-test'
     | '/admin/events'
     | '/admin/login'
     | '/admin/opportunities'
@@ -330,6 +341,7 @@ export interface FileRouteTypes {
     | '/room'
     | '/saved'
     | '/submit'
+    | '/x-card-test'
     | '/admin/events'
     | '/admin/login'
     | '/admin/opportunities'
@@ -360,6 +372,7 @@ export interface RootRouteChildren {
   RoomRoute: typeof RoomRoute
   SavedRoute: typeof SavedRoute
   SubmitRoute: typeof SubmitRoute
+  XCardTestRoute: typeof XCardTestRoute
   AdminEventsRoute: typeof AdminEventsRouteWithChildren
   AdminLoginRoute: typeof AdminLoginRoute
   AdminOpportunitiesRoute: typeof AdminOpportunitiesRouteWithChildren
@@ -427,6 +440,13 @@ declare module '@tanstack/react-router' {
       path: '/submit'
       fullPath: '/submit'
       preLoaderRoute: typeof SubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/x-card-test': {
+      id: '/x-card-test'
+      path: '/x-card-test'
+      fullPath: '/x-card-test'
+      preLoaderRoute: typeof XCardTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -607,6 +627,7 @@ const rootRouteChildren: RootRouteChildren = {
   RoomRoute: RoomRoute,
   SavedRoute: SavedRoute,
   SubmitRoute: SubmitRoute,
+  XCardTestRoute: XCardTestRoute,
   AdminEventsRoute: AdminEventsRouteWithChildren,
   AdminLoginRoute: AdminLoginRoute,
   AdminOpportunitiesRoute: AdminOpportunitiesRouteWithChildren,
