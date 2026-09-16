@@ -25,9 +25,10 @@ function VenuesPage() {
 
       <PageHero label="Devcon 8 • Mumbai" title="Need a place to host your side event?">
         <p>
-          Finding a venue can be harder than planning the event itself. We put together a
-          community-curated list of places around Mumbai&apos;s Devcon scene to help you find
-          somewhere that fits.
+          Looking for somewhere to host your Devcon side event? We put together a community-curated
+          list of places around Mumbai&apos;s Devcon scene — from small community meetups to bigger
+          networking nights. When you need a room for 20&ndash;50 people, start with the cafés and
+          community spaces marked KREW PICK.
         </p>
         <div className="mt-4 flex flex-wrap items-baseline gap-x-4 gap-y-1">
           <p className="label-mono text-muted-foreground">Built by the Krew, for the Krew.</p>

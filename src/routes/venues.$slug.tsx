@@ -78,6 +78,11 @@ function VenueDetails({ venue }: { venue: Venue }) {
           <Tag tone="purple" compact>
             {category.label}
           </Tag>
+          {venue.krewPick && (
+            <Tag compact className="border-lavender bg-lavender text-primary">
+              KREW PICK
+            </Tag>
+          )}
           <Tag tone="ghost" compact>
             {venue.indoorOutdoor}
           </Tag>

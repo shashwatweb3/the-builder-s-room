@@ -15,10 +15,17 @@ export function VenueCard({ venue, className }: { venue: Venue; className?: stri
       interactive
       className={cn("group relative flex h-full flex-col gap-3 p-4 sm:p-5", className)}
     >
-      <div className="flex items-center justify-between gap-2">
-        <Tag tone="purple" compact>
-          {category.shortLabel}
-        </Tag>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Tag tone="purple" compact>
+            {category.shortLabel}
+          </Tag>
+          {venue.krewPick && (
+            <Tag compact className="border-lavender bg-lavender text-primary">
+              KREW PICK
+            </Tag>
+          )}
+        </div>
         <Tag tone="ghost" compact>
           {venue.indoorOutdoor}
         </Tag>

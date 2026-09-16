@@ -1,9 +1,13 @@
 /**
  * DEVCON SIDE-EVENT VENUES — community-curated directory.
  *
- * Static, client-side dataset for the venue directory on /events.
+ * Static, client-side dataset for the venue directory on /venues.
  * Compiled from venue sources (official sites, hotel meeting pages, media).
  * Anything we could not verify is marked TBD rather than invented.
+ *
+ * JWCC is intentionally excluded — it is Devcon's home venue itself. This
+ * directory points side-event teams at the other places worth knowing.
+ * `krewPick` marks venues we recommend for small (20–50) community gatherings.
  */
 
 export type VenueCategoryId =
@@ -57,6 +61,7 @@ export interface Venue {
   description: string;
   amenities: string[];
   rank: number;
+  krewPick?: boolean;
 }
 
 export const VENUE_CATEGORIES: Record<VenueCategoryId, VenueCategory> = {
@@ -126,42 +131,6 @@ export const VENUE_SORT_OPTIONS: { value: string; label: string }[] = [
 
 export const VENUES: Venue[] = [
   {
-    slug: "jwcc",
-    name: "Jio World Convention Centre",
-    type: "Convention centre",
-    category: "conference",
-    area: "bkc",
-    areaLabel: "BKC · home of Devcon",
-    address: "G Block, Bandra Kurla Complex, Mumbai 400 098",
-    capacity:
-      "3 exhibition halls (15,000 m²) · 2 convention halls (10,000 m²) · Lotus Ballroom (3,000 m²) · 25 meeting rooms",
-    capacityTier: "300+",
-    capacityValue: 15000,
-    budget: "₹₹₹₹",
-    budgetValue: 4,
-    budgetNote: "Premium, tiered per space — it is the conference itself",
-    distanceKm: "0 km",
-    distanceKmValue: 0,
-    bestFor: "The main event — Devcon is already here",
-    indoorOutdoor: "Indoor + rooftop",
-    eventTypes: ["meetup", "networking", "panel", "workshop", "hackathon", "dinner", "party"],
-    tags: ["3 exhibition halls", "Lotus Ballroom", "25 meeting rooms", "Rooftop venue"],
-    website: "https://www.jioworldcentre.com",
-    bookingUrl: "https://www.jioworldcentre.com",
-    phone: "+91 22 3570 4400",
-    description:
-      "India's landmark convention centre and the venue itself. Three exhibition halls, two pillarless convention halls, the 3,000 m² Lotus Ballroom, 25 meeting rooms and a rooftop open-air venue. If your event is big, this is where the budget goes.",
-    amenities: [
-      "A/V & staging",
-      "In-house catering",
-      "Wi-Fi",
-      "Registration hall",
-      "Business centre",
-      "Parking",
-    ],
-    rank: 1,
-  },
-  {
     slug: "sofitel",
     name: "Sofitel Mumbai BKC",
     type: "5-star hotel · meetings & events",
@@ -193,7 +162,7 @@ export const VENUES: Venue[] = [
       "Hotel rooms on site",
       "Parking",
     ],
-    rank: 2,
+    rank: 7,
   },
   {
     slug: "trident",
@@ -227,7 +196,7 @@ export const VENUES: Venue[] = [
       "Hotel rooms",
       "Parking",
     ],
-    rank: 3,
+    rank: 8,
   },
   {
     slug: "nmacc-studio-theatre",
@@ -261,7 +230,7 @@ export const VENUES: Venue[] = [
       "Foyer",
       "Same campus",
     ],
-    rank: 4,
+    rank: 9,
   },
   {
     slug: "wework-enam-sambhav",
@@ -289,7 +258,7 @@ export const VENUES: Venue[] = [
     description:
       "WeWork's Enam Sambhav building on the BKC ring road rents on-demand conference and event rooms from ~₹3,000/hr, with a rooftop and standard WeWork A/V + Wi-Fi. Flexible for pop-up workshops, panels and small builds.",
     amenities: ["Meeting rooms", "Event space", "Rooftop", "Fast Wi-Fi", "Coffee & snacks"],
-    rank: 5,
+    rank: 10,
   },
   {
     slug: "awfis-parinee",
@@ -317,7 +286,7 @@ export const VENUES: Venue[] = [
     description:
       "Awfis Parinee Crescenzo is a 23,000 sq ft coworking and conferencing floor in the building face-off across from JWCC territory — 400+ seats, private cabins, meeting rooms and day passes make it a dependable overflow hub during Devcon week.",
     amenities: ["400+ seats", "Meeting rooms", "Day passes", "Wi-Fi", "Pantry"],
-    rank: 6,
+    rank: 11,
   },
   {
     slug: "jio-world-garden",
@@ -345,7 +314,7 @@ export const VENUES: Venue[] = [
     description:
       "Western Mumbai's largest open-air turfed venue, part of the Jio World Centre campus. Concerts and community festivals live here. Rental is premium — six-figure-per-day territory — so budget accordingly. Fantastic for the closing party.",
     amenities: ["Turf grounds", "2,000-car parking", "Wi-Fi", "Power backup", "Accessible access"],
-    rank: 7,
+    rank: 12,
   },
   {
     slug: "mmrda-grounds",
@@ -379,7 +348,7 @@ export const VENUES: Venue[] = [
       "No AC",
       "No overnight events",
     ],
-    rank: 8,
+    rank: 13,
   },
   {
     slug: "grand-hyatt",
@@ -415,7 +384,7 @@ export const VENUES: Venue[] = [
       "548 rooms",
       "Parking",
     ],
-    rank: 10,
+    rank: 15,
   },
   {
     slug: "taj-santacruz",
@@ -451,7 +420,7 @@ export const VENUES: Venue[] = [
       "Hotel rooms",
       "Parking",
     ],
-    rank: 11,
+    rank: 16,
   },
   {
     slug: "91springboard-bkc",
@@ -480,7 +449,7 @@ export const VENUES: Venue[] = [
     description:
       "91springboard's BKC/Kalina hub is a 400+ seater on CST Road with meeting rooms from ~₹700/hr, day passes from ~₹500 and a 24-7 community vibe. The nearby Kalina II hub scales to ~500 seats for bigger events.",
     amenities: ["400+ seats", "Meeting rooms", "Day passes", "24/7 access", "Parking"],
-    rank: 9,
+    rank: 14,
   },
   {
     slug: "blue-tokai-maker-maxity",
@@ -508,35 +477,152 @@ export const VENUES: Venue[] = [
     description:
       "A Blue Tokai inside BKC's Maker Maxity complex — a roughly five-minute walk from JWCC. Low-key café tables work for small group chats and impromptu catch-ups; not a venue for formal sessions.",
     amenities: ["Specialty coffee", "Wi-Fi", "Café seating"],
-    rank: 12,
+    rank: 6,
   },
   {
     slug: "subko-mary-lodge",
     name: "Subko Coffee Roasters — Mary Lodge",
-    type: "Specialty coffee · event space",
+    type: "Specialty coffee · bookable event space",
     category: "cafes",
     area: "bandra",
     areaLabel: "Bandra West · Ranwar",
     address: "Subko Mary Lodge, 21A Chapel Road, Ranwar, Bandra West, Mumbai 400050",
-    capacity: "Last Supper Room ~25 · Loft ~45 (confirm with venue)",
+    capacity: "Last Supper Room 25 seats · Loft Area combination 45 seats",
     capacityTier: "≤50",
     capacityValue: 45,
     budget: "₹",
     budgetValue: 1,
-    budgetNote: "Coffee-house affordable; booking terms TBD",
+    budgetNote: "Coffee-house affordable; bookable rooms on 2-hr weekday slots",
     distanceKm: "~4 km",
     distanceKmValue: 4,
-    bestFor: "Intimate talks, co-work catch-ups and coffee-first meetups",
+    bestFor: "Intimate talks, community meetups and coffee-first workshops (20–50 people)",
     indoorOutdoor: "Indoor",
-    eventTypes: ["meetup", "workshop"],
-    tags: ["Specialty coffee", "Bookable rooms", "Ranwar heritage"],
+    eventTypes: ["meetup", "networking", "workshop"],
+    tags: ["Specialty coffee", "Bookable rooms", "25–45 seats", "Ranwar heritage"],
     website: "https://subko.coffee",
-    bookingUrl: "https://subko.coffee",
+    bookingUrl: "https://www.subko.coffee/pages/subko-spaces",
     phone: null,
     description:
-      "The original Subko at Mary Lodge in Bandra's Ranwar heritage village. Bookable upstairs spaces suit intimate meetups and workshops, and the coffee is the obvious centrepiece.",
+      "The original Subko at Mary Lodge in Bandra's Ranwar heritage village. Upstairs the Last Supper Room seats 25, and combined with the Loft Area it reaches 45 — both bookable in 2-hour weekday slots (08:00–22:00). Ideal for an intimate community meetup, small workshop or a coffee-first founder gathering. The coffee is the obvious centrepiece.",
     amenities: ["Specialty coffee", "Bookable rooms", "Wi-Fi", "Bakery"],
-    rank: 13,
+    rank: 1,
+    krewPick: true,
+  },
+  {
+    slug: "veronicas",
+    name: "Veronica's",
+    type: "Neighbourhood café · ~28 seats",
+    category: "cafes",
+    area: "bandra",
+    areaLabel: "Bandra West · Ranwar",
+    address: "Waroda Road, Ranwar, Bandra West, Mumbai 400050",
+    capacity: "~28 covers — intimate café room",
+    capacityTier: "≤50",
+    capacityValue: 28,
+    budget: "₹₹",
+    budgetValue: 2,
+    budgetNote: "Café pricing — F&B only",
+    distanceKm: "~4 km",
+    distanceKmValue: 4,
+    bestFor: "Small community meetups, coffee meetups and informal founder chats",
+    indoorOutdoor: "Indoor",
+    eventTypes: ["meetup", "networking", "workshop"],
+    tags: ["Ranwar", "~28 seats", "Community feel"],
+    website: "https://veronicasbombay.com",
+    bookingUrl: "https://veronicasbombay.com",
+    phone: "+91 93729 81697",
+    description:
+      "A small neighbourhood café on Waroda Road in Ranwar — around 28 seats, made for easy 20–30 person gatherings. A dependable pick for coffee meetups, creator chats and intimate networking near Bandra's Devcon crowd.",
+    amenities: ["Specialty coffee", "Café seating", "All-day menu", "Reservations"],
+    rank: 2,
+    krewPick: true,
+  },
+  {
+    slug: "earth-cafe-bkc",
+    name: "Earth Cafe — BKC",
+    type: "Vegan café",
+    category: "cafes",
+    area: "bkc",
+    areaLabel: "BKC · near Diamond Bourse",
+    address: "4, INS Building, near Diamond Bourse, Bandra Kurla Complex, Mumbai 400050",
+    capacity: "Café seating — TBD (small room; confirm with venue)",
+    capacityTier: "≤50",
+    capacityValue: 40,
+    budget: "₹₹",
+    budgetValue: 2,
+    budgetNote: "Café pricing — F&B only",
+    distanceKm: "~1.5 km",
+    distanceKmValue: 1.5,
+    bestFor: "Healthy community meetups and small gatherings inside BKC",
+    indoorOutdoor: "Indoor",
+    eventTypes: ["meetup", "networking"],
+    tags: ["In BKC", "Vegan", "Nearest to JWCC"],
+    website: "https://earthcafeindia.com",
+    bookingUrl: "https://earthcafeindia.com",
+    phone: "+91 98198 14822",
+    description:
+      "Earth Cafe's BKC outpost near the Diamond Bourse — a vegan café walking distance from JWCC. Comfortable for 20–50 people at a stretch; check with them on room capacity before planning anything bigger.",
+    amenities: ["Vegan menu", "Café seating", "Wi-Fi", "Reservations"],
+    rank: 3,
+    krewPick: true,
+  },
+  {
+    slug: "boojee-cafe",
+    name: "Boojee Cafe",
+    type: "Specialty coffee · own roastery",
+    category: "cafes",
+    area: "bandra",
+    areaLabel: "Bandra West · New Kantwadi Road",
+    address: "Shop No. 6, New Kantwadi Road, off Perry Cross Road, Bandra West, Mumbai 400050",
+    capacity: "Small café room — TBD (confirm with venue)",
+    capacityTier: "≤50",
+    capacityValue: 40,
+    budget: "₹",
+    budgetValue: 1,
+    budgetNote: "Café pricing — F&B only",
+    distanceKm: "~4 km",
+    distanceKmValue: 4,
+    bestFor: "Community meetups, coffee meetups and small creator gatherings",
+    indoorOutdoor: "Indoor",
+    eventTypes: ["meetup", "networking", "workshop"],
+    tags: ["Own roastery", "New Kantwadi Road", "Coffee-first"],
+    website: "https://boojeecafe.com",
+    bookingUrl: "https://boojeecafe.com",
+    phone: "+91 99302 03882",
+    description:
+      "Boojee roasts its own coffee and pours it in a small room on New Kantwadi Road (off Perry Cross Road), Bandra West. An easy, unpretentious spot for a 20–50 person coffee meetup; a second room — Boojee 16 on 16th Road — offers another option if you need it.",
+    amenities: ["Specialty coffee", "Own roastery", "Café seating", "Wi-Fi"],
+    rank: 4,
+    krewPick: true,
+  },
+  {
+    slug: "earth-cafe-waterfield",
+    name: "Earth Cafe @ Waterfield",
+    type: "Vegan café",
+    category: "cafes",
+    area: "bandra",
+    areaLabel: "Bandra West · Waterfield Road",
+    address: "Durga Chambers, Waterfield Road, Bandra West, Mumbai 400050",
+    capacity: "Café seating — TBD (small room; confirm with venue)",
+    capacityTier: "≤50",
+    capacityValue: 40,
+    budget: "₹₹",
+    budgetValue: 2,
+    budgetNote: "Café pricing — F&B only",
+    distanceKm: "~4 km",
+    distanceKmValue: 4,
+    bestFor: "Community meetups and relaxed small gatherings in Bandra",
+    indoorOutdoor: "Indoor",
+    eventTypes: ["meetup", "networking"],
+    tags: ["Waterfield Road", "Vegan", "Neighbourhood spot"],
+    website: "https://earthcafeindia.com",
+    bookingUrl: "https://earthcafeindia.com",
+    phone: "+91 98198 28989",
+    description:
+      "A neighbourhood vegan café on Waterfield Road in Bandra West — a calm, light room well suited to 20–50 person community hangs and informal meetups. Best for the relaxed end of a Devcon day.",
+    amenities: ["Vegan menu", "Café seating", "Wi-Fi", "Reservations"],
+    rank: 5,
+    krewPick: true,
   },
   {
     slug: "st-andrews-auditorium",
@@ -564,7 +650,7 @@ export const VENUES: Venue[] = [
     description:
       "A historic auditorium inside St. Andrew's College, Bandra, used for plays, concerts and talks with genuinely good acoustics. Seating capacity is reported as ~250 (some listings say more); double-check with the college before booking.",
     amenities: ["Stage", "Good acoustics", "College facilities", "No on-site F&B — BYO"],
-    rank: 14,
+    rank: 17,
   },
   {
     slug: "taj-lands-end",
@@ -599,7 +685,7 @@ export const VENUES: Venue[] = [
       "Hotel rooms",
       "Parking",
     ],
-    rank: 15,
+    rank: 18,
   },
   {
     slug: "cecconis",
@@ -627,7 +713,7 @@ export const VENUES: Venue[] = [
     description:
       "Cecconi's private-events offering: hire the garden lounge for dinners, drinks receptions and celebrations, or the sea-facing outdoor space. Inside the same building as Soho House Mumbai, with Juhu Beach views.",
     amenities: ["Private garden lounge", "Sea-view terrace", "Pre-booked menus", "Valet parking"],
-    rank: 16,
+    rank: 19,
   },
   {
     slug: "soho-house",
@@ -655,7 +741,7 @@ export const VENUES: Venue[] = [
     description:
       "A rooftop-pool townhouse on Juhu Beach. Non-members can hire the event spaces — the Eva Room (up to 70), the 32-seat Screening Room and Cecconi's Garden Lounge. Premium, cinematic, and a strong choice for a memorable side-event.",
     amenities: ["Rooftop pool", "Screening room", "In-house catering", "Valet", "Non-member hire"],
-    rank: 17,
+    rank: 20,
   },
   {
     slug: "olive-khar",
@@ -683,7 +769,7 @@ export const VENUES: Venue[] = [
     description:
       "Olive's Khar outpost (note — this is Khar, not BKC) is a Mumbai institution with candle-lit garden tables and several private dining rooms. A lovely unwind spot after a long Devcon day.",
     amenities: ["Private dining rooms", "Garden seating", "Full bar", "Valet"],
-    rank: 18,
+    rank: 21,
   },
   {
     slug: "aurus",
@@ -711,7 +797,7 @@ export const VENUES: Venue[] = [
     description:
       "Dish Hospitality's luxury lounge-restaurant at Juhu (same group behind Bastian). Good for a high-end team dinner; private-event details and booking are TBD — contact the venue directly.",
     amenities: ["Full bar", "Lounge", "Valet", "Reservations"],
-    rank: 19,
+    rank: 22,
   },
   {
     slug: "totos-garage",
@@ -739,7 +825,7 @@ export const VENUES: Venue[] = [
     description:
       "A grungy, beloved Bandra dive bar with a VW Beetle suspended over the bar, retro rock on rotation and cheap beer. Cramped by design — perfect for a loud after-party, not for talks.",
     amenities: ["Full bar", "Retro music", "Outdoor smoking area", "No bookings for talks"],
-    rank: 20,
+    rank: 23,
   },
   {
     slug: "sixteen33",
@@ -767,7 +853,7 @@ export const VENUES: Venue[] = [
     description:
       "Sixteen33 is a small, cocktail-forward neighbourhood bar named for the junction it sits on — casual bistro by day, slick cocktail bar by night, with street-side tables. Great for a 20-person mixer, too small for talks.",
     amenities: ["Full bar", "Street-side tables", "Food", "Reservations via District"],
-    rank: 21,
+    rank: 24,
   },
   {
     slug: "elbo-room",
@@ -795,7 +881,7 @@ export const VENUES: Venue[] = [
     description:
       "A long-running bar and lounge on the Bandra–Khar border of Linking Road. Big enough to host sizeable parties (listings report up to ~400) with indoor and outdoor seating.",
     amenities: ["Full bar", "Indoor + outdoor", "Event hosting", "Live music"],
-    rank: 22,
+    rank: 25,
   },
   {
     slug: "phoenix-marketcity",
@@ -823,6 +909,6 @@ export const VENUES: Venue[] = [
     description:
       "Phoenix Marketcity positions itself as 'Mumbai's most cultural mall' and hosts live events, exhibitions and community activations in its courtyards — a quirky, non-traditional choice for bigger casual gatherings, a short drive from BKC.",
     amenities: ["Courtyard event spaces", "Food court", "Parking", "Metro-adjacent"],
-    rank: 23,
+    rank: 26,
   },
 ];
