@@ -29,6 +29,21 @@ export const Route = createFileRoute("/")({
         content:
           "Builders and creators learning, helping, and building together. Find your people. Make something.",
       },
+      { property: "og:url", content: "https://www.krew3.site/" },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://www.krew3.site/venue-og-x-v1.jpg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:type", content: "image/jpeg" },
+      {
+        name: "twitter:card",
+        content: "summary_large_image",
+      },
+      { name: "twitter:image", content: "https://www.krew3.site/venue-og-x-v1.jpg" },
+      {
+        name: "twitter:image:alt",
+        content: "Krew3 — Devcon 8 Mumbai community and side-event hub",
+      },
     ],
   }),
   loader: async () => {
