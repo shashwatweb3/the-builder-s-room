@@ -20,9 +20,9 @@ export const Route = createFileRoute("/venues/")({
       },
       { property: "og:url", content: "https://www.krew3.site/venues" },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "https://www.krew3.site/veneueprev.png" },
-      { property: "og:image:width", content: "1734" },
-      { property: "og:image:height", content: "907" },
+      { property: "og:image", content: "https://www.krew3.site/venue-og.jpg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Krew3 Venues — Find a place for your Devcon side event" },
       {
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/venues/")({
         content:
           "Find venues around BKC, Bandra, Kurla, Santacruz and nearby areas for your Devcon 8 side event.",
       },
-      { name: "twitter:image", content: "https://www.krew3.site/veneueprev.png" },
+      { name: "twitter:image", content: "https://www.krew3.site/venue-og.jpg" },
     ],
     links: [{ rel: "canonical", href: "https://www.krew3.site/venues" }],
   }),
