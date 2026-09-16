@@ -17,7 +17,7 @@ export const Route = createFileRoute("/x-card-test")({
       },
       { property: "og:url", content: "https://www.krew3.site/x-card-test" },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "https://www.krew3.site/venue-og.jpg" },
+      { property: "og:image", content: "https://www.krew3.site/venue-og-x.jpg" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { property: "og:image:type", content: "image/jpeg" },
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/x-card-test")({
         content:
           "Find venues around BKC, Bandra, Kurla, Santacruz and nearby areas for your Devcon 8 side event.",
       },
-      { name: "twitter:image", content: "https://www.krew3.site/venue-og.jpg" },
+      { name: "twitter:image", content: "https://www.krew3.site/venue-og-x.jpg" },
       {
         name: "twitter:image:alt",
         content: "Krew3 Devcon 8 Mumbai side-event venue directory",
