@@ -30,6 +30,8 @@ import { Route as OpportunitiesIndexRouteImport } from './routes/opportunities.i
 import { Route as OpportunitiesIdRouteImport } from './routes/opportunities.$id'
 import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
+import { Route as VenuesIndexRouteImport } from './routes/venues.index'
+import { Route as VenuesSlugRouteImport } from './routes/venues.$slug'
 import { Route as AdminEventsNewRouteImport } from './routes/admin.events.new'
 import { Route as AdminOpportunitiesNewRouteImport } from './routes/admin.opportunities.new'
 import { Route as AdminEventsIdEditRouteImport } from './routes/admin.events.$id.edit'
@@ -140,6 +142,16 @@ const ProjectsIdRoute = ProjectsIdRouteImport.update({
   path: '/projects/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VenuesIndexRoute = VenuesIndexRouteImport.update({
+  id: '/venues/',
+  path: '/venues/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VenuesSlugRoute = VenuesSlugRouteImport.update({
+  id: '/venues/$slug',
+  path: '/venues/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminEventsNewRoute = AdminEventsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -178,12 +190,14 @@ export interface FileRoutesByFullPath {
   '/events/$id': typeof EventsIdRoute
   '/opportunities/$id': typeof OpportunitiesIdRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/venues/$slug': typeof VenuesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/ambassadors/': typeof AmbassadorsIndexRoute
   '/builders/': typeof BuildersIndexRoute
   '/events/': typeof EventsIndexRoute
   '/opportunities/': typeof OpportunitiesIndexRoute
   '/projects/': typeof ProjectsIndexRoute
+  '/venues/': typeof VenuesIndexRoute
   '/admin/events/new': typeof AdminEventsNewRoute
   '/admin/opportunities/new': typeof AdminOpportunitiesNewRoute
   '/admin/events/$id/edit': typeof AdminEventsIdEditRoute
@@ -205,12 +219,14 @@ export interface FileRoutesByTo {
   '/events/$id': typeof EventsIdRoute
   '/opportunities/$id': typeof OpportunitiesIdRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/venues/$slug': typeof VenuesSlugRoute
   '/admin': typeof AdminIndexRoute
   '/ambassadors': typeof AmbassadorsIndexRoute
   '/builders': typeof BuildersIndexRoute
   '/events': typeof EventsIndexRoute
   '/opportunities': typeof OpportunitiesIndexRoute
   '/projects': typeof ProjectsIndexRoute
+  '/venues': typeof VenuesIndexRoute
   '/admin/events/new': typeof AdminEventsNewRoute
   '/admin/opportunities/new': typeof AdminOpportunitiesNewRoute
   '/admin/events/$id/edit': typeof AdminEventsIdEditRoute
@@ -233,12 +249,14 @@ export interface FileRoutesById {
   '/events/$id': typeof EventsIdRoute
   '/opportunities/$id': typeof OpportunitiesIdRoute
   '/projects/$id': typeof ProjectsIdRoute
+  '/venues/$slug': typeof VenuesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/ambassadors/': typeof AmbassadorsIndexRoute
   '/builders/': typeof BuildersIndexRoute
   '/events/': typeof EventsIndexRoute
   '/opportunities/': typeof OpportunitiesIndexRoute
   '/projects/': typeof ProjectsIndexRoute
+  '/venues/': typeof VenuesIndexRoute
   '/admin/events/new': typeof AdminEventsNewRoute
   '/admin/opportunities/new': typeof AdminOpportunitiesNewRoute
   '/admin/events/$id/edit': typeof AdminEventsIdEditRoute
@@ -262,12 +280,14 @@ export interface FileRouteTypes {
     | '/events/$id'
     | '/opportunities/$id'
     | '/projects/$id'
+    | '/venues/$slug'
     | '/admin/'
     | '/ambassadors/'
     | '/builders/'
     | '/events/'
     | '/opportunities/'
     | '/projects/'
+    | '/venues/'
     | '/admin/events/new'
     | '/admin/opportunities/new'
     | '/admin/events/$id/edit'
@@ -289,12 +309,14 @@ export interface FileRouteTypes {
     | '/events/$id'
     | '/opportunities/$id'
     | '/projects/$id'
+    | '/venues/$slug'
     | '/admin'
     | '/ambassadors'
     | '/builders'
     | '/events'
     | '/opportunities'
     | '/projects'
+    | '/venues'
     | '/admin/events/new'
     | '/admin/opportunities/new'
     | '/admin/events/$id/edit'
@@ -316,12 +338,14 @@ export interface FileRouteTypes {
     | '/events/$id'
     | '/opportunities/$id'
     | '/projects/$id'
+    | '/venues/$slug'
     | '/admin/'
     | '/ambassadors/'
     | '/builders/'
     | '/events/'
     | '/opportunities/'
     | '/projects/'
+    | '/venues/'
     | '/admin/events/new'
     | '/admin/opportunities/new'
     | '/admin/events/$id/edit'
@@ -344,12 +368,14 @@ export interface RootRouteChildren {
   EventsIdRoute: typeof EventsIdRoute
   OpportunitiesIdRoute: typeof OpportunitiesIdRoute
   ProjectsIdRoute: typeof ProjectsIdRoute
+  VenuesSlugRoute: typeof VenuesSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AmbassadorsIndexRoute: typeof AmbassadorsIndexRoute
   BuildersIndexRoute: typeof BuildersIndexRoute
   EventsIndexRoute: typeof EventsIndexRoute
   OpportunitiesIndexRoute: typeof OpportunitiesIndexRoute
   ProjectsIndexRoute: typeof ProjectsIndexRoute
+  VenuesIndexRoute: typeof VenuesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -501,6 +527,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/venues/': {
+      id: '/venues/'
+      path: '/venues'
+      fullPath: '/venues/'
+      preLoaderRoute: typeof VenuesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/venues/$slug': {
+      id: '/venues/$slug'
+      path: '/venues/$slug'
+      fullPath: '/venues/$slug'
+      preLoaderRoute: typeof VenuesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/events/new': {
       id: '/admin/events/new'
       path: '/new'
@@ -575,12 +615,14 @@ const rootRouteChildren: RootRouteChildren = {
   EventsIdRoute: EventsIdRoute,
   OpportunitiesIdRoute: OpportunitiesIdRoute,
   ProjectsIdRoute: ProjectsIdRoute,
+  VenuesSlugRoute: VenuesSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
   AmbassadorsIndexRoute: AmbassadorsIndexRoute,
   BuildersIndexRoute: BuildersIndexRoute,
   EventsIndexRoute: EventsIndexRoute,
   OpportunitiesIndexRoute: OpportunitiesIndexRoute,
   ProjectsIndexRoute: ProjectsIndexRoute,
+  VenuesIndexRoute: VenuesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

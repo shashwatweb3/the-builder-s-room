@@ -9,7 +9,7 @@ import { EventCard } from "@/components/EventCard";
 import { EmptyState } from "@/components/EmptyState";
 import { FilterBar } from "@/components/FilterBar";
 import { JoinCTA } from "@/components/JoinCTA";
-import { VenueDirectory } from "@/components/VenueDirectory";
+import { VenueEntryCard } from "@/components/VenueEntryCard";
 import { cn } from "@/lib/utils";
 import type { RecEvent } from "@/data/types";
 
@@ -341,7 +341,7 @@ function EventsPage() {
         </div>
       </section>
 
-      <VenueDirectory />
+      <VenueEntryCard />
 
       <section className="mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-10">
         <JoinCTA />

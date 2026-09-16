@@ -32,7 +32,7 @@ export interface VenueCategory {
 }
 
 export interface Venue {
-  id: string;
+  slug: string;
   name: string;
   type: string;
   category: VenueCategoryId;
@@ -126,7 +126,7 @@ export const VENUE_SORT_OPTIONS: { value: string; label: string }[] = [
 
 export const VENUES: Venue[] = [
   {
-    id: "jwcc",
+    slug: "jwcc",
     name: "Jio World Convention Centre",
     type: "Convention centre",
     category: "conference",
@@ -162,7 +162,7 @@ export const VENUES: Venue[] = [
     rank: 1,
   },
   {
-    id: "sofitel",
+    slug: "sofitel",
     name: "Sofitel Mumbai BKC",
     type: "5-star hotel · meetings & events",
     category: "hotels",
@@ -196,7 +196,7 @@ export const VENUES: Venue[] = [
     rank: 2,
   },
   {
-    id: "trident",
+    slug: "trident",
     name: "Trident Bandra Kurla",
     type: "5-star hotel · meetings & events",
     category: "hotels",
@@ -230,7 +230,7 @@ export const VENUES: Venue[] = [
     rank: 3,
   },
   {
-    id: "nmacc-studio-theatre",
+    slug: "nmacc-studio-theatre",
     name: "NMACC — The Studio Theatre",
     type: "Black-box performance theatre",
     category: "auditoriums",
@@ -264,7 +264,7 @@ export const VENUES: Venue[] = [
     rank: 4,
   },
   {
-    id: "wework-enam-sambhav",
+    slug: "wework-enam-sambhav",
     name: "WeWork — Enam Sambhav",
     type: "Coworking · meeting & event rooms",
     category: "coworking",
@@ -292,7 +292,7 @@ export const VENUES: Venue[] = [
     rank: 5,
   },
   {
-    id: "awfis-parinee",
+    slug: "awfis-parinee",
     name: "Awfis — Parinee Crescenzo",
     type: "Coworking · conferencing",
     category: "coworking",
@@ -320,7 +320,7 @@ export const VENUES: Venue[] = [
     rank: 6,
   },
   {
-    id: "jio-world-garden",
+    slug: "jio-world-garden",
     name: "Jio World Garden",
     type: "Open-air turfed event venue",
     category: "rooftops",
@@ -348,7 +348,7 @@ export const VENUES: Venue[] = [
     rank: 7,
   },
   {
-    id: "mmrda-grounds",
+    slug: "mmrda-grounds",
     name: "MMRDA Grounds",
     type: "Open-air event grounds",
     category: "conference",
@@ -382,7 +382,7 @@ export const VENUES: Venue[] = [
     rank: 8,
   },
   {
-    id: "grand-hyatt",
+    slug: "grand-hyatt",
     name: "Grand Hyatt Mumbai",
     type: "5-star hotel · hotel & residences",
     category: "hotels",
@@ -418,7 +418,7 @@ export const VENUES: Venue[] = [
     rank: 10,
   },
   {
-    id: "taj-santacruz",
+    slug: "taj-santacruz",
     name: "Taj Santacruz",
     type: "5-star airport hotel",
     category: "hotels",
@@ -454,7 +454,7 @@ export const VENUES: Venue[] = [
     rank: 11,
   },
   {
-    id: "91springboard-bkc",
+    slug: "91springboard-bkc",
     name: "91springboard — BKC / Kalina",
     type: "Coworking · community hub",
     category: "coworking",
@@ -483,7 +483,7 @@ export const VENUES: Venue[] = [
     rank: 9,
   },
   {
-    id: "blue-tokai-maker-maxity",
+    slug: "blue-tokai-maker-maxity",
     name: "Blue Tokai — Maker Maxity",
     type: "Specialty coffee · café space",
     category: "cafes",
@@ -511,7 +511,7 @@ export const VENUES: Venue[] = [
     rank: 12,
   },
   {
-    id: "subko-mary-lodge",
+    slug: "subko-mary-lodge",
     name: "Subko Coffee Roasters — Mary Lodge",
     type: "Specialty coffee · event space",
     category: "cafes",
@@ -539,7 +539,7 @@ export const VENUES: Venue[] = [
     rank: 13,
   },
   {
-    id: "st-andrews-auditorium",
+    slug: "st-andrews-auditorium",
     name: "St. Andrew's Auditorium",
     type: "College auditorium for hire",
     category: "auditoriums",
@@ -567,7 +567,7 @@ export const VENUES: Venue[] = [
     rank: 14,
   },
   {
-    id: "taj-lands-end",
+    slug: "taj-lands-end",
     name: "Taj Lands End, Bandra",
     type: "5-star beachfront hotel",
     category: "hotels",
@@ -602,7 +602,7 @@ export const VENUES: Venue[] = [
     rank: 15,
   },
   {
-    id: "cecconis",
+    slug: "cecconis",
     name: "Cecconi's Mumbai",
     type: "Northern Italian restaurant · private dining",
     category: "restaurants",
@@ -630,7 +630,7 @@ export const VENUES: Venue[] = [
     rank: 16,
   },
   {
-    id: "soho-house",
+    slug: "soho-house",
     name: "Soho House Mumbai",
     type: "Private members' club · event spaces",
     category: "rooftops",
@@ -658,7 +658,7 @@ export const VENUES: Venue[] = [
     rank: 17,
   },
   {
-    id: "olive-khar",
+    slug: "olive-khar",
     name: "Olive Bar & Kitchen",
     type: "European restaurant · private dining",
     category: "restaurants",
@@ -686,7 +686,7 @@ export const VENUES: Venue[] = [
     rank: 18,
   },
   {
-    id: "aurus",
+    slug: "aurus",
     name: "Aurus Restaurant & Lounge",
     type: "Luxury restaurant & lounge",
     category: "restaurants",
@@ -714,7 +714,7 @@ export const VENUES: Venue[] = [
     rank: 19,
   },
   {
-    id: "totos-garage",
+    slug: "totos-garage",
     name: "Toto's Garage",
     type: "Iconic dive bar & pub",
     category: "bars",
@@ -742,7 +742,7 @@ export const VENUES: Venue[] = [
     rank: 20,
   },
   {
-    id: "sixteen33",
+    slug: "sixteen33",
     name: "Sixteen33",
     type: "Neighbourhood bar & diner",
     category: "bars",
@@ -770,7 +770,7 @@ export const VENUES: Venue[] = [
     rank: 21,
   },
   {
-    id: "elbo-room",
+    slug: "elbo-room",
     name: "The Elbo Room",
     type: "Bar & lounge",
     category: "bars",
@@ -798,7 +798,7 @@ export const VENUES: Venue[] = [
     rank: 22,
   },
   {
-    id: "phoenix-marketcity",
+    slug: "phoenix-marketcity",
     name: "Phoenix Marketcity Mumbai",
     type: "Retail destination · event spaces",
     category: "unique",
