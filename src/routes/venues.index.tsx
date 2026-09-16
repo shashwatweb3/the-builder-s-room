@@ -5,7 +5,32 @@ import { VenueDirectory } from "@/components/VenueDirectory";
 
 export const Route = createFileRoute("/venues/")({
   head: () => ({
-    meta: [{ title: "Devcon 8 Side-Event Venues — Krew3" }],
+    meta: [
+      { title: "Krew3 Venues — Find a place for your Devcon side event" },
+      {
+        name: "description",
+        content:
+          "Find venues around BKC, Bandra, Kurla, Santacruz and nearby areas for your Devcon 8 side event.",
+      },
+      { property: "og:title", content: "Krew3 Venues — Find a place for your Devcon side event" },
+      {
+        property: "og:description",
+        content:
+          "Find venues around BKC, Bandra, Kurla, Santacruz and nearby areas for your Devcon 8 side event.",
+      },
+      { property: "og:url", content: "https://www.krew3.site/venues" },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://www.krew3.site/veneueprev.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Krew3 Venues — Find a place for your Devcon side event" },
+      {
+        name: "twitter:description",
+        content:
+          "Find venues around BKC, Bandra, Kurla, Santacruz and nearby areas for your Devcon 8 side event.",
+      },
+      { name: "twitter:image", content: "https://www.krew3.site/veneueprev.png" },
+    ],
+    links: [{ rel: "canonical", href: "https://www.krew3.site/venues" }],
   }),
   component: VenuesPage,
 });
