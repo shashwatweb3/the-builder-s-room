@@ -21,6 +21,8 @@ export const Route = createFileRoute("/venues/")({
       { property: "og:url", content: "https://www.krew3.site/venues" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: "https://www.krew3.site/veneueprev.png" },
+      { property: "og:image:width", content: "1734" },
+      { property: "og:image:height", content: "907" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Krew3 Venues — Find a place for your Devcon side event" },
       {
