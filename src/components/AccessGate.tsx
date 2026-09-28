@@ -1,6 +1,7 @@
 import { type FormEvent, type ReactNode, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/Button";
+import { BuilderBaseCredit } from "@/components/BuilderBaseCredit";
 import { OffsetCard } from "@/components/OffsetCard";
 import { SectionLabel } from "@/components/SectionLabel";
 import { useKrewAccess } from "@/lib/krew-access";
@@ -82,6 +83,10 @@ export function AccessGateCard({
           That code doesn&apos;t look right. Try again.
         </p>
       )}
+
+      <div className="mt-8 flex justify-center border-t border-border/70 pt-6">
+        <BuilderBaseCredit />
+      </div>
     </OffsetCard>
   );
 }

@@ -4,6 +4,7 @@ import { getRequest } from "@tanstack/react-start/server";
 import { createServerClient } from "@supabase/ssr";
 import { useMemo, useState } from "react";
 import { AccessGate } from "@/components/AccessGate";
+import { BuilderBaseCredit } from "@/components/BuilderBaseCredit";
 import { SectionLabel } from "@/components/SectionLabel";
 import { EventCard } from "@/components/EventCard";
 import { EmptyState } from "@/components/EmptyState";
@@ -325,6 +326,8 @@ function EventsPage() {
             </a>{" "}
             on Telegram.
           </p>
+
+          <BuilderBaseCredit align="left" className="mt-6" />
         </div>
 
         <div className="mt-8">
