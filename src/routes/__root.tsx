@@ -8,6 +8,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
@@ -155,6 +156,7 @@ function RootComponent() {
         <Footer />
         <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
         <Toaster position="bottom-right" />
+        <Analytics />
       </SavedProvider>
     </QueryClientProvider>
   );
