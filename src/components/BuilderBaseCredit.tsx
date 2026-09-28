@@ -26,7 +26,7 @@ export function BuilderBaseCredit({
         width={1080}
         height={1080}
         loading="lazy"
-        className="h-6 w-auto sm:h-7"
+        className="h-16 w-auto sm:h-20"
       />
     </div>
   );
