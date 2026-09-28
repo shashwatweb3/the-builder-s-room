@@ -84,7 +84,7 @@ export function AccessGateCard({
         </p>
       )}
 
-      <div className="mt-8 flex justify-center border-t border-border/70 pt-6">
+      <div className="mt-8 flex justify-center border-t border-border/70 pt-8">
         <BuilderBaseCredit />
       </div>
     </OffsetCard>

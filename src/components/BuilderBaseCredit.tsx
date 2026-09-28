@@ -12,7 +12,7 @@ export function BuilderBaseCredit({
   return (
     <div
       className={cn(
-        "flex flex-col gap-1.5",
+        "flex flex-col gap-2",
         align === "center" ? "items-center text-center" : "items-start text-left",
         className,
       )}
@@ -26,7 +26,7 @@ export function BuilderBaseCredit({
         width={1080}
         height={1080}
         loading="lazy"
-        className="h-16 w-auto sm:h-20"
+        className="h-[130px] w-auto sm:h-[150px]"
       />
     </div>
   );
