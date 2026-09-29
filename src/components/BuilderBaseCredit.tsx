@@ -39,7 +39,7 @@ export function BuilderBaseCredit({ className }: { className?: string }) {
             aria-label="Lucknow DAO"
             className="flex min-h-[80px] w-[100px] flex-col items-center justify-center gap-1.5 rounded-xl border border-ink bg-card p-2.5 shadow-offset-sm transition-[transform,box-shadow] duration-150 ease-out hover:-translate-y-0.5 hover:shadow-offset-lg active:translate-y-0.5 active:shadow-offset-sm sm:min-h-[104px] sm:w-[110px] sm:gap-2 sm:p-3"
           >
-            <span className="block h-[40px] w-[40px] overflow-hidden rounded-md border border-border bg-ink sm:h-[31px] sm:w-[31px]">
+            <span className="block h-[40px] w-[40px] overflow-hidden rounded-md border border-border bg-ink sm:h-[44px] sm:w-[44px]">
               <img
                 src={LUCKOW_LOGO_SRC}
                 alt="Lucknow DAO"
@@ -55,7 +55,7 @@ export function BuilderBaseCredit({ className }: { className?: string }) {
           </a>
         ) : (
           <div className="flex min-h-[80px] w-[100px] flex-col items-center justify-center gap-1.5 rounded-xl border border-ink bg-card p-2.5 shadow-offset-sm active:translate-y-0.5 active:shadow-offset-sm sm:min-h-[104px] sm:w-[110px] sm:gap-2 sm:p-3">
-            <span className="block h-[40px] w-[40px] overflow-hidden rounded-md border border-border bg-ink sm:h-[31px] sm:w-[31px]">
+            <span className="block h-[40px] w-[40px] overflow-hidden rounded-md border border-border bg-ink sm:h-[44px] sm:w-[44px]">
               <img
                 src={LUCKOW_LOGO_SRC}
                 alt="Lucknow DAO"

@@ -36,18 +36,18 @@ export function EventCard({ event, id }: { event: RecEvent; id?: string }) {
       as="article"
       id={cardId}
       size="sm"
-      className="group relative flex scroll-mt-24 flex-col gap-2.5 rounded-[1.5rem] p-4 transition-[transform,box-shadow] duration-150 active:translate-y-0.5 active:shadow-offset-sm sm:grid sm:scroll-mt-28 sm:grid-cols-[auto_auto_minmax(0,1fr)_auto] sm:grid-rows-[auto_auto_auto] sm:[grid-template-areas:'date_tags_title_actions'_'.org_desc_actions'_'meta_meta_meta_meta'] sm:gap-x-6 sm:gap-y-2 sm:rounded-2xl sm:p-5 sm:duration-200 sm:hover:-translate-y-0.5 sm:hover:shadow-offset sm:focus-within:-translate-y-0.5 sm:focus-within:shadow-offset"
+      className="group relative flex scroll-mt-24 flex-col gap-2.5 rounded-[1.5rem] p-4 transition-[transform,box-shadow] duration-150 active:translate-y-0.5 active:shadow-offset-sm md:grid md:scroll-mt-40 md:grid-cols-[auto_auto_minmax(0,1fr)_auto] md:grid-rows-[auto_auto_auto] md:[grid-template-areas:'date_tags_title_actions'_'.org_desc_actions'_'meta_meta_meta_meta'] md:gap-x-6 md:gap-y-2 md:rounded-2xl md:p-5 md:duration-200 md:hover:-translate-y-0.5 md:hover:shadow-offset-lg md:focus-within:-translate-y-0.5 md:focus-within:shadow-offset-lg"
     >
-      <div className="order-1 flex items-start justify-between gap-3 sm:contents">
+      <div className="order-1 flex items-start justify-between gap-3 md:contents">
         <div
           aria-hidden
-          className="grid w-[74px] min-h-[62px] place-items-center rounded-lg border-2 border-border bg-lavender py-3 leading-none shadow-offset-sm sm:[grid-area:date] sm:w-14 sm:min-h-0 sm:py-1.5"
+          className="grid w-[74px] min-h-[62px] place-items-center rounded-lg border-2 border-border bg-lavender py-3 leading-none shadow-offset-sm md:[grid-area:date] md:w-14 md:min-h-0 md:py-1.5"
         >
           <span className="label-mono">{month}</span>
           <span className="text-lg font-extrabold">{dayLabel}</span>
         </div>
 
-        <div className="flex flex-col items-end gap-1 sm:[grid-area:tags] sm:flex-row sm:flex-wrap sm:items-start sm:gap-1.5">
+        <div className="flex flex-col items-end gap-1 md:[grid-area:tags] md:flex-row md:flex-wrap md:items-start md:gap-1.5">
           <Tag compact tone="purple">
             {eventKindLabel[event.kind]}
           </Tag>
@@ -67,7 +67,7 @@ export function EventCard({ event, id }: { event: RecEvent; id?: string }) {
         </div>
       </div>
 
-      <h3 className="order-2 line-clamp-2 text-lg font-extrabold leading-snug tracking-tight sm:[grid-area:title]">
+      <h3 className="order-2 line-clamp-2 text-lg font-extrabold leading-snug tracking-tight md:[grid-area:title]">
         <Link
           to="/events/$id"
           params={{ id: event.slug }}
@@ -78,28 +78,28 @@ export function EventCard({ event, id }: { event: RecEvent; id?: string }) {
       </h3>
 
       {event.organizer && (
-        <p className="order-3 label-mono text-muted-foreground sm:[grid-area:org]">
+        <p className="order-3 label-mono text-muted-foreground md:[grid-area:org]">
           Hosted by {event.organizer}
         </p>
       )}
 
-      <p className="order-4 label-mono line-clamp-2 text-muted-foreground sm:[grid-area:meta]">
-        <span className="sm:hidden">{metaMobile}</span>
-        <span className="hidden sm:inline">{metaDesktop}</span>
+      <p className="order-4 label-mono line-clamp-2 text-muted-foreground md:[grid-area:meta]">
+        <span className="md:hidden">{metaMobile}</span>
+        <span className="hidden md:inline">{metaDesktop}</span>
       </p>
 
-      <p className="order-5 line-clamp-2 text-sm leading-snug text-muted-foreground sm:[grid-area:desc] sm:leading-relaxed">
+      <p className="order-5 line-clamp-2 text-sm leading-snug text-muted-foreground md:[grid-area:desc] md:leading-relaxed">
         {event.summary}
       </p>
 
-      <div className="order-6 flex items-center justify-between gap-3 sm:[grid-area:actions] sm:flex-col sm:items-end sm:gap-2 sm:justify-start">
+      <div className="order-6 flex items-center justify-between gap-3 md:[grid-area:actions] md:flex-col md:items-end md:gap-2 md:justify-start">
         <ShareButton title={event.name} slug={event.slug} path={`/events/${event.slug}`} />
         {event.url ? (
           <a
             href={event.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="label-mono relative z-10 inline-flex h-[44px] w-[118px] items-center justify-center gap-1 rounded-full border-2 border-border bg-foreground px-3 py-1.5 text-background shadow-offset-sm sm:h-auto sm:w-auto sm:justify-start"
+            className="label-mono relative z-10 inline-flex h-[44px] w-[118px] items-center justify-center gap-1 rounded-full border-2 border-border bg-foreground px-3 py-1.5 text-background shadow-offset-sm md:h-auto md:w-auto md:justify-start"
           >
             RSVP
             <ArrowUpRight
@@ -110,7 +110,7 @@ export function EventCard({ event, id }: { event: RecEvent; id?: string }) {
         ) : (
           <span
             title="Details TBA"
-            className="label-mono relative z-10 inline-flex h-[44px] w-[118px] items-center justify-center gap-1 rounded-full border-2 border-dashed border-foreground/40 bg-transparent px-3 py-1.5 text-muted-foreground sm:h-auto sm:w-auto"
+            className="label-mono relative z-10 inline-flex h-[44px] w-[118px] items-center justify-center gap-1 rounded-full border-2 border-dashed border-foreground/40 bg-transparent px-3 py-1.5 text-muted-foreground md:h-auto md:w-auto"
           >
             Details TBA
           </span>

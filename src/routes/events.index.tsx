@@ -3,7 +3,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { createServerClient } from "@supabase/ssr";
 import { useMemo, useState } from "react";
-import { ArrowRight } from "lucide-react";
 import { AccessGate } from "@/components/AccessGate";
 import { BuilderBaseCredit } from "@/components/BuilderBaseCredit";
 import { SectionLabel } from "@/components/SectionLabel";
@@ -13,7 +12,7 @@ import { FilterBar } from "@/components/FilterBar";
 import { JoinCTA } from "@/components/JoinCTA";
 import { MobileFilterSheet } from "@/components/MobileFilterSheet";
 import { VenueEntryCard } from "@/components/VenueEntryCard";
-import { formatShortDate, formatShortDateRange, formatTimeRange } from "@/lib/format";
+import { formatShortDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { RecEvent } from "@/data/types";
 
@@ -215,6 +214,7 @@ function EventsPage() {
 
   const [filter, setFilter] = useState<EventFilter>("all");
   const [filterOpen, setFilterOpen] = useState(false);
+  const [pinnedDate, setPinnedDate] = useState<string | null>(null);
 
   const switchView = (next: EventView) => {
     setFilter("all");
@@ -297,57 +297,61 @@ function EventsPage() {
   return (
     <AccessGate>
       <section className="mx-auto w-full max-w-[1400px] px-4 py-6 sm:px-6 lg:px-10">
-        {/* Mobile segmented control */}
-        <div
-          role="tablist"
-          aria-label="Event view"
-          className="flex gap-1 rounded-full border-2 border-border bg-card p-1 shadow-offset-sm sm:hidden"
-        >
-          {EVENT_VIEWS.map((option) => {
-            const active = view === option.value;
-            return (
-              <button
-                key={option.value}
-                role="tab"
-                type="button"
-                aria-selected={active}
-                onClick={() => switchView(option.value)}
-                className={cn(
-                  "label-mono min-h-9 flex-1 rounded-full px-3 text-[12px] transition-colors duration-200",
-                  active
-                    ? "bg-foreground text-background"
-                    : "text-muted-foreground hover:text-foreground",
-                )}
-              >
-                {option.label} · {viewCounts[option.value]}
-              </button>
-            );
-          })}
-        </div>
+        <div className="lg:sticky lg:top-[82px] lg:z-40 lg:-mx-10 lg:border-b-2 lg:border-border lg:bg-background lg:px-10 lg:py-3">
+          {/* Mobile segmented control */}
+          <div
+            role="tablist"
+            aria-label="Event view"
+            className="flex gap-1 rounded-full border-2 border-border bg-card p-1 shadow-offset-sm sm:hidden"
+          >
+            {EVENT_VIEWS.map((option) => {
+              const active = view === option.value;
+              return (
+                <button
+                  key={option.value}
+                  role="tab"
+                  type="button"
+                  aria-selected={active}
+                  onClick={() => switchView(option.value)}
+                  className={cn(
+                    "label-mono min-h-9 flex-1 rounded-full px-3 text-[12px] transition-colors duration-200",
+                    active
+                      ? "bg-foreground text-background"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  {option.label} · {viewCounts[option.value]}
+                </button>
+              );
+            })}
+          </div>
 
-        {/* Desktop tabs */}
-        <div role="tablist" aria-label="Event view" className="hidden flex-wrap gap-2 sm:flex">
-          {EVENT_VIEWS.map((option) => {
-            const active = view === option.value;
-            return (
-              <button
-                key={option.value}
-                role="tab"
-                type="button"
-                aria-selected={active}
-                onClick={() => switchView(option.value)}
-                className={cn(
-                  "label-mono press min-h-11 shrink-0 rounded-full border-2 border-border px-5 py-2.5 text-[0.95rem] shadow-offset-sm",
-                  active ? "bg-foreground text-background" : "bg-card hover:bg-lavender/50",
-                )}
-              >
-                {option.label}
-                <span className={cn("ml-1.5", active ? "opacity-70" : "text-muted-foreground")}>
-                  · {viewCounts[option.value]}
-                </span>
-              </button>
-            );
-          })}
+          {/* Desktop tabs */}
+          <div role="tablist" aria-label="Event view" className="hidden flex-wrap gap-2 sm:flex">
+            {EVENT_VIEWS.map((option) => {
+              const active = view === option.value;
+              return (
+                <button
+                  key={option.value}
+                  role="tab"
+                  type="button"
+                  aria-selected={active}
+                  onClick={() => switchView(option.value)}
+                  className={cn(
+                    "label-mono press min-h-12 shrink-0 rounded-full border-2 border-border px-6 py-2.5 text-base shadow-offset-sm transition-colors duration-200",
+                    active
+                      ? "bg-foreground text-background"
+                      : "bg-card text-muted-foreground hover:bg-lavender/50 hover:text-foreground",
+                  )}
+                >
+                  {option.label}
+                  <span className={cn("ml-1.5", active ? "opacity-70" : "text-muted-foreground")}>
+                    · {viewCounts[option.value]}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Desktop count + note */}
@@ -388,7 +392,7 @@ function EventsPage() {
           />
         </div>
 
-        <div className="mt-5 border-t-2 border-border pt-4 sm:mt-10 sm:pt-8">
+        <div className="mt-4 border-t-2 border-border pt-4 sm:mt-7 sm:pt-6">
           <SectionLabel>{meta.eyebrow}</SectionLabel>
           <h1 className="mt-2 text-[clamp(2rem,9.5vw,2.5rem)] leading-[0.95] font-extrabold tracking-tight sm:text-[clamp(2rem,5vw,3rem)]">
             {meta.title}
@@ -415,56 +419,80 @@ function EventsPage() {
           <BuilderBaseCredit className="mt-5 sm:mt-6" />
         </div>
 
-        <div className="mt-5 sm:mt-8">
+        <div className="mt-4 sm:mt-6">
           {results.length ? (
             <div className="flex flex-col gap-3 sm:gap-4">
               {nextUp && (
                 <Link
                   to="/events/$id"
                   params={{ id: nextUp.slug }}
-                  className="group flex items-center gap-3 rounded-2xl border-2 border-border bg-foreground p-4 text-background shadow-offset-sm transition-transform duration-150 active:translate-y-0.5 active:shadow-offset-sm sm:hidden"
+                  className="group flex items-stretch overflow-hidden rounded-2xl border-2 border-border bg-foreground text-background shadow-offset-sm transition-[transform,box-shadow] duration-150 active:translate-y-0.5 active:shadow-offset-sm sm:hover:-translate-y-0.5 sm:hover:shadow-offset"
                 >
-                  <span className="label-mono grid size-11 shrink-0 place-items-center rounded-xl border-2 border-background/20 bg-background/10 text-[10px] text-background/80">
-                    NEXT
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="label-mono block text-[10px] text-background/70">
-                      {formatShortDateRange(nextUp.date, nextUp.endDate)} ·{" "}
-                      {formatTimeRange(nextUp.startTime, nextUp.endTime)}
-                    </span>
-                    <span className="mt-0.5 block truncate text-base font-extrabold tracking-tight">
-                      {nextUp.name}
+                  <span className="label-mono flex w-[96px] shrink-0 flex-col justify-center border-r-2 border-background/15 px-3 py-3 sm:w-[150px] sm:px-5 sm:py-4">
+                    <span className="text-[9px] text-background/70 sm:text-[10px]">NEXT UP</span>
+                    <span className="mt-1 block text-xl font-extrabold leading-none tracking-tight sm:text-3xl">
+                      {formatShortDate(nextUp.date).toUpperCase()}
                     </span>
                   </span>
-                  <ArrowRight
-                    className="size-5 shrink-0 transition-transform duration-150 group-hover:translate-x-1"
-                    aria-hidden
-                  />
+                  <span className="flex min-w-0 flex-1 items-center justify-between gap-3 px-3 py-3 sm:px-5 sm:py-4">
+                    <span className="min-w-0">
+                      <span className="line-clamp-1 block text-base font-extrabold tracking-tight sm:text-lg">
+                        {nextUp.name}
+                      </span>
+                      <span className="label-mono mt-0.5 block truncate text-[11px] text-background/80 sm:text-xs">
+                        {[nextUp.organizer, nextUp.location].filter(Boolean).join(" · ")}
+                      </span>
+                    </span>
+                    {nextUp.url && (
+                      <span
+                        aria-hidden
+                        className="label-mono flex shrink-0 items-center gap-1 rounded-full border-2 border-background/25 px-3 py-1.5 text-[11px] transition-colors group-hover:border-background"
+                      >
+                        RSVP ↗
+                      </span>
+                    )}
+                  </span>
                 </Link>
               )}
 
               {dateRail.length > 1 && (
                 <div
-                  className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 sm:hidden"
+                  className="no-scrollbar -mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0 lg:gap-2"
                   aria-label="Jump to a date"
                 >
-                  {dateRail.map(([date, slug]) => (
-                    <button
-                      key={date}
-                      type="button"
-                      onClick={() => jumpToDate(slug)}
-                      className="label-mono press shrink-0 snap-start rounded-full border-2 border-border bg-card px-3 py-1.5 text-[11px] shadow-offset-sm"
-                    >
-                      {formatShortDate(date).toUpperCase()}
-                    </button>
-                  ))}
+                  {dateRail.map(([date, slug]) => {
+                    const active = (pinnedDate ?? nextUp?.date ?? dateRail[0]?.[0]) === date;
+                    return (
+                      <button
+                        key={date}
+                        type="button"
+                        onClick={() => {
+                          setPinnedDate(date);
+                          jumpToDate(slug);
+                        }}
+                        className={cn(
+                          "label-mono shrink-0 snap-start rounded-full border-2 border-border px-3 py-1.5 text-[11px] transition-colors duration-150 lg:px-3.5",
+                          active
+                            ? "bg-foreground text-background"
+                            : "bg-card text-muted-foreground hover:bg-lavender/50 hover:text-foreground",
+                        )}
+                      >
+                        {formatShortDate(date).toUpperCase()}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
 
-              <div className="grid gap-3 sm:gap-4">
-                {results.map((e) => (
-                  <EventCard key={e.id} event={e} id={`event-${e.slug}`} />
-                ))}
+              <div
+                key={view}
+                className="grid grid-cols-1 gap-3 rise-in sm:gap-4 md:grid-cols-2 lg:gap-5"
+              >
+                {results
+                  .filter((e) => !(nextUp && results.length > 1 && e.id === nextUp.id))
+                  .map((e) => (
+                    <EventCard key={e.id} event={e} id={`event-${e.slug}`} />
+                  ))}
               </div>
             </div>
           ) : (
