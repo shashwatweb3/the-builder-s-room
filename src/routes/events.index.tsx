@@ -327,7 +327,7 @@ function EventsPage() {
             on Telegram.
           </p>
 
-          <BuilderBaseCredit variant="cards" className="mt-6" />
+          <BuilderBaseCredit className="mt-6" />
         </div>
 
         <div className="mt-8">
