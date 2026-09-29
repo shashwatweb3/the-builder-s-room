@@ -51,24 +51,28 @@ export function BuilderBaseCredit({
             aria-label="Lucknow DAO"
             className="no-underline"
           >
+            <span className="block h-[48px] w-[48px] overflow-hidden rounded-lg border border-border bg-ink shadow-offset-sm sm:h-[57px] sm:w-[57px]">
+              <img
+                src={LUCKOW_LOGO_SRC}
+                alt="Lucknow DAO"
+                width={377}
+                height={377}
+                loading="lazy"
+                className="h-full w-full object-cover"
+              />
+            </span>
+          </a>
+        ) : (
+          <span className="block h-[48px] w-[48px] overflow-hidden rounded-lg border border-border bg-ink shadow-offset-sm sm:h-[57px] sm:w-[57px]">
             <img
               src={LUCKOW_LOGO_SRC}
               alt="Lucknow DAO"
               width={377}
               height={377}
               loading="lazy"
-              className="h-[48px] w-auto sm:h-[57px]"
+              className="h-full w-full object-cover"
             />
-          </a>
-        ) : (
-          <img
-            src={LUCKOW_LOGO_SRC}
-            alt="Lucknow DAO"
-            width={377}
-            height={377}
-            loading="lazy"
-            className="h-[48px] w-auto sm:h-[57px]"
-          />
+          </span>
         )}
       </div>
     </div>
