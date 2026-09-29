@@ -17,7 +17,7 @@ export function BuilderBaseCredit({ className }: { className?: string }) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Visit Builder Base"
-          className="flex min-h-[104px] w-[110px] flex-col items-center justify-center gap-2 rounded-xl border border-ink bg-card p-3 shadow-offset-sm transition-[transform,box-shadow] duration-150 ease-out hover:-translate-y-0.5 hover:shadow-offset-lg sm:min-h-[112px] sm:w-[124px]"
+          className="flex min-h-[96px] w-[100px] flex-col items-center justify-center gap-2 rounded-xl border border-ink bg-card p-3 shadow-offset-sm transition-[transform,box-shadow] duration-150 ease-out hover:-translate-y-0.5 hover:shadow-offset-lg sm:min-h-[104px] sm:w-[110px]"
         >
           <img
             src={BB_LOGO_SRC}
@@ -37,7 +37,7 @@ export function BuilderBaseCredit({ className }: { className?: string }) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Lucknow DAO"
-            className="flex min-h-[104px] w-[110px] flex-col items-center justify-center gap-2 rounded-xl border border-ink bg-card p-3 shadow-offset-sm transition-[transform,box-shadow] duration-150 ease-out hover:-translate-y-0.5 hover:shadow-offset-lg sm:min-h-[112px] sm:w-[124px]"
+            className="flex min-h-[96px] w-[100px] flex-col items-center justify-center gap-2 rounded-xl border border-ink bg-card p-3 shadow-offset-sm transition-[transform,box-shadow] duration-150 ease-out hover:-translate-y-0.5 hover:shadow-offset-lg sm:min-h-[104px] sm:w-[110px]"
           >
             <span className="block h-[27px] w-[27px] overflow-hidden rounded-md border border-border bg-ink sm:h-[31px] sm:w-[31px]">
               <img
@@ -54,7 +54,7 @@ export function BuilderBaseCredit({ className }: { className?: string }) {
             </span>
           </a>
         ) : (
-          <div className="flex min-h-[104px] w-[110px] flex-col items-center justify-center gap-2 rounded-xl border border-ink bg-card p-3 shadow-offset-sm sm:min-h-[112px] sm:w-[124px]">
+          <div className="flex min-h-[96px] w-[100px] flex-col items-center justify-center gap-2 rounded-xl border border-ink bg-card p-3 shadow-offset-sm sm:min-h-[104px] sm:w-[110px]">
             <span className="block h-[27px] w-[27px] overflow-hidden rounded-md border border-border bg-ink sm:h-[31px] sm:w-[31px]">
               <img
                 src={LUCKOW_LOGO_SRC}

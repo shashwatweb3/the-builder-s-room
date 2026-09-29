@@ -44,16 +44,16 @@ function ProjectsPage() {
           </a>
         </div>
 
-        <div className="mt-10">
+        <div className="mt-6 sm:mt-10">
           <EmptyState title="Nothing here yet." body="The Krew is cooking." action={null} />
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-[1400px] px-4 pt-16 sm:px-6 lg:px-10 lg:pt-24">
+      <section className="mx-auto w-full max-w-[1400px] px-4 pt-10 sm:px-6 lg:px-10 lg:pt-24">
         <CollabPanel />
       </section>
 
-      <section className="mx-auto w-full max-w-[1400px] px-4 pt-16 sm:px-6 lg:px-10">
+      <section className="mx-auto w-full max-w-[1400px] px-4 pt-10 sm:px-6 lg:px-10 sm:pt-16">
         <JoinCTA />
       </section>
     </>

@@ -315,7 +315,7 @@ function OpportunitiesPage() {
         Jobs, hackathons, grants, residencies and ambassador programs worth checking out.
       </PageHero>
 
-      <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
+      <section className="mx-auto w-full max-w-[1400px] px-4 py-8 sm:px-6 lg:px-10 lg:py-14">
         <OpportunityFilters
           state={filters}
           onChange={(next) => {
@@ -325,7 +325,7 @@ function OpportunitiesPage() {
           resultCount={results.length}
         />
 
-        <p className="mt-5 text-sm text-muted-foreground">
+        <p className="mt-3 text-sm text-muted-foreground sm:mt-5">
           Want to add an opportunity or event? DM{" "}
           <a
             href="https://t.me/Lucky_sc0"
@@ -338,7 +338,7 @@ function OpportunitiesPage() {
           on Telegram.
         </p>
 
-        <div className="mt-10">
+        <div className="mt-6 sm:mt-10">
           {shown.length === 0 ? (
             <EmptyState
               title={items.length === 0 ? "No open opportunities yet." : "Nothing matches that."}
@@ -358,7 +358,7 @@ function OpportunitiesPage() {
               }
             />
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
               {shown.map((item) =>
                 item.kind === "ambassador" ? (
                   <AmbassadorCard key={item.data.id} program={item.data} />
@@ -401,13 +401,13 @@ function OpportunityItem({ item }: { item: UIOpportunity }) {
         });
 
   return (
-    <OffsetCard as="article" interactive className="group relative flex h-full flex-col p-5 sm:p-6">
+    <OffsetCard as="article" interactive className="group relative flex h-full flex-col p-4 sm:p-6">
       <div className="flex items-start justify-between gap-3">
         <Tag tone="purple">{meta.label}</Tag>
         <SaveButton kind="opportunity" id={item.id} label={item.title} className="relative z-10" />
       </div>
 
-      <h3 className="mt-4 text-xl font-extrabold tracking-tight sm:text-2xl">
+      <h3 className="mt-3 text-lg font-extrabold tracking-tight sm:mt-4 sm:text-2xl">
         <Link
           to="/opportunities/$id"
           params={{ id: item.slug }}
@@ -418,9 +418,11 @@ function OpportunityItem({ item }: { item: UIOpportunity }) {
       </h3>
       <p className="label-mono mt-1.5 text-muted-foreground">{item.organization}</p>
 
-      <p className="mt-3 line-clamp-2 text-sm text-muted-foreground sm:text-base">{item.summary}</p>
+      <p className="mt-2 line-clamp-2 text-sm text-muted-foreground sm:mt-3 sm:text-base">
+        {item.summary}
+      </p>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-3 flex flex-wrap gap-2 sm:mt-4">
         {item.tags.slice(0, 3).map((t) => (
           <Tag key={t} tone="ghost">
             {t}
@@ -428,7 +430,7 @@ function OpportunityItem({ item }: { item: UIOpportunity }) {
         ))}
       </div>
 
-      <div className="mt-5 flex items-center justify-between gap-3 border-t-2 border-dashed border-foreground/15 pt-4">
+      <div className="mt-4 flex items-center justify-between gap-3 border-t-2 border-dashed border-foreground/15 pt-3 sm:mt-5 sm:pt-4">
         <StatusBadge
           label={item.deadline ? deadlineLabel(item.deadline) : "ROLLING"}
           tone={closing ? "purple" : "neutral"}
@@ -470,7 +472,7 @@ function OpportunityItem({ item }: { item: UIOpportunity }) {
 
 function AmbassadorCard({ program }: { program: UIAmbassador }) {
   return (
-    <OffsetCard as="article" interactive className="group relative flex h-full flex-col p-5 sm:p-6">
+    <OffsetCard as="article" interactive className="group relative flex h-full flex-col p-4 sm:p-6">
       <div className="flex items-start justify-between gap-3">
         <Tag tone="purple">Ambassador</Tag>
         <StatusBadge
@@ -480,7 +482,7 @@ function AmbassadorCard({ program }: { program: UIAmbassador }) {
         />
       </div>
 
-      <h3 className="mt-4 text-xl font-extrabold tracking-tight sm:text-2xl">
+      <h3 className="mt-3 text-lg font-extrabold tracking-tight sm:mt-4 sm:text-2xl">
         <Link
           to="/opportunities/$id"
           params={{ id: program.slug }}
@@ -491,17 +493,17 @@ function AmbassadorCard({ program }: { program: UIAmbassador }) {
       </h3>
       <p className="label-mono mt-1.5 text-muted-foreground">{program.organization}</p>
 
-      <p className="mt-3 line-clamp-2 text-sm text-muted-foreground sm:text-base">
+      <p className="mt-2 line-clamp-2 text-sm text-muted-foreground sm:mt-3 sm:text-base">
         {program.summary}
       </p>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-3 flex flex-wrap gap-2 sm:mt-4">
         <Tag tone="ghost">{programTypeLabel[program.type] ?? program.type}</Tag>
         {program.remote && <Tag tone="ghost">Remote</Tag>}
         {program.paid && <Tag tone="ghost">Paid</Tag>}
       </div>
 
-      <div className="mt-5 flex items-center justify-between gap-3 border-t-2 border-dashed border-foreground/15 pt-4">
+      <div className="mt-4 flex items-center justify-between gap-3 border-t-2 border-dashed border-foreground/15 pt-3 sm:mt-5 sm:pt-4">
         <span className="label-mono text-muted-foreground">
           {program.deadline ? deadlineLabel(program.deadline) : "ROLLING"}
         </span>

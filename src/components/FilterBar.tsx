@@ -43,7 +43,7 @@ export function FilterBar({
             onClick={() => onChange(o.value)}
             className={cn(
               "label-mono press shrink-0 snap-start rounded-full border-2 border-border shadow-offset-sm",
-              compact ? "min-h-8 px-3 py-1.5" : "min-h-9 px-3.5 py-2",
+              compact ? "min-h-9 px-3 py-1.5" : "min-h-9 px-3.5 py-2",
               active ? "bg-foreground text-background" : "bg-card hover:bg-lavender/50",
             )}
           >

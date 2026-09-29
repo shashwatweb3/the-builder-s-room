@@ -275,7 +275,7 @@ function EventsPage() {
                 aria-selected={active}
                 onClick={() => switchView(option.value)}
                 className={cn(
-                  "label-mono press min-h-11 shrink-0 rounded-full border-2 border-border px-5 py-2.5 shadow-offset-sm",
+                  "label-mono press min-h-9 shrink-0 rounded-full border-2 border-border px-4 py-1.5 text-[13px] shadow-offset-sm sm:min-h-11 sm:px-5 sm:py-2.5 sm:text-[0.95rem]",
                   active ? "bg-foreground text-background" : "bg-card hover:bg-lavender/50",
                 )}
               >
@@ -288,8 +288,8 @@ function EventsPage() {
           })}
         </div>
 
-        <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <p className="label-mono text-muted-foreground">{results.length} EVENTS</p>
+        <div className="mt-2.5 flex flex-wrap items-baseline gap-x-3 gap-y-1 sm:mt-3">
+          <p className="label-mono text-xs text-muted-foreground">{results.length} EVENTS</p>
           <p className="text-xs text-muted-foreground sm:text-sm">
             Events are listed by their respective organizers. Krew3 is the directory, not the host.
           </p>
@@ -305,16 +305,18 @@ function EventsPage() {
           />
         </div>
 
-        <div className="mt-10 border-t-2 border-border pt-8">
+        <div className="mt-6 border-t-2 border-border pt-5 sm:mt-10 sm:pt-8">
           <SectionLabel>{meta.eyebrow}</SectionLabel>
-          <h1 className="mt-2 text-[clamp(2rem,5vw,3rem)] leading-[0.95] font-extrabold tracking-tight">
+          <h1 className="mt-2 text-[clamp(2.375rem,10vw,2.75rem)] leading-[0.95] font-extrabold tracking-tight sm:text-[clamp(2rem,5vw,3rem)]">
             {meta.title}
           </h1>
-          <div className="mt-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-            <p className="max-w-2xl text-base text-muted-foreground sm:text-lg">{meta.copy}</p>
+          <div className="mt-2.5 flex flex-wrap items-baseline gap-x-4 gap-y-1 sm:mt-3">
+            <p className="max-w-2xl text-sm leading-snug text-muted-foreground sm:text-lg">
+              {meta.copy}
+            </p>
             {meta.note && <p className="label-mono text-muted-foreground">{meta.note}</p>}
           </div>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-2 text-xs text-muted-foreground sm:text-sm">
             Want to add an opportunity or event? DM{" "}
             <a
               href="https://t.me/Lucky_sc0"
@@ -327,12 +329,12 @@ function EventsPage() {
             on Telegram.
           </p>
 
-          <BuilderBaseCredit className="mt-6" />
+          <BuilderBaseCredit className="mt-5 sm:mt-6" />
         </div>
 
-        <div className="mt-8">
+        <div className="mt-6 sm:mt-8">
           {results.length ? (
-            <div className="grid gap-4">
+            <div className="grid gap-3 sm:gap-4">
               {results.map((e) => (
                 <EventCard key={e.id} event={e} />
               ))}

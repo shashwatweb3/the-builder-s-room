@@ -136,13 +136,13 @@ function Home() {
   const { unlocked, hydrated, error, unlock } = useKrewAccess();
 
   const gateCard = (
-    <div className="mt-10 flex justify-center">
+    <div className="mt-6 flex justify-center sm:mt-10">
       <AccessGateCard onUnlock={unlock} error={error} headingLevel="h2" />
     </div>
   );
 
   const gateLoading = (
-    <div className="mt-10 flex min-h-[220px] items-center justify-center rounded-2xl border-2 border-dashed border-border">
+    <div className="mt-6 flex min-h-[220px] items-center justify-center rounded-2xl border-2 border-dashed border-border sm:mt-10">
       <span className="label-mono text-muted-foreground">Loading…</span>
     </div>
   );
@@ -154,7 +154,7 @@ function Home() {
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
           <div className="rise-in">
             <SectionLabel>WEB3'S KREW FOR BUILDERS + CREATORS</SectionLabel>
-            <h1 className="mt-6 text-[clamp(2.5rem,7vw,5.5rem)] leading-[0.95] font-extrabold tracking-tight">
+            <h1 className="mt-4 text-[clamp(2.3rem,10vw,3rem)] leading-[0.95] font-extrabold tracking-tight sm:mt-6 sm:text-[clamp(2.5rem,7vw,5.5rem)]">
               <span className="block">Not a community.</span>
               <span className="block">
                 A{" "}
@@ -167,13 +167,13 @@ function Home() {
                 </span>
               </span>
             </h1>
-            <p className="mt-7 max-w-xl text-lg font-medium text-muted-foreground sm:text-xl">
+            <p className="mt-5 max-w-xl text-lg font-medium text-muted-foreground sm:mt-7 sm:text-xl">
               Builders and creators learning, helping, and building together.
             </p>
             <p className="mt-3 max-w-xl text-base text-muted-foreground">
               Find your people. Make something.
             </p>
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-6 flex flex-col gap-3 sm:mt-9 sm:flex-row">
               <Button asChild size="lg">
                 <a href={TELEGRAM_INVITE_URL} target="_blank" rel="noopener noreferrer">
                   Join the Krew →
@@ -190,9 +190,9 @@ function Home() {
       </section>
 
       {/* WHAT IS KREW3 */}
-      <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
+      <section className="mx-auto w-full max-w-[1400px] px-4 pt-12 sm:px-6 sm:pt-20 lg:px-10 lg:pt-28">
         <OffsetCard tone="purple" size="lg" className="grid-paper p-6 sm:p-12">
-          <p className="text-[clamp(2rem,6vw,4.5rem)] leading-[0.98] font-extrabold tracking-tight">
+          <p className="text-[clamp(1.5rem,6vw,2.25rem)] leading-[0.98] font-extrabold tracking-tight sm:text-[clamp(2rem,6vw,4.5rem)]">
             Not a community.
             <br />A <span className="text-primary-foreground">Krew.</span>
           </p>
@@ -213,11 +213,11 @@ function Home() {
       </section>
 
       {/* FEATURED PROJECTS — empty state */}
-      <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
+      <section className="mx-auto w-full max-w-[1400px] px-4 pt-12 sm:px-6 sm:pt-20 lg:px-10 lg:pt-28">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <SectionLabel>Projects</SectionLabel>
-            <h2 className="mt-4 text-[clamp(2rem,6vw,4rem)] leading-[1] font-extrabold tracking-tight">
+            <h2 className="mt-4 text-[clamp(1.75rem,7vw,2.5rem)] leading-[1] font-extrabold tracking-tight sm:text-[clamp(2rem,6vw,4rem)]">
               What people are building.
             </h2>
             <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
@@ -236,18 +236,18 @@ function Home() {
           </Link>
         </div>
 
-        <div className="mt-10 rounded-2xl border-2 border-dashed border-border bg-card/50 p-10 text-center">
+        <div className="mt-6 rounded-2xl border-2 border-dashed border-border bg-card/50 p-8 text-center sm:mt-10 sm:p-10">
           <p className="text-muted-foreground">Nothing here yet. The Krew is cooking.</p>
         </div>
       </section>
 
       {/* UPCOMING EVENTS */}
       {(!unlocked || events.length > 0) && (
-        <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
+        <section className="mx-auto w-full max-w-[1400px] px-4 pt-12 sm:px-6 sm:pt-20 lg:px-10 lg:pt-28">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <SectionLabel>DEVCON 8 • MUMBAI, INDIA 🇮🇳</SectionLabel>
-              <h2 className="mt-4 text-[clamp(2rem,6vw,4rem)] leading-[1] font-extrabold tracking-tight">
+              <h2 className="mt-4 text-[clamp(1.75rem,7vw,2.5rem)] leading-[1] font-extrabold tracking-tight sm:text-[clamp(2rem,6vw,4rem)]">
                 Don't miss the good stuff.
               </h2>
               <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
@@ -268,11 +268,11 @@ function Home() {
           </div>
 
           {unlocked ? (
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-6 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
               {events.map((e) => (
                 <article
                   key={e.id}
-                  className="group flex flex-col rounded-2xl border-2 border-border bg-card p-5 shadow-offset-sm"
+                  className="group flex flex-col rounded-2xl border-2 border-border bg-card p-4 shadow-offset-sm sm:p-5"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <Tag tone="purple">{e.is_online ? "Online" : "In person"}</Tag>
@@ -281,7 +281,7 @@ function Home() {
                       tone={e.is_online ? "live" : "neutral"}
                     />
                   </div>
-                  <h3 className="mt-4 text-xl leading-tight font-extrabold tracking-tight">
+                  <h3 className="mt-3 text-lg leading-tight font-extrabold tracking-tight sm:mt-4 sm:text-xl">
                     {e.title}
                   </h3>
                   <p className="mt-1.5 label-mono text-muted-foreground">
@@ -308,11 +308,11 @@ function Home() {
 
       {/* FEATURED OPPORTUNITIES */}
       {(!unlocked || opportunities.length > 0) && (
-        <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
+        <section className="mx-auto w-full max-w-[1400px] px-4 pt-12 sm:px-6 sm:pt-20 lg:px-10 lg:pt-28">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <SectionLabel>Opportunities</SectionLabel>
-              <h2 className="mt-4 text-[clamp(2rem,6vw,4rem)] leading-[1] font-extrabold tracking-tight">
+              <h2 className="mt-4 text-[clamp(1.75rem,7vw,2.5rem)] leading-[1] font-extrabold tracking-tight sm:text-[clamp(2rem,6vw,4rem)]">
                 Something worth applying to.
               </h2>
               <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
@@ -333,16 +333,16 @@ function Home() {
           </div>
 
           {unlocked ? (
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-6 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
               {opportunities.map((o) => (
                 <Link
                   key={o.id}
                   to="/opportunities/$id"
                   params={{ id: o.slug }}
-                  className="group flex flex-col rounded-2xl border-2 border-border bg-card p-5 shadow-offset-sm transition-colors hover:bg-lavender/30"
+                  className="group flex flex-col rounded-2xl border-2 border-border bg-card p-4 shadow-offset-sm transition-colors hover:bg-lavender/30 sm:p-5"
                 >
                   <Tag tone="purple">{o.type}</Tag>
-                  <h3 className="mt-4 text-xl leading-tight font-extrabold tracking-tight group-hover:underline">
+                  <h3 className="mt-3 text-lg leading-tight font-extrabold tracking-tight group-hover:underline sm:mt-4 sm:text-xl">
                     {o.title}
                   </h3>
                   <p className="mt-1.5 label-mono text-muted-foreground">{o.organization}</p>
@@ -370,19 +370,19 @@ function Home() {
       )}
 
       {/* JOIN */}
-      <section className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
+      <section className="mx-auto w-full max-w-[1400px] px-4 pt-12 sm:px-6 sm:pt-20 lg:px-10 lg:pt-28">
         <JoinCTA />
       </section>
 
       {/* FAQ */}
       <section
         id="faq"
-        className="mx-auto w-full max-w-[1400px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28"
+        className="mx-auto w-full max-w-[1400px] px-4 pt-12 sm:px-6 sm:pt-20 lg:px-10 lg:pt-28"
       >
         <div className="grid gap-8 lg:grid-cols-[1fr_1.4fr] lg:gap-14">
           <div>
             <SectionLabel>Questions</SectionLabel>
-            <h2 className="mt-4 text-[clamp(2rem,5vw,3.5rem)] leading-[1] font-extrabold tracking-tight">
+            <h2 className="mt-4 text-[clamp(1.75rem,7vw,2.5rem)] leading-[1] font-extrabold tracking-tight sm:text-[clamp(2rem,5vw,3.5rem)]">
               What is this place?
             </h2>
           </div>
