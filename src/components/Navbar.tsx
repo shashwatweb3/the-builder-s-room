@@ -69,17 +69,32 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
       >
         <nav
           aria-label="Main"
-          className="mx-auto flex h-16 w-full max-w-[1400px] items-center gap-3 px-4 sm:px-6 lg:h-20 lg:px-10"
+          className={cn(
+            "mx-auto flex w-full max-w-[1400px] items-center gap-3 px-4 transition-[height] duration-300 sm:px-6 lg:h-20 lg:px-10",
+            scrolled ? "h-13 sm:h-16" : "h-16",
+          )}
         >
           <Link
             to="/"
             className="flex shrink-0 items-center gap-2 rounded-full"
             aria-label="Krew3 — home"
           >
-            <span className="grid size-8 place-items-center rounded-lg border-2 border-border bg-primary text-primary-foreground shadow-offset-sm">
+            <span
+              className={cn(
+                "grid place-items-center rounded-lg border-2 border-border bg-primary text-primary-foreground shadow-offset-sm transition-all duration-300",
+                scrolled ? "size-7 lg:size-8" : "size-8",
+              )}
+            >
               <span className="font-mono text-xs font-bold">K3</span>
             </span>
-            <span className="text-lg font-extrabold tracking-tight lg:text-xl">Krew3</span>
+            <span
+              className={cn(
+                "font-extrabold tracking-tight transition-all duration-300 lg:text-xl",
+                scrolled ? "text-base" : "text-lg",
+              )}
+            >
+              Krew3
+            </span>
           </Link>
 
           <ul className="ml-6 hidden items-center gap-1 xl:flex">
@@ -144,7 +159,10 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
               type="button"
               onClick={onOpenSearch}
               aria-label="Search Krew3"
-              className="press flex min-h-10 items-center gap-2 rounded-full border-2 border-border bg-card px-3 shadow-offset-sm sm:px-3.5"
+              className={cn(
+                "press flex items-center gap-2 rounded-full border-2 border-border bg-card px-3 shadow-offset-sm transition-all duration-300 sm:px-3.5",
+                scrolled ? "min-h-9 sm:min-h-10" : "min-h-10",
+              )}
             >
               <Search className="size-4" aria-hidden />
               <span className="label-mono hidden text-muted-foreground sm:inline">⌘K</span>
@@ -174,7 +192,10 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
               onClick={() => setMenuOpen(true)}
               aria-label="Open menu"
               aria-expanded={menuOpen}
-              className="press grid size-10 place-items-center rounded-full border-2 border-border bg-card shadow-offset-sm xl:hidden"
+              className={cn(
+                "press grid place-items-center rounded-full border-2 border-border bg-card shadow-offset-sm transition-all duration-300 xl:hidden",
+                scrolled ? "size-9 sm:size-10" : "size-10",
+              )}
             >
               <Menu className="size-5" aria-hidden />
             </button>

@@ -14,7 +14,8 @@ const eventKindLabel: Record<EventKind, string> = {
   "community-call": "Community Call",
 };
 
-export function EventCard({ event }: { event: RecEvent }) {
+export function EventCard({ event, id }: { event: RecEvent; id?: string }) {
+  const cardId = id ?? `event-${event.slug}`;
   const d = new Date(event.date + "T00:00:00Z");
   const end = event.endDate ? new Date(event.endDate + "T00:00:00Z") : null;
   const month = d.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" }).toUpperCase();
@@ -33,8 +34,9 @@ export function EventCard({ event }: { event: RecEvent }) {
   return (
     <OffsetCard
       as="article"
+      id={cardId}
       size="sm"
-      className="group relative flex flex-col gap-2.5 rounded-[1.5rem] p-4 transition-[transform,box-shadow] duration-200 sm:grid sm:grid-cols-[auto_auto_minmax(0,1fr)_auto] sm:grid-rows-[auto_auto_auto] sm:[grid-template-areas:'date_tags_title_actions'_'.org_desc_actions'_'meta_meta_meta_meta'] sm:gap-x-6 sm:gap-y-2 sm:rounded-2xl sm:p-5 sm:hover:-translate-y-0.5 sm:hover:shadow-offset sm:focus-within:-translate-y-0.5 sm:focus-within:shadow-offset"
+      className="group relative flex scroll-mt-24 flex-col gap-2.5 rounded-[1.5rem] p-4 transition-[transform,box-shadow] duration-150 active:translate-y-0.5 active:shadow-offset-sm sm:grid sm:scroll-mt-28 sm:grid-cols-[auto_auto_minmax(0,1fr)_auto] sm:grid-rows-[auto_auto_auto] sm:[grid-template-areas:'date_tags_title_actions'_'.org_desc_actions'_'meta_meta_meta_meta'] sm:gap-x-6 sm:gap-y-2 sm:rounded-2xl sm:p-5 sm:duration-200 sm:hover:-translate-y-0.5 sm:hover:shadow-offset sm:focus-within:-translate-y-0.5 sm:focus-within:shadow-offset"
     >
       <div className="order-1 flex items-start justify-between gap-3 sm:contents">
         <div
@@ -81,13 +83,13 @@ export function EventCard({ event }: { event: RecEvent }) {
         </p>
       )}
 
-      <p className="order-4 line-clamp-2 text-sm leading-snug text-muted-foreground sm:[grid-area:desc] sm:leading-relaxed">
-        {event.summary}
-      </p>
-
-      <p className="order-5 label-mono text-muted-foreground sm:[grid-area:meta]">
+      <p className="order-4 label-mono line-clamp-2 text-muted-foreground sm:[grid-area:meta]">
         <span className="sm:hidden">{metaMobile}</span>
         <span className="hidden sm:inline">{metaDesktop}</span>
+      </p>
+
+      <p className="order-5 line-clamp-2 text-sm leading-snug text-muted-foreground sm:[grid-area:desc] sm:leading-relaxed">
+        {event.summary}
       </p>
 
       <div className="order-6 flex items-center justify-between gap-3 sm:[grid-area:actions] sm:flex-col sm:items-end sm:gap-2 sm:justify-start">

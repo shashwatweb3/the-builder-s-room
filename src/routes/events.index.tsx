@@ -1,8 +1,9 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { createServerClient } from "@supabase/ssr";
 import { useMemo, useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { AccessGate } from "@/components/AccessGate";
 import { BuilderBaseCredit } from "@/components/BuilderBaseCredit";
 import { SectionLabel } from "@/components/SectionLabel";
@@ -10,7 +11,9 @@ import { EventCard } from "@/components/EventCard";
 import { EmptyState } from "@/components/EmptyState";
 import { FilterBar } from "@/components/FilterBar";
 import { JoinCTA } from "@/components/JoinCTA";
+import { MobileFilterSheet } from "@/components/MobileFilterSheet";
 import { VenueEntryCard } from "@/components/VenueEntryCard";
+import { formatShortDate, formatShortDateRange, formatTimeRange } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { RecEvent } from "@/data/types";
 
@@ -211,6 +214,7 @@ function EventsPage() {
   const activeRegion = view === "devcon" ? "mumbai" : "goa";
 
   const [filter, setFilter] = useState<EventFilter>("all");
+  const [filterOpen, setFilterOpen] = useState(false);
 
   const switchView = (next: EventView) => {
     setFilter("all");
@@ -253,6 +257,35 @@ function EventsPage() {
     [scoped, filter],
   );
 
+  const nextUp = useMemo(() => {
+    const today = new Date();
+    const todayUTC = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+    return (
+      results.find((e) => {
+        const end = e.endDate
+          ? new Date(e.endDate + "T00:00:00Z").getTime()
+          : new Date(e.date + "T00:00:00Z").getTime();
+        return end >= todayUTC;
+      }) ?? results[0]
+    );
+  }, [results]);
+
+  const dateRail = useMemo(() => {
+    const seen = new Map<string, string>();
+    for (const e of results) {
+      if (!seen.has(e.date)) seen.set(e.date, e.slug);
+    }
+    return [...seen.entries()];
+  }, [results]);
+
+  const jumpToDate = (slug: string) => {
+    document
+      .getElementById(`event-${slug}`)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const activeFilterLabel = FILTER_OPTIONS.find((o) => o.value === filter)?.label ?? "FILTER";
+
   const viewCounts = useMemo(() => {
     const goa = events.filter((e) => e.region === "goa").length;
     return {
@@ -264,7 +297,12 @@ function EventsPage() {
   return (
     <AccessGate>
       <section className="mx-auto w-full max-w-[1400px] px-4 py-6 sm:px-6 lg:px-10">
-        <div role="tablist" aria-label="Event view" className="flex flex-wrap gap-2">
+        {/* Mobile segmented control */}
+        <div
+          role="tablist"
+          aria-label="Event view"
+          className="flex gap-1 rounded-full border-2 border-border bg-card p-1 shadow-offset-sm sm:hidden"
+        >
           {EVENT_VIEWS.map((option) => {
             const active = view === option.value;
             return (
@@ -275,7 +313,31 @@ function EventsPage() {
                 aria-selected={active}
                 onClick={() => switchView(option.value)}
                 className={cn(
-                  "label-mono press min-h-9 shrink-0 rounded-full border-2 border-border px-4 py-1.5 text-[13px] shadow-offset-sm sm:min-h-11 sm:px-5 sm:py-2.5 sm:text-[0.95rem]",
+                  "label-mono min-h-9 flex-1 rounded-full px-3 text-[12px] transition-colors duration-200",
+                  active
+                    ? "bg-foreground text-background"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {option.label} · {viewCounts[option.value]}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Desktop tabs */}
+        <div role="tablist" aria-label="Event view" className="hidden flex-wrap gap-2 sm:flex">
+          {EVENT_VIEWS.map((option) => {
+            const active = view === option.value;
+            return (
+              <button
+                key={option.value}
+                role="tab"
+                type="button"
+                aria-selected={active}
+                onClick={() => switchView(option.value)}
+                className={cn(
+                  "label-mono press min-h-11 shrink-0 rounded-full border-2 border-border px-5 py-2.5 text-[0.95rem] shadow-offset-sm",
                   active ? "bg-foreground text-background" : "bg-card hover:bg-lavender/50",
                 )}
               >
@@ -288,14 +350,35 @@ function EventsPage() {
           })}
         </div>
 
-        <div className="mt-2.5 flex flex-wrap items-baseline gap-x-3 gap-y-1 sm:mt-3">
+        {/* Desktop count + note */}
+        <div className="mt-3 hidden flex-wrap items-baseline gap-x-3 gap-y-1 sm:flex">
           <p className="label-mono text-xs text-muted-foreground">{results.length} EVENTS</p>
           <p className="text-xs text-muted-foreground sm:text-sm">
             Events are listed by their respective organizers. Krew3 is the directory, not the host.
           </p>
         </div>
 
-        <div className="mt-2.5">
+        {/* Mobile count + filter trigger */}
+        <button
+          type="button"
+          onClick={() => setFilterOpen(true)}
+          aria-label="Open filters"
+          className="press mt-2.5 flex min-h-11 w-full items-center justify-between gap-3 rounded-full border-2 border-border bg-card px-4 py-2 shadow-offset-sm sm:hidden"
+        >
+          <span className="label-mono text-[13px]">{results.length} EVENTS</span>
+          <span className="label-mono flex items-center gap-1.5 text-[13px]">
+            {activeFilterLabel}
+            <span aria-hidden className="text-muted-foreground">
+              ▾
+            </span>
+          </span>
+        </button>
+        <p className="mt-2 text-[11px] leading-snug text-muted-foreground sm:hidden">
+          Events are listed by their respective organizers. Krew3 is the directory, not the host.
+        </p>
+
+        {/* Desktop filter pills */}
+        <div className="mt-2.5 hidden sm:block">
           <FilterBar
             compact
             options={options}
@@ -305,9 +388,9 @@ function EventsPage() {
           />
         </div>
 
-        <div className="mt-6 border-t-2 border-border pt-5 sm:mt-10 sm:pt-8">
+        <div className="mt-5 border-t-2 border-border pt-4 sm:mt-10 sm:pt-8">
           <SectionLabel>{meta.eyebrow}</SectionLabel>
-          <h1 className="mt-2 text-[clamp(2.375rem,10vw,2.75rem)] leading-[0.95] font-extrabold tracking-tight sm:text-[clamp(2rem,5vw,3rem)]">
+          <h1 className="mt-2 text-[clamp(2rem,9.5vw,2.5rem)] leading-[0.95] font-extrabold tracking-tight sm:text-[clamp(2rem,5vw,3rem)]">
             {meta.title}
           </h1>
           <div className="mt-2.5 flex flex-wrap items-baseline gap-x-4 gap-y-1 sm:mt-3">
@@ -332,12 +415,57 @@ function EventsPage() {
           <BuilderBaseCredit className="mt-5 sm:mt-6" />
         </div>
 
-        <div className="mt-6 sm:mt-8">
+        <div className="mt-5 sm:mt-8">
           {results.length ? (
-            <div className="grid gap-3 sm:gap-4">
-              {results.map((e) => (
-                <EventCard key={e.id} event={e} />
-              ))}
+            <div className="flex flex-col gap-3 sm:gap-4">
+              {nextUp && (
+                <Link
+                  to="/events/$id"
+                  params={{ id: nextUp.slug }}
+                  className="group flex items-center gap-3 rounded-2xl border-2 border-border bg-foreground p-4 text-background shadow-offset-sm transition-transform duration-150 active:translate-y-0.5 active:shadow-offset-sm sm:hidden"
+                >
+                  <span className="label-mono grid size-11 shrink-0 place-items-center rounded-xl border-2 border-background/20 bg-background/10 text-[10px] text-background/80">
+                    NEXT
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="label-mono block text-[10px] text-background/70">
+                      {formatShortDateRange(nextUp.date, nextUp.endDate)} ·{" "}
+                      {formatTimeRange(nextUp.startTime, nextUp.endTime)}
+                    </span>
+                    <span className="mt-0.5 block truncate text-base font-extrabold tracking-tight">
+                      {nextUp.name}
+                    </span>
+                  </span>
+                  <ArrowRight
+                    className="size-5 shrink-0 transition-transform duration-150 group-hover:translate-x-1"
+                    aria-hidden
+                  />
+                </Link>
+              )}
+
+              {dateRail.length > 1 && (
+                <div
+                  className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 sm:hidden"
+                  aria-label="Jump to a date"
+                >
+                  {dateRail.map(([date, slug]) => (
+                    <button
+                      key={date}
+                      type="button"
+                      onClick={() => jumpToDate(slug)}
+                      className="label-mono press shrink-0 snap-start rounded-full border-2 border-border bg-card px-3 py-1.5 text-[11px] shadow-offset-sm"
+                    >
+                      {formatShortDate(date).toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <div className="grid gap-3 sm:gap-4">
+                {results.map((e) => (
+                  <EventCard key={e.id} event={e} id={`event-${e.slug}`} />
+                ))}
+              </div>
             </div>
           ) : (
             <EmptyState
@@ -363,6 +491,14 @@ function EventsPage() {
       <section className="mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-10">
         <JoinCTA />
       </section>
+
+      <MobileFilterSheet
+        open={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        options={options}
+        value={filter}
+        onSelect={(v) => setFilter(v as EventFilter)}
+      />
     </AccessGate>
   );
 }
