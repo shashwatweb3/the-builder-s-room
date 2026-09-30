@@ -242,7 +242,7 @@ function Home() {
       </section>
 
       {/* UPCOMING EVENTS */}
-      {(!unlocked || events.length > 0) && (
+      {events.length > 0 && (
         <section className="mx-auto w-full max-w-[1400px] px-4 pt-12 sm:px-6 sm:pt-20 lg:px-10 lg:pt-28">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
@@ -267,42 +267,36 @@ function Home() {
             </Link>
           </div>
 
-          {unlocked ? (
-            <div className="mt-6 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
-              {events.map((e) => (
-                <article
-                  key={e.id}
-                  className="group flex flex-col rounded-2xl border-2 border-border bg-card p-4 shadow-offset-sm sm:p-5"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <Tag tone="purple">{e.is_online ? "Online" : "In person"}</Tag>
-                    <StatusBadge
-                      label={e.is_online ? "Online" : "In person"}
-                      tone={e.is_online ? "live" : "neutral"}
-                    />
-                  </div>
-                  <h3 className="mt-3 text-lg leading-tight font-extrabold tracking-tight sm:mt-4 sm:text-xl">
-                    {e.title}
-                  </h3>
-                  <p className="mt-1.5 label-mono text-muted-foreground">
-                    {new Date(e.event_date).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </p>
-                  <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{e.description}</p>
-                  {e.location && (
-                    <p className="mt-1.5 label-mono text-muted-foreground">{e.location}</p>
-                  )}
-                </article>
-              ))}
-            </div>
-          ) : hydrated ? (
-            gateCard
-          ) : (
-            gateLoading
-          )}
+          <div className="mt-6 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
+            {events.map((e) => (
+              <article
+                key={e.id}
+                className="group flex flex-col rounded-2xl border-2 border-border bg-card p-4 shadow-offset-sm sm:p-5"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <Tag tone="purple">{e.is_online ? "Online" : "In person"}</Tag>
+                  <StatusBadge
+                    label={e.is_online ? "Online" : "In person"}
+                    tone={e.is_online ? "live" : "neutral"}
+                  />
+                </div>
+                <h3 className="mt-3 text-lg leading-tight font-extrabold tracking-tight sm:mt-4 sm:text-xl">
+                  {e.title}
+                </h3>
+                <p className="mt-1.5 label-mono text-muted-foreground">
+                  {new Date(e.event_date).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </p>
+                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{e.description}</p>
+                {e.location && (
+                  <p className="mt-1.5 label-mono text-muted-foreground">{e.location}</p>
+                )}
+              </article>
+            ))}
+          </div>
         </section>
       )}
 

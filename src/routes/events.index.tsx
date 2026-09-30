@@ -3,7 +3,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { createServerClient } from "@supabase/ssr";
 import { useMemo, useState } from "react";
-import { AccessGate } from "@/components/AccessGate";
 import { BuilderBaseCredit } from "@/components/BuilderBaseCredit";
 import { SectionLabel } from "@/components/SectionLabel";
 import { EventCard } from "@/components/EventCard";
@@ -295,7 +294,7 @@ function EventsPage() {
   }, [events]);
 
   return (
-    <AccessGate>
+    <>
       <section className="mx-auto w-full max-w-[1400px] px-4 py-6 sm:px-6 lg:px-10">
         <div className="lg:sticky lg:top-[82px] lg:z-40 lg:-mx-10 lg:border-b-2 lg:border-border lg:bg-background lg:px-10 lg:py-3">
           {/* Mobile segmented control */}
@@ -527,6 +526,6 @@ function EventsPage() {
         value={filter}
         onSelect={(v) => setFilter(v as EventFilter)}
       />
-    </AccessGate>
+    </>
   );
 }
