@@ -10,6 +10,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { FilterBar } from "@/components/FilterBar";
 import { JoinCTA } from "@/components/JoinCTA";
 import { MobileFilterSheet } from "@/components/MobileFilterSheet";
+import { EventsTelegramPopup } from "@/components/EventsTelegramPopup";
 import { VenueEntryCard } from "@/components/VenueEntryCard";
 import { formatShortDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -526,6 +527,8 @@ function EventsPage() {
         value={filter}
         onSelect={(v) => setFilter(v as EventFilter)}
       />
+
+      <EventsTelegramPopup />
     </>
   );
 }
