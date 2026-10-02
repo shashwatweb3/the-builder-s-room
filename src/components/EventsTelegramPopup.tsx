@@ -57,35 +57,35 @@ export function EventsTelegramPopup() {
       data-testid="events-telegram-popup"
       role="complementary"
       aria-label="Join the Krew3 Telegram community"
-      className="rise-in pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:inset-x-auto sm:right-5 sm:bottom-5 sm:justify-end sm:px-0 sm:pb-0"
+      className="rise-in pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center px-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:inset-x-auto sm:right-4 sm:bottom-4 sm:justify-end sm:px-0 sm:pb-0"
     >
-      <div className="pointer-events-auto relative w-[calc(100%-24px)] max-w-[360px] rounded-2xl border-2 border-border bg-background p-4 shadow-offset-lg">
+      <div className="pointer-events-auto relative mx-auto w-[calc(100%-24px)] max-w-[340px] rounded-2xl border-2 border-border bg-background p-3 shadow-offset sm:w-[320px]">
         <button
           type="button"
           onClick={() => setOpen(false)}
           aria-label="Dismiss the Krew3 Telegram popup"
-          className="absolute top-2.5 right-2.5 inline-flex size-9 items-center justify-center rounded-full border-2 border-border bg-card text-foreground transition-colors hover:bg-lavender focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+          className="absolute top-1.5 right-1.5 inline-flex size-9 items-center justify-center rounded-full border-2 border-border bg-card text-foreground transition-colors hover:bg-lavender focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
         >
-          <X className="size-3.5" aria-hidden />
+          <X className="size-3" aria-hidden />
         </button>
 
-        <SectionLabel dot={false} className="pr-11 leading-none">
+        <SectionLabel dot={false} className="pr-10 text-[0.6rem] leading-none">
           Krew3 Community
         </SectionLabel>
 
-        <h2 className="mt-1 text-[0.9rem] leading-tight font-extrabold tracking-tight">
+        <h2 className="mt-1.5 text-[1.0625rem] leading-tight font-extrabold tracking-tight">
           Want the good stuff first?
         </h2>
 
-        <p className="mt-0.5 text-[0.75rem] leading-tight text-muted-foreground">
-          Hackathons, residencies, jobs &amp; more. Get the latest updates in the Krew.
+        <p className="mt-1 text-[0.8125rem] leading-snug text-muted-foreground">
+          Hackathons, jobs &amp; more.
         </p>
 
         <Button
           asChild
           variant="soft"
-          size="md"
-          className="mt-1.5 w-full bg-lavender py-0 text-[0.85rem] font-semibold"
+          size="sm"
+          className="mt-2 h-9 w-full bg-lavender text-[0.8125rem] font-semibold"
         >
           <a
             href={TELEGRAM_CTA_URL}
