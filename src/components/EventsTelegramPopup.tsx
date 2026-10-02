@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "@/components/Button";
 import { SectionLabel } from "@/components/SectionLabel";
 
@@ -57,30 +57,36 @@ export function EventsTelegramPopup() {
       data-testid="events-telegram-popup"
       role="complementary"
       aria-label="Join the Krew3 Telegram community"
-      className="rise-in pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center px-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:inset-x-auto sm:right-6 sm:bottom-6 sm:justify-end sm:px-0 sm:pb-0"
+      className="rise-in pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:inset-x-auto sm:right-5 sm:bottom-5 sm:justify-end sm:px-0 sm:pb-0"
     >
-      <div className="pointer-events-auto relative w-full max-w-[360px] rounded-2xl border-2 border-border bg-background p-5 shadow-offset-lg sm:w-[360px]">
+      <div className="pointer-events-auto relative w-[calc(100%-24px)] max-w-[360px] rounded-2xl border-2 border-border bg-background p-4 shadow-offset-lg">
         <button
           type="button"
           onClick={() => setOpen(false)}
           aria-label="Dismiss the Krew3 Telegram popup"
-          className="absolute top-3 right-3 inline-flex size-10 items-center justify-center rounded-full border-2 border-border bg-card text-foreground transition-colors hover:bg-lavender focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+          className="absolute top-2.5 right-2.5 inline-flex size-9 items-center justify-center rounded-full border-2 border-border bg-card text-foreground transition-colors hover:bg-lavender focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
         >
-          <X className="size-4" aria-hidden />
+          <X className="size-3.5" aria-hidden />
         </button>
 
-        <SectionLabel dot={false}>Krew3 Community</SectionLabel>
+        <SectionLabel dot={false} className="pr-11 leading-none">
+          Krew3 Community
+        </SectionLabel>
 
-        <h2 className="mt-2 pr-8 text-lg leading-tight font-extrabold tracking-tight">
-          Want the updates first?
+        <h2 className="mt-1 text-[0.9rem] leading-tight font-extrabold tracking-tight">
+          Want the good stuff first?
         </h2>
 
-        <p className="mt-2 pr-8 text-sm leading-snug text-muted-foreground">
-          Join the Krew3 Telegram community for exclusive updates on hackathons, residencies, jobs,
-          opportunities and more.
+        <p className="mt-0.5 text-[0.75rem] leading-tight text-muted-foreground">
+          Hackathons, residencies, jobs &amp; more. Get the latest updates in the Krew.
         </p>
 
-        <Button asChild size="md" className="mt-4 w-full">
+        <Button
+          asChild
+          variant="soft"
+          size="md"
+          className="mt-1.5 w-full bg-lavender py-0 text-[0.85rem] font-semibold"
+        >
           <a
             href={TELEGRAM_CTA_URL}
             target="_blank"
@@ -88,11 +94,8 @@ export function EventsTelegramPopup() {
             aria-label="Join the Krew on Telegram (opens in a new tab)"
           >
             Join the Krew →
-            <ArrowRight className="size-4" aria-hidden />
           </a>
         </Button>
-
-        <p className="label-mono mt-3 text-center text-muted-foreground">Be a member of Krew3.</p>
       </div>
     </div>
   );
