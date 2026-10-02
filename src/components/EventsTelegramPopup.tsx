@@ -4,15 +4,35 @@ import { Button } from "@/components/Button";
 import { SectionLabel } from "@/components/SectionLabel";
 
 const TELEGRAM_CTA_URL = "https://t.me/+wWXPenW-mUNjNmI1";
-const POPUP_INTERVAL_MS = 5000;
+const POPUP_DELAY_MS = 5000;
+const POPUP_SHOWN_KEY = "krew3_events_community_popup_shown";
+
+function readPopupShown(): boolean {
+  try {
+    return window.sessionStorage.getItem(POPUP_SHOWN_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function writePopupShown() {
+  try {
+    window.sessionStorage.setItem(POPUP_SHOWN_KEY, "1");
+  } catch {
+    /* storage unavailable */
+  }
+}
 
 /**
  * Non-blocking Telegram community nudge for the Krew3 Events page.
  *
- * Local to /events: it shows after a 5s dwell, reappears 5s after being
- * closed, never stacks, and unmounts (clearing its timer) as soon as the
- * visitor navigates away. It is a fixed, non-modal aside — pointer-events are
- * only enabled on the card itself so the page underneath stays scrollable and
+ * Shows exactly ONCE per browser session, 5s after the visitor enters
+ * /events. A sessionStorage flag is set the moment it first appears, so it
+ * never returns after being closed, after rerenders or remounts, when
+ * switching between the Devcon and Pre-Devcon views, or on refresh. The
+ * single timeout is cleared on unmount so it stops as soon as the visitor
+ * navigates away. It is a fixed, non-modal aside — pointer-events are only
+ * enabled on the card itself so the page underneath stays scrollable and
  * fully usable. The URL is intentionally local rather than the shared
  * TELEGRAM_INVITE_URL so other pages keep their existing invite link.
  */
@@ -20,10 +40,14 @@ export function EventsTelegramPopup() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const timer = window.setInterval(() => {
+    if (readPopupShown()) return;
+
+    const timer = window.setTimeout(() => {
+      writePopupShown();
       setOpen(true);
-    }, POPUP_INTERVAL_MS);
-    return () => window.clearInterval(timer);
+    }, POPUP_DELAY_MS);
+
+    return () => window.clearTimeout(timer);
   }, []);
 
   if (!open) return null;
