@@ -5,6 +5,7 @@ const LUCKOW_LOGO_SRC = "/assets/lucknow.jpg";
 const BUILDER_BASE_URL = "https://link3.to/builderbase";
 const LUCKOW_DAO_URL: string | null = null;
 const DEVCON_TICKETS_URL = "https://tickets.devcon.org/";
+const DEVCON_LOGO_SRC = "/assets/devcon-logo.webp";
 
 export function BuilderBaseCredit({ className }: { className?: string }) {
   return (
@@ -76,8 +77,16 @@ export function BuilderBaseCredit({ className }: { className?: string }) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Get your Devcon 8 ticket"
-          className="flex min-h-[95px] w-[100px] flex-col items-center justify-center gap-1.5 rounded-xl border border-ink bg-card p-2.5 shadow-offset-sm transition-[transform,box-shadow] duration-150 ease-out hover:-translate-y-0.5 hover:shadow-offset-lg active:translate-y-0.5 active:shadow-offset-sm sm:min-h-[104px] sm:w-[110px] sm:gap-2 sm:p-3"
+          className="flex min-h-[95px] w-[100px] flex-col items-center justify-center gap-[3px] rounded-xl border border-ink bg-card p-2.5 shadow-offset-sm transition-[transform,box-shadow] duration-150 ease-out hover:-translate-y-0.5 hover:shadow-offset-lg active:translate-y-0.5 active:shadow-offset-sm sm:min-h-[104px] sm:w-[110px] sm:gap-1 sm:p-3"
         >
+          <img
+            src={DEVCON_LOGO_SRC}
+            alt="Devcon"
+            width={508}
+            height={224}
+            loading="lazy"
+            className="h-4 w-auto max-w-full object-contain sm:h-5"
+          />
           <span className="label-mono text-[9px] uppercase tracking-[0.16em] text-lavender-deep">
             Devcon 8
           </span>
