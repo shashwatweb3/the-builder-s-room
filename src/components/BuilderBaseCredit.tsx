@@ -4,6 +4,7 @@ const BB_LOGO_SRC = "/assets/bb-logo-light.svg";
 const LUCKOW_LOGO_SRC = "/assets/lucknow.jpg";
 const BUILDER_BASE_URL = "https://link3.to/builderbase";
 const LUCKOW_DAO_URL: string | null = null;
+const DEVCON_TICKETS_URL = "https://tickets.devcon.org/";
 
 export function BuilderBaseCredit({ className }: { className?: string }) {
   return (
@@ -11,7 +12,7 @@ export function BuilderBaseCredit({ className }: { className?: string }) {
       <span className="label-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
         Supported by
       </span>
-      <div className="flex items-stretch gap-3 sm:gap-4">
+      <div className="flex flex-wrap items-stretch justify-center gap-3 sm:gap-4">
         <a
           href={BUILDER_BASE_URL}
           target="_blank"
@@ -70,6 +71,23 @@ export function BuilderBaseCredit({ className }: { className?: string }) {
             </span>
           </div>
         )}
+        <a
+          href={DEVCON_TICKETS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Get your Devcon 8 ticket"
+          className="flex min-h-[95px] w-[100px] flex-col items-center justify-center gap-1.5 rounded-xl border border-ink bg-card p-2.5 shadow-offset-sm transition-[transform,box-shadow] duration-150 ease-out hover:-translate-y-0.5 hover:shadow-offset-lg active:translate-y-0.5 active:shadow-offset-sm sm:min-h-[104px] sm:w-[110px] sm:gap-2 sm:p-3"
+        >
+          <span className="label-mono text-[9px] uppercase tracking-[0.16em] text-lavender-deep">
+            Devcon 8
+          </span>
+          <span className="text-center text-[9.5px] leading-[1.15] font-semibold text-foreground sm:text-[10.5px]">
+            Don&apos;t have your Devcon ticket?
+          </span>
+          <span className="text-center text-[8.5px] font-semibold leading-[1.15] text-foreground sm:text-[9.5px]">
+            Get your ticket →
+          </span>
+        </a>
       </div>
     </div>
   );
