@@ -6,6 +6,8 @@ import { Dot } from "./StatusBadge";
 import { MobileMenu } from "./MobileMenu";
 import { useSaved } from "@/lib/saved";
 import { TELEGRAM_INVITE_URL } from "@/lib/community";
+import { useMemberSession } from "@/lib/member-auth";
+import { isMemberNavRoute } from "@/lib/krew-profile";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -15,6 +17,7 @@ const navLinks = [
 ] as const;
 
 const moreLinks = [
+  { to: "/profile", label: "Krew ID" },
   { to: "/about", label: "About" },
   { to: "/guidelines", label: "Community Guidelines" },
   { to: "/", hash: "faq", label: "FAQ" },
@@ -27,6 +30,12 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLLIElement>(null);
   const { count, hydrated } = useSaved();
+  const { user, loading: authLoading } = useMemberSession();
+
+  // Member routes stay hidden until we actually know a session exists, so
+  // logged-out visitors never see Krew ID controls. Public nav is untouched.
+  const memberLinksVisible = !authLoading && !!user;
+  const visibleMoreLinks = moreLinks.filter((l) => !isMemberNavRoute(l.to) || memberLinksVisible);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
@@ -134,7 +143,7 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
                   aria-label="More"
                   className="rise-in absolute left-0 top-full mt-2 w-64 rounded-2xl border-2 border-border bg-card p-2 shadow-offset"
                 >
-                  {moreLinks.map((l) => (
+                  {visibleMoreLinks.map((l) => (
                     <Link
                       key={l.to}
                       to={l.to}
@@ -203,7 +212,11 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
         </nav>
       </header>
 
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <MobileMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        memberLinksVisible={memberLinksVisible}
+      />
     </>
   );
 }

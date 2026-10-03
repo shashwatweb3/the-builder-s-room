@@ -5,6 +5,7 @@ const navItems = [
   { to: "/admin" as const, label: "Dashboard" as const, exact: true as const },
   { to: "/admin/events" as const, label: "Events" as const, exact: false as const },
   { to: "/admin/opportunities" as const, label: "Opportunities" as const, exact: false as const },
+  { to: "/admin/members" as const, label: "Members" as const, exact: false as const },
 ];
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {

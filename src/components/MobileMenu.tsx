@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { Button } from "./Button";
 import { Dot } from "./StatusBadge";
 import { TELEGRAM_INVITE_URL } from "@/lib/community";
+import { isMemberNavRoute } from "@/lib/krew-profile";
 
 const items = [
   { to: "/projects", label: "Projects" },
@@ -12,13 +13,25 @@ const items = [
 ] as const;
 
 const secondary = [
+  { to: "/profile", label: "Krew ID" },
   { to: "/about", label: "About" },
   { to: "/guidelines", label: "Community Guidelines" },
   { to: "/", hash: "faq", label: "FAQ" },
   { to: "/contact", label: "Contact" },
 ] as const;
 
-export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
+type MobileMenuProps = {
+  open: boolean;
+  onClose: () => void;
+  /** Owned by Navbar so we do not subscribe to auth twice. */
+  memberLinksVisible: boolean;
+};
+
+export function MobileMenu({ open, onClose, memberLinksVisible }: MobileMenuProps) {
+  const visibleSecondary = secondary.filter(
+    (item) => !isMemberNavRoute(item.to) || memberLinksVisible,
+  );
+
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -87,7 +100,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
 
           <p className="label-mono mt-6 mb-2 text-muted-foreground">More</p>
           <ul className="space-y-1">
-            {secondary.map((item) => (
+            {visibleSecondary.map((item) => (
               <li key={item.to}>
                 <Link
                   to={item.to}

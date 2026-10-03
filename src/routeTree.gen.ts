@@ -10,17 +10,21 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UsernameRouteImport } from './routes/$username'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as GuidelinesRouteImport } from './routes/guidelines'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as RoomRouteImport } from './routes/room'
 import { Route as SavedRouteImport } from './routes/saved'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SubmitRouteImport } from './routes/submit'
 import { Route as XCardTestRouteImport } from './routes/x-card-test'
 import { Route as XCardTest2RouteImport } from './routes/x-card-test-2'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminEventsRouteImport } from './routes/admin.events'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminMembersRouteImport } from './routes/admin.members'
 import { Route as AdminOpportunitiesRouteImport } from './routes/admin.opportunities'
 import { Route as AmbassadorsIndexRouteImport } from './routes/ambassadors.index'
 import { Route as AmbassadorsIdRouteImport } from './routes/ambassadors.$id'
@@ -30,6 +34,8 @@ import { Route as EventsIndexRouteImport } from './routes/events.index'
 import { Route as EventsIdRouteImport } from './routes/events.$id'
 import { Route as OpportunitiesIndexRouteImport } from './routes/opportunities.index'
 import { Route as OpportunitiesIdRouteImport } from './routes/opportunities.$id'
+import { Route as ProfileIndexRouteImport } from './routes/profile.index'
+import { Route as ProfileCardRouteImport } from './routes/profile.card'
 import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
 import { Route as VenuesIndexRouteImport } from './routes/venues.index'
@@ -42,6 +48,11 @@ import { Route as AdminOpportunitiesIdEditRouteImport } from './routes/admin.opp
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsernameRoute = UsernameRouteImport.update({
+  id: '/$username',
+  path: '/$username',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -59,6 +70,11 @@ const GuidelinesRoute = GuidelinesRouteImport.update({
   path: '/guidelines',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RoomRoute = RoomRouteImport.update({
   id: '/room',
   path: '/room',
@@ -67,6 +83,11 @@ const RoomRoute = RoomRouteImport.update({
 const SavedRoute = SavedRouteImport.update({
   id: '/saved',
   path: '/saved',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SubmitRoute = SubmitRouteImport.update({
@@ -97,6 +118,11 @@ const AdminEventsRoute = AdminEventsRouteImport.update({
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin/login',
   path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminMembersRoute = AdminMembersRouteImport.update({
+  id: '/admin/members',
+  path: '/admin/members',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminOpportunitiesRoute = AdminOpportunitiesRouteImport.update({
@@ -144,6 +170,16 @@ const OpportunitiesIdRoute = OpportunitiesIdRouteImport.update({
   path: '/opportunities/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileIndexRoute = ProfileIndexRouteImport.update({
+  id: '/profile/',
+  path: '/profile/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileCardRoute = ProfileCardRouteImport.update({
+  id: '/profile/card',
+  path: '/profile/card',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
   id: '/projects/',
   path: '/projects/',
@@ -188,21 +224,26 @@ const AdminOpportunitiesIdEditRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$username': typeof UsernameRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/guidelines': typeof GuidelinesRoute
+  '/login': typeof LoginRoute
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
+  '/signup': typeof SignupRoute
   '/submit': typeof SubmitRoute
   '/x-card-test': typeof XCardTestRoute
   '/x-card-test-2': typeof XCardTest2Route
   '/admin/events': typeof AdminEventsRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
+  '/admin/members': typeof AdminMembersRoute
   '/admin/opportunities': typeof AdminOpportunitiesRouteWithChildren
   '/ambassadors/$id': typeof AmbassadorsIdRoute
   '/builders/$id': typeof BuildersIdRoute
   '/events/$id': typeof EventsIdRoute
   '/opportunities/$id': typeof OpportunitiesIdRoute
+  '/profile/card': typeof ProfileCardRoute
   '/projects/$id': typeof ProjectsIdRoute
   '/venues/$slug': typeof VenuesSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -210,6 +251,7 @@ export interface FileRoutesByFullPath {
   '/builders/': typeof BuildersIndexRoute
   '/events/': typeof EventsIndexRoute
   '/opportunities/': typeof OpportunitiesIndexRoute
+  '/profile/': typeof ProfileIndexRoute
   '/projects/': typeof ProjectsIndexRoute
   '/venues/': typeof VenuesIndexRoute
   '/admin/events/new': typeof AdminEventsNewRoute
@@ -219,21 +261,26 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$username': typeof UsernameRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/guidelines': typeof GuidelinesRoute
+  '/login': typeof LoginRoute
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
+  '/signup': typeof SignupRoute
   '/submit': typeof SubmitRoute
   '/x-card-test': typeof XCardTestRoute
   '/x-card-test-2': typeof XCardTest2Route
   '/admin/events': typeof AdminEventsRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
+  '/admin/members': typeof AdminMembersRoute
   '/admin/opportunities': typeof AdminOpportunitiesRouteWithChildren
   '/ambassadors/$id': typeof AmbassadorsIdRoute
   '/builders/$id': typeof BuildersIdRoute
   '/events/$id': typeof EventsIdRoute
   '/opportunities/$id': typeof OpportunitiesIdRoute
+  '/profile/card': typeof ProfileCardRoute
   '/projects/$id': typeof ProjectsIdRoute
   '/venues/$slug': typeof VenuesSlugRoute
   '/admin': typeof AdminIndexRoute
@@ -241,6 +288,7 @@ export interface FileRoutesByTo {
   '/builders': typeof BuildersIndexRoute
   '/events': typeof EventsIndexRoute
   '/opportunities': typeof OpportunitiesIndexRoute
+  '/profile': typeof ProfileIndexRoute
   '/projects': typeof ProjectsIndexRoute
   '/venues': typeof VenuesIndexRoute
   '/admin/events/new': typeof AdminEventsNewRoute
@@ -251,21 +299,26 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$username': typeof UsernameRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/guidelines': typeof GuidelinesRoute
+  '/login': typeof LoginRoute
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
+  '/signup': typeof SignupRoute
   '/submit': typeof SubmitRoute
   '/x-card-test': typeof XCardTestRoute
   '/x-card-test-2': typeof XCardTest2Route
   '/admin/events': typeof AdminEventsRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
+  '/admin/members': typeof AdminMembersRoute
   '/admin/opportunities': typeof AdminOpportunitiesRouteWithChildren
   '/ambassadors/$id': typeof AmbassadorsIdRoute
   '/builders/$id': typeof BuildersIdRoute
   '/events/$id': typeof EventsIdRoute
   '/opportunities/$id': typeof OpportunitiesIdRoute
+  '/profile/card': typeof ProfileCardRoute
   '/projects/$id': typeof ProjectsIdRoute
   '/venues/$slug': typeof VenuesSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -273,6 +326,7 @@ export interface FileRoutesById {
   '/builders/': typeof BuildersIndexRoute
   '/events/': typeof EventsIndexRoute
   '/opportunities/': typeof OpportunitiesIndexRoute
+  '/profile/': typeof ProfileIndexRoute
   '/projects/': typeof ProjectsIndexRoute
   '/venues/': typeof VenuesIndexRoute
   '/admin/events/new': typeof AdminEventsNewRoute
@@ -284,21 +338,26 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/$username'
     | '/about'
     | '/contact'
     | '/guidelines'
+    | '/login'
     | '/room'
     | '/saved'
+    | '/signup'
     | '/submit'
     | '/x-card-test'
     | '/x-card-test-2'
     | '/admin/events'
     | '/admin/login'
+    | '/admin/members'
     | '/admin/opportunities'
     | '/ambassadors/$id'
     | '/builders/$id'
     | '/events/$id'
     | '/opportunities/$id'
+    | '/profile/card'
     | '/projects/$id'
     | '/venues/$slug'
     | '/admin/'
@@ -306,6 +365,7 @@ export interface FileRouteTypes {
     | '/builders/'
     | '/events/'
     | '/opportunities/'
+    | '/profile/'
     | '/projects/'
     | '/venues/'
     | '/admin/events/new'
@@ -315,21 +375,26 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/$username'
     | '/about'
     | '/contact'
     | '/guidelines'
+    | '/login'
     | '/room'
     | '/saved'
+    | '/signup'
     | '/submit'
     | '/x-card-test'
     | '/x-card-test-2'
     | '/admin/events'
     | '/admin/login'
+    | '/admin/members'
     | '/admin/opportunities'
     | '/ambassadors/$id'
     | '/builders/$id'
     | '/events/$id'
     | '/opportunities/$id'
+    | '/profile/card'
     | '/projects/$id'
     | '/venues/$slug'
     | '/admin'
@@ -337,6 +402,7 @@ export interface FileRouteTypes {
     | '/builders'
     | '/events'
     | '/opportunities'
+    | '/profile'
     | '/projects'
     | '/venues'
     | '/admin/events/new'
@@ -346,21 +412,26 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/$username'
     | '/about'
     | '/contact'
     | '/guidelines'
+    | '/login'
     | '/room'
     | '/saved'
+    | '/signup'
     | '/submit'
     | '/x-card-test'
     | '/x-card-test-2'
     | '/admin/events'
     | '/admin/login'
+    | '/admin/members'
     | '/admin/opportunities'
     | '/ambassadors/$id'
     | '/builders/$id'
     | '/events/$id'
     | '/opportunities/$id'
+    | '/profile/card'
     | '/projects/$id'
     | '/venues/$slug'
     | '/admin/'
@@ -368,6 +439,7 @@ export interface FileRouteTypes {
     | '/builders/'
     | '/events/'
     | '/opportunities/'
+    | '/profile/'
     | '/projects/'
     | '/venues/'
     | '/admin/events/new'
@@ -378,21 +450,26 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  UsernameRoute: typeof UsernameRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
   GuidelinesRoute: typeof GuidelinesRoute
+  LoginRoute: typeof LoginRoute
   RoomRoute: typeof RoomRoute
   SavedRoute: typeof SavedRoute
+  SignupRoute: typeof SignupRoute
   SubmitRoute: typeof SubmitRoute
   XCardTestRoute: typeof XCardTestRoute
   XCardTest2Route: typeof XCardTest2Route
   AdminEventsRoute: typeof AdminEventsRouteWithChildren
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminMembersRoute: typeof AdminMembersRoute
   AdminOpportunitiesRoute: typeof AdminOpportunitiesRouteWithChildren
   AmbassadorsIdRoute: typeof AmbassadorsIdRoute
   BuildersIdRoute: typeof BuildersIdRoute
   EventsIdRoute: typeof EventsIdRoute
   OpportunitiesIdRoute: typeof OpportunitiesIdRoute
+  ProfileCardRoute: typeof ProfileCardRoute
   ProjectsIdRoute: typeof ProjectsIdRoute
   VenuesSlugRoute: typeof VenuesSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -400,6 +477,7 @@ export interface RootRouteChildren {
   BuildersIndexRoute: typeof BuildersIndexRoute
   EventsIndexRoute: typeof EventsIndexRoute
   OpportunitiesIndexRoute: typeof OpportunitiesIndexRoute
+  ProfileIndexRoute: typeof ProfileIndexRoute
   ProjectsIndexRoute: typeof ProjectsIndexRoute
   VenuesIndexRoute: typeof VenuesIndexRoute
 }
@@ -411,6 +489,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$username': {
+      id: '/$username'
+      path: '/$username'
+      fullPath: '/$username'
+      preLoaderRoute: typeof UsernameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -434,6 +519,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidelinesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/room': {
       id: '/room'
       path: '/room'
@@ -446,6 +538,13 @@ declare module '@tanstack/react-router' {
       path: '/saved'
       fullPath: '/saved'
       preLoaderRoute: typeof SavedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/submit': {
@@ -488,6 +587,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/login'
       fullPath: '/admin/login'
       preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/members': {
+      id: '/admin/members'
+      path: '/admin/members'
+      fullPath: '/admin/members'
+      preLoaderRoute: typeof AdminMembersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/opportunities': {
@@ -551,6 +657,20 @@ declare module '@tanstack/react-router' {
       path: '/opportunities/$id'
       fullPath: '/opportunities/$id'
       preLoaderRoute: typeof OpportunitiesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile/': {
+      id: '/profile/'
+      path: '/profile'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof ProfileIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile/card': {
+      id: '/profile/card'
+      path: '/profile/card'
+      fullPath: '/profile/card'
+      preLoaderRoute: typeof ProfileCardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/projects/': {
@@ -641,21 +761,26 @@ const AdminOpportunitiesRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  UsernameRoute: UsernameRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
   GuidelinesRoute: GuidelinesRoute,
+  LoginRoute: LoginRoute,
   RoomRoute: RoomRoute,
   SavedRoute: SavedRoute,
+  SignupRoute: SignupRoute,
   SubmitRoute: SubmitRoute,
   XCardTestRoute: XCardTestRoute,
   XCardTest2Route: XCardTest2Route,
   AdminEventsRoute: AdminEventsRouteWithChildren,
   AdminLoginRoute: AdminLoginRoute,
+  AdminMembersRoute: AdminMembersRoute,
   AdminOpportunitiesRoute: AdminOpportunitiesRouteWithChildren,
   AmbassadorsIdRoute: AmbassadorsIdRoute,
   BuildersIdRoute: BuildersIdRoute,
   EventsIdRoute: EventsIdRoute,
   OpportunitiesIdRoute: OpportunitiesIdRoute,
+  ProfileCardRoute: ProfileCardRoute,
   ProjectsIdRoute: ProjectsIdRoute,
   VenuesSlugRoute: VenuesSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -663,6 +788,7 @@ const rootRouteChildren: RootRouteChildren = {
   BuildersIndexRoute: BuildersIndexRoute,
   EventsIndexRoute: EventsIndexRoute,
   OpportunitiesIndexRoute: OpportunitiesIndexRoute,
+  ProfileIndexRoute: ProfileIndexRoute,
   ProjectsIndexRoute: ProjectsIndexRoute,
   VenuesIndexRoute: VenuesIndexRoute,
 }

@@ -138,9 +138,108 @@ export interface Database {
           role?: "admin";
         };
       };
+      krew_profiles: {
+        Row: {
+          id: string;
+          user_id: string;
+          username: string;
+          display_name: string;
+          bio: string | null;
+          avatar_url: string | null;
+          member_type: string | null;
+          x_handle: string | null;
+          telegram_handle: string | null;
+          website_url: string | null;
+          best_work_title: string | null;
+          best_work_url: string | null;
+          status: "pending" | "approved" | "revoked";
+          is_public: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          username: string;
+          display_name: string;
+          bio?: string | null;
+          avatar_url?: string | null;
+          member_type?: string | null;
+          x_handle?: string | null;
+          telegram_handle?: string | null;
+          website_url?: string | null;
+          best_work_title?: string | null;
+          best_work_url?: string | null;
+          status?: "pending" | "approved" | "revoked";
+          is_public?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          username?: string;
+          display_name?: string;
+          bio?: string | null;
+          avatar_url?: string | null;
+          member_type?: string | null;
+          x_handle?: string | null;
+          telegram_handle?: string | null;
+          website_url?: string | null;
+          best_work_title?: string | null;
+          best_work_url?: string | null;
+          status?: "pending" | "approved" | "revoked";
+          is_public?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "krew_profiles_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: true;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Views: {
+      krew_profiles_public: {
+        Row: {
+          username: string;
+          display_name: string;
+          bio: string | null;
+          avatar_url: string | null;
+          member_type: string | null;
+          x_handle: string | null;
+          telegram_handle: string | null;
+          website_url: string | null;
+          best_work_title: string | null;
+          best_work_url: string | null;
+        };
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
+    };
+    Functions: {
+      /** Returns the caller's own row, or no rows. SECURITY DEFINER. */
+      my_krew_profile: {
+        Args: Record<PropertyKey, never>;
+        Returns: Database["public"]["Tables"]["krew_profiles"]["Row"][];
+      };
+      /** True when the handle is already reserved by any profile. */
+      krew_username_taken: {
+        Args: { p_username: string };
+        Returns: boolean;
+      };
+      /** Every profile for admins. Returns nothing for anyone else. */
+      admin_krew_profiles: {
+        Args: Record<PropertyKey, never>;
+        Returns: Database["public"]["Tables"]["krew_profiles"]["Row"][];
+      };
+    };
     Enums: Record<string, never>;
   };
 }
