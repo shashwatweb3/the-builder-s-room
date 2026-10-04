@@ -105,6 +105,14 @@ function MemberLogin() {
             Create one
           </Link>
         </p>
+
+        <p className="mt-3 text-center text-sm text-muted-foreground">
+          Don&apos;t want an account?{" "}
+          <Link to="/krew-id" className="font-semibold text-foreground underline">
+            Claim your Krew ID
+          </Link>{" "}
+          and edit it with a private link.
+        </p>
       </div>
     </div>
   );

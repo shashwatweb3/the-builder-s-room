@@ -1,4 +1,7 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
+import { createServerClient } from "@supabase/ssr";
 import { useEffect, useMemo, useState } from "react";
 import { Check, Copy, ExternalLink, Search, X } from "lucide-react";
 import { toast } from "sonner";
@@ -23,27 +26,55 @@ import {
 
 export const Route = createFileRoute("/admin/members")({
   beforeLoad: async () => {
-    // Mirror admin.index.tsx: if Supabase env is missing, degrade to the login
-    // screen instead of throwing a 500.
-    if (!import.meta.env["VITE_SUPABASE_URL"] || !import.meta.env["VITE_SUPABASE_ANON_KEY"]) {
-      throw redirect({ to: "/admin/login" });
-    }
-
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) throw redirect({ to: "/admin/login" });
-
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-
-    if (profile?.role !== "admin") throw redirect({ to: "/admin/login" });
+    // Same server-side guard the other admin routes use. beforeLoad also runs
+    // during SSR, where a browser Supabase client cannot see the session
+    // cookie, so checking there would bounce a refresh straight to the login
+    // screen.
+    const { isAdmin } = await getSession();
+    if (!isAdmin) throw redirect({ to: "/admin/login" });
   },
   component: AdminMembers,
+});
+
+function makeClient(request: Request) {
+  return createServerClient(
+    import.meta.env["VITE_SUPABASE_URL"],
+    import.meta.env["VITE_SUPABASE_ANON_KEY"],
+    {
+      cookies: {
+        getAll() {
+          const h = request.headers.get("cookie") ?? "";
+          return h.split(";").map((c) => {
+            const [name, ...rest] = c.trim().split("=");
+            return { name: name ?? "", value: rest.join("=") };
+          });
+        },
+        setAll() {},
+      },
+    },
+  );
+}
+
+const getSession = createServerFn({ method: "GET" }).handler(async () => {
+  if (!import.meta.env["VITE_SUPABASE_URL"] || !import.meta.env["VITE_SUPABASE_ANON_KEY"]) {
+    return { isAdmin: false };
+  }
+  const request = getRequest();
+  if (!request) return { isAdmin: false };
+
+  const supabase = makeClient(request);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { isAdmin: false };
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  return { isAdmin: (profile as { role?: string } | null)?.role === "admin" };
 });
 
 type StatusFilter = "all" | KrewProfileStatus;
@@ -277,6 +308,9 @@ function AdminMembers() {
                             dot
                           />
                           {typeLabel && <StatusBadge label={typeLabel} tone="purple" />}
+                          {/* A /krew-id claim has no account: the holder of the
+                              private edit link is its only editor. */}
+                          {!row.user_id && <StatusBadge label="No account" tone="closed" />}
                           {!row.is_public && row.status === "approved" && (
                             <StatusBadge label="Hidden" tone="closed" />
                           )}

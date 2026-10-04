@@ -1,5 +1,7 @@
-import { ArrowUpRight, Check, Globe, Send } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowUpRight, Check, Copy, Globe, Send, Share2 } from "lucide-react";
 import { SectionLabel } from "@/components/SectionLabel";
+import { krewCardUrl } from "@/lib/krew-card-model";
 import {
   KREW3_LOGO_SIZE,
   KREW3_LOGO_SRC,
@@ -60,9 +62,13 @@ export function KrewProfileView({ profile }: { profile: PublicKrewProfile }) {
             <span className="text-lg font-extrabold tracking-tight">Krew3</span>
           </span>
 
-          <span className="label-mono flex items-center gap-1.5 rounded-full border-2 border-border bg-surface px-2.5 py-1">
-            <Check className="size-3" aria-hidden />
-            Krew3 member
+          <span className="flex items-center gap-2">
+            <span className="label-mono hidden items-center gap-1.5 rounded-full border-2 border-border bg-surface px-2.5 py-1 sm:flex">
+              <Check className="size-3" aria-hidden />
+              Krew3 member
+            </span>
+
+            <KrewShareButton username={profile.username} displayName={profile.display_name} />
           </span>
         </div>
 
@@ -180,6 +186,67 @@ export function KrewProfileView({ profile }: { profile: PublicKrewProfile }) {
         </div>
       </article>
     </div>
+  );
+}
+
+/**
+ * Share this Krew ID.
+ *
+ * Uses the same canonical URL the Krew Card QR encodes, so a shared link and a
+ * scanned card always land on the same public page. Phones get the native share
+ * sheet; everywhere else the URL is copied. Nothing about the profile beyond
+ * its public fields is shared, and the URL is only ever the public path.
+ */
+function KrewShareButton({ username, displayName }: { username: string; displayName: string }) {
+  const [state, setState] = useState<"idle" | "copied" | "failed">("idle");
+
+  useEffect(() => {
+    if (state !== "copied") return;
+    const timer = setTimeout(() => setState("idle"), 2000);
+    return () => clearTimeout(timer);
+  }, [state]);
+
+  const share = async () => {
+    const url = krewCardUrl(username);
+
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({
+          title: `${displayName} on Krew3`,
+          text: `${displayName} is a Krew3 member.`,
+          url,
+        });
+        return;
+      } catch (cause) {
+        // A cancelled share sheet is not an error worth reporting.
+        if (cause instanceof DOMException && cause.name === "AbortError") return;
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(url);
+      setState("copied");
+    } catch {
+      setState("failed");
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={() => void share()}
+      aria-live="polite"
+      className="press label-mono flex items-center gap-1.5 rounded-full border-2 border-border bg-background px-2.5 py-1 font-bold transition-colors hover:bg-lavender/40"
+    >
+      {state === "copied" ? (
+        <Check className="size-3" aria-hidden />
+      ) : state === "failed" ? (
+        <Copy className="size-3" aria-hidden />
+      ) : (
+        <Share2 className="size-3" aria-hidden />
+      )}
+      {state === "copied" ? "Copied" : state === "failed" ? "Copy failed" : "Share"}
+    </button>
   );
 }
 

@@ -32,6 +32,7 @@ import { Route as BuildersIndexRouteImport } from './routes/builders.index'
 import { Route as BuildersIdRouteImport } from './routes/builders.$id'
 import { Route as EventsIndexRouteImport } from './routes/events.index'
 import { Route as EventsIdRouteImport } from './routes/events.$id'
+import { Route as KrewIdIndexRouteImport } from './routes/krew-id/index'
 import { Route as OpportunitiesIndexRouteImport } from './routes/opportunities.index'
 import { Route as OpportunitiesIdRouteImport } from './routes/opportunities.$id'
 import { Route as ProfileIndexRouteImport } from './routes/profile.index'
@@ -42,6 +43,7 @@ import { Route as VenuesIndexRouteImport } from './routes/venues.index'
 import { Route as VenuesSlugRouteImport } from './routes/venues.$slug'
 import { Route as AdminEventsNewRouteImport } from './routes/admin.events.new'
 import { Route as AdminOpportunitiesNewRouteImport } from './routes/admin.opportunities.new'
+import { Route as KrewIdManageTokenRouteImport } from './routes/krew-id/manage.$token'
 import { Route as AdminEventsIdEditRouteImport } from './routes/admin.events.$id.edit'
 import { Route as AdminOpportunitiesIdEditRouteImport } from './routes/admin.opportunities.$id.edit'
 
@@ -160,6 +162,11 @@ const EventsIdRoute = EventsIdRouteImport.update({
   path: '/events/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KrewIdIndexRoute = KrewIdIndexRouteImport.update({
+  id: '/krew-id/',
+  path: '/krew-id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OpportunitiesIndexRoute = OpportunitiesIndexRouteImport.update({
   id: '/opportunities/',
   path: '/opportunities/',
@@ -210,6 +217,11 @@ const AdminOpportunitiesNewRoute = AdminOpportunitiesNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AdminOpportunitiesRoute,
 } as any)
+const KrewIdManageTokenRoute = KrewIdManageTokenRouteImport.update({
+  id: '/krew-id/manage/$token',
+  path: '/krew-id/manage/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminEventsIdEditRoute = AdminEventsIdEditRouteImport.update({
   id: '/$id/edit',
   path: '/$id/edit',
@@ -250,12 +262,14 @@ export interface FileRoutesByFullPath {
   '/ambassadors/': typeof AmbassadorsIndexRoute
   '/builders/': typeof BuildersIndexRoute
   '/events/': typeof EventsIndexRoute
+  '/krew-id/': typeof KrewIdIndexRoute
   '/opportunities/': typeof OpportunitiesIndexRoute
   '/profile/': typeof ProfileIndexRoute
   '/projects/': typeof ProjectsIndexRoute
   '/venues/': typeof VenuesIndexRoute
   '/admin/events/new': typeof AdminEventsNewRoute
   '/admin/opportunities/new': typeof AdminOpportunitiesNewRoute
+  '/krew-id/manage/$token': typeof KrewIdManageTokenRoute
   '/admin/events/$id/edit': typeof AdminEventsIdEditRoute
   '/admin/opportunities/$id/edit': typeof AdminOpportunitiesIdEditRoute
 }
@@ -287,12 +301,14 @@ export interface FileRoutesByTo {
   '/ambassadors': typeof AmbassadorsIndexRoute
   '/builders': typeof BuildersIndexRoute
   '/events': typeof EventsIndexRoute
+  '/krew-id': typeof KrewIdIndexRoute
   '/opportunities': typeof OpportunitiesIndexRoute
   '/profile': typeof ProfileIndexRoute
   '/projects': typeof ProjectsIndexRoute
   '/venues': typeof VenuesIndexRoute
   '/admin/events/new': typeof AdminEventsNewRoute
   '/admin/opportunities/new': typeof AdminOpportunitiesNewRoute
+  '/krew-id/manage/$token': typeof KrewIdManageTokenRoute
   '/admin/events/$id/edit': typeof AdminEventsIdEditRoute
   '/admin/opportunities/$id/edit': typeof AdminOpportunitiesIdEditRoute
 }
@@ -325,12 +341,14 @@ export interface FileRoutesById {
   '/ambassadors/': typeof AmbassadorsIndexRoute
   '/builders/': typeof BuildersIndexRoute
   '/events/': typeof EventsIndexRoute
+  '/krew-id/': typeof KrewIdIndexRoute
   '/opportunities/': typeof OpportunitiesIndexRoute
   '/profile/': typeof ProfileIndexRoute
   '/projects/': typeof ProjectsIndexRoute
   '/venues/': typeof VenuesIndexRoute
   '/admin/events/new': typeof AdminEventsNewRoute
   '/admin/opportunities/new': typeof AdminOpportunitiesNewRoute
+  '/krew-id/manage/$token': typeof KrewIdManageTokenRoute
   '/admin/events/$id/edit': typeof AdminEventsIdEditRoute
   '/admin/opportunities/$id/edit': typeof AdminOpportunitiesIdEditRoute
 }
@@ -364,12 +382,14 @@ export interface FileRouteTypes {
     | '/ambassadors/'
     | '/builders/'
     | '/events/'
+    | '/krew-id/'
     | '/opportunities/'
     | '/profile/'
     | '/projects/'
     | '/venues/'
     | '/admin/events/new'
     | '/admin/opportunities/new'
+    | '/krew-id/manage/$token'
     | '/admin/events/$id/edit'
     | '/admin/opportunities/$id/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -401,12 +421,14 @@ export interface FileRouteTypes {
     | '/ambassadors'
     | '/builders'
     | '/events'
+    | '/krew-id'
     | '/opportunities'
     | '/profile'
     | '/projects'
     | '/venues'
     | '/admin/events/new'
     | '/admin/opportunities/new'
+    | '/krew-id/manage/$token'
     | '/admin/events/$id/edit'
     | '/admin/opportunities/$id/edit'
   id:
@@ -438,12 +460,14 @@ export interface FileRouteTypes {
     | '/ambassadors/'
     | '/builders/'
     | '/events/'
+    | '/krew-id/'
     | '/opportunities/'
     | '/profile/'
     | '/projects/'
     | '/venues/'
     | '/admin/events/new'
     | '/admin/opportunities/new'
+    | '/krew-id/manage/$token'
     | '/admin/events/$id/edit'
     | '/admin/opportunities/$id/edit'
   fileRoutesById: FileRoutesById
@@ -476,10 +500,12 @@ export interface RootRouteChildren {
   AmbassadorsIndexRoute: typeof AmbassadorsIndexRoute
   BuildersIndexRoute: typeof BuildersIndexRoute
   EventsIndexRoute: typeof EventsIndexRoute
+  KrewIdIndexRoute: typeof KrewIdIndexRoute
   OpportunitiesIndexRoute: typeof OpportunitiesIndexRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
   ProjectsIndexRoute: typeof ProjectsIndexRoute
   VenuesIndexRoute: typeof VenuesIndexRoute
+  KrewIdManageTokenRoute: typeof KrewIdManageTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -645,6 +671,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/krew-id/': {
+      id: '/krew-id/'
+      path: '/krew-id'
+      fullPath: '/krew-id/'
+      preLoaderRoute: typeof KrewIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/opportunities/': {
       id: '/opportunities/'
       path: '/opportunities'
@@ -714,6 +747,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/opportunities/new'
       preLoaderRoute: typeof AdminOpportunitiesNewRouteImport
       parentRoute: typeof AdminOpportunitiesRoute
+    }
+    '/krew-id/manage/$token': {
+      id: '/krew-id/manage/$token'
+      path: '/krew-id/manage/$token'
+      fullPath: '/krew-id/manage/$token'
+      preLoaderRoute: typeof KrewIdManageTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin/events/$id/edit': {
       id: '/admin/events/$id/edit'
@@ -787,10 +827,12 @@ const rootRouteChildren: RootRouteChildren = {
   AmbassadorsIndexRoute: AmbassadorsIndexRoute,
   BuildersIndexRoute: BuildersIndexRoute,
   EventsIndexRoute: EventsIndexRoute,
+  KrewIdIndexRoute: KrewIdIndexRoute,
   OpportunitiesIndexRoute: OpportunitiesIndexRoute,
   ProfileIndexRoute: ProfileIndexRoute,
   ProjectsIndexRoute: ProjectsIndexRoute,
   VenuesIndexRoute: VenuesIndexRoute,
+  KrewIdManageTokenRoute: KrewIdManageTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

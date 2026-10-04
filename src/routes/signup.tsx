@@ -139,6 +139,14 @@ function MemberSignup() {
             Sign in
           </Link>
         </p>
+
+        <p className="mt-3 text-center text-sm text-muted-foreground">
+          Rather skip the account?{" "}
+          <Link to="/krew-id" className="font-semibold text-foreground underline">
+            Claim your Krew ID
+          </Link>{" "}
+          with no email at all.
+        </p>
       </div>
     </div>
   );

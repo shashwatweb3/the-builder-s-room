@@ -44,6 +44,33 @@ create function storage.foldername(name text) returns text[]
     )
   $$;
 
+-- Mirrors the real helper 020 uses to build a public URL from a ticket path.
+-- Only defined when the run asks for it, so the suite can also be executed
+-- against a project whose Storage version predates this helper:
+--   psql -v with_platform_url_helper=1 ...   -> helper present (new project)
+--   psql ...                                -> helper absent (old project)
+\if :{?with_platform_url_helper}
+create function storage.get_public_url(bucket_id text, name text) returns text
+  language sql immutable
+  as $$
+    select 'https://project.supabase.co/storage/v1/object/public/'
+           || bucket_id || '/' || name
+  $$;
+\endif
+
+-- krew_avatar_public_url's fallback resolves the project base from this
+-- setting instead of a request header, so a client can never influence the
+-- stored host. Same value the stub above returns, so the suite's expected URLs
+-- are byte-identical whether the helper exists or not.
+-- Database level, not session level: each test file runs in its own psql
+-- session, and a real project carries this for every connection.
+do $$
+begin
+  execute format(
+    'alter database %I set app.settings.supabase_url = %L',
+    current_database(), 'https://project.supabase.co');
+end $$;
+
 -- public.profiles as created by 001_initial_schema.sql (admin role table).
 create table public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,

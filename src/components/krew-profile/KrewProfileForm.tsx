@@ -25,13 +25,45 @@ const inputClass =
   "mt-2 w-full rounded-2xl border-2 border-border bg-background px-4 text-base outline-none transition-colors placeholder:text-muted-foreground focus:border-primary";
 const labelClass = "label-mono block text-muted-foreground";
 
+/**
+ * A photo that has been uploaded but not yet saved.
+ *
+ * `path` is the reserved storage path the claim/update RPC expects; `previewUrl`
+ * is only used for the thumbnail. The database builds the stored avatar_url
+ * itself from the ticket, so the URL is never trusted on submit.
+ */
+export type FormAvatar = { path: string; previewUrl: string };
+
 type Props = {
   draft: KrewProfileDraft;
   onChange: (patch: Partial<KrewProfileDraft>) => void;
-  userId: string;
+  /** Required for the authenticated /profile flow; unused by /krew-id. */
+  userId?: string;
   lockedUsername: boolean;
+  /**
+   * The handle this profile already owns, when editing an existing row.
+   *
+   * krew_username_taken reports a member's own row as taken, so without this an
+   * editor would be told their own handle is unavailable and Save would never
+   * enable - which would lock approved members out of every other edit too,
+   * because their username is frozen.
+   */
+  ownUsername?: string;
   saving: boolean;
-  onSave: () => void;
+  /**
+   * Receives the freshly uploaded photo when there is an unsaved one. The
+   * public claim and manage flows pass it to krew_claim_id /
+   * krew_update_by_token as p_avatar_path.
+   */
+  onSave: (avatar: FormAvatar | null) => void;
+  /**
+   * Supplied by the token-based flows to upload through a short-lived storage
+   * ticket. When omitted, the form falls back to the authenticated
+   * user-id-scoped upload from member-auth.
+   */
+  onUploadAvatar?: (file: File) => Promise<FormAvatar>;
+  /** Submit copy. /krew-id claims a handle, /profile saves an existing row. */
+  submitLabel?: string;
   error: string;
   success: string;
 };
@@ -39,15 +71,19 @@ type Props = {
 export function KrewProfileForm({
   draft,
   onChange,
-  userId,
+  userId = "",
   lockedUsername,
+  ownUsername,
   saving,
   onSave,
+  onUploadAvatar,
+  submitLabel = "Save profile",
   error,
   success,
 }: Props) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
+  const [unsavedAvatar, setUnsavedAvatar] = useState<FormAvatar | null>(null);
   const [touchedUsername, setTouchedUsername] = useState(false);
   const [availability, setAvailability] = useState<"idle" | "checking" | "free" | "taken">("idle");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -56,6 +92,7 @@ export function KrewProfileForm({
   const usernameCheck = validateUsername(draft.username);
   const normalized = slugifyUsername(draft.username);
   const checkedUsername = usernameCheck.ok ? usernameCheck.username : null;
+  const ownedUsername = ownUsername ? slugifyUsername(ownUsername) : "";
 
   const connectionCount = [draft.x_handle, draft.telegram_handle, draft.website_url].filter(
     (v) => v.trim().length > 0,
@@ -71,6 +108,11 @@ export function KrewProfileForm({
       setAvailability("idle");
       return;
     }
+    // Your own handle is not a conflict: skip the probe entirely.
+    if (checkedUsername === ownedUsername) {
+      setAvailability("free");
+      return;
+    }
     if (availTimer.current) clearTimeout(availTimer.current);
     setAvailability("checking");
     availTimer.current = setTimeout(() => {
@@ -82,7 +124,7 @@ export function KrewProfileForm({
     return () => {
       if (availTimer.current) clearTimeout(availTimer.current);
     };
-  }, [checkedUsername]);
+  }, [checkedUsername, ownedUsername]);
 
   const handleFile = async (file: File | null) => {
     if (!file) return;
@@ -96,8 +138,19 @@ export function KrewProfileForm({
 
     setUploading(true);
     try {
-      const url = await uploadAvatar(userId, file, avatarPath(userId, file));
-      onChange({ avatar_url: url });
+      if (onUploadAvatar) {
+        // Public flow: reserve a ticket path, upload there, keep the path for
+        // krew_claim_id / krew_update_by_token.
+        const uploaded = await onUploadAvatar(file);
+        setUnsavedAvatar(uploaded);
+        onChange({ avatar_url: uploaded.previewUrl });
+      } else {
+        // Authenticated flow: the storage policy scopes writes to the member's
+        // own folder, so the path is derived and the URL can be stored as is.
+        const url = await uploadAvatar(userId, file, avatarPath(userId, file));
+        setUnsavedAvatar(null);
+        onChange({ avatar_url: url });
+      }
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : "Upload failed.");
     } finally {
@@ -120,11 +173,15 @@ export function KrewProfileForm({
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSave || saving) return;
-    onSave();
+    onSave(unsavedAvatar);
   };
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-6">
+    // noValidate: the fields below opt into URL/keyboard hints via type="url",
+    // but native constraint validation would silently block submit on a bare
+    // domain ("krew3.site") that normalizeUrl and the database both accept.
+    // canSave + the inline messages are the real gate.
+    <form onSubmit={submit} noValidate className="flex flex-col gap-6">
       {/* Profile photo */}
       <div>
         <span className={labelClass}>Profile photo</span>
@@ -174,12 +231,17 @@ export function KrewProfileForm({
               )}
             </Button>
 
-            {draft.avatar_url && (
+            {/* The token RPCs keep the existing photo when p_avatar_path is
+                null, so "Remove" only exists on the authenticated editor. */}
+            {!onUploadAvatar && draft.avatar_url && (
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={() => onChange({ avatar_url: null })}
+                onClick={() => {
+                  setUnsavedAvatar(null);
+                  onChange({ avatar_url: null });
+                }}
               >
                 Remove
               </Button>
@@ -470,7 +532,7 @@ export function KrewProfileForm({
       )}
 
       <Button type="submit" size="lg" className="w-full" disabled={!canSave || saving}>
-        {saving ? "Saving…" : "Save profile"}
+        {saving ? "Saving…" : submitLabel}
       </Button>
 
       {!canSave && (

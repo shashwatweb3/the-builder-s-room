@@ -4,7 +4,7 @@ import {
   memberTypeLabel,
   normalizeHandle,
   profilePathLabel,
-  type KrewProfile,
+  type PublicKrewProfile,
 } from "@/lib/krew-profile";
 
 /**
@@ -46,7 +46,12 @@ export interface KrewCardModel {
   connections: string[];
 }
 
-export function buildKrewCardModel(profile: KrewProfile): KrewCardModel {
+/**
+ * Only the public projection is needed, so both the authenticated
+ * /profile/card route and the token-only /krew-id/manage/$token page can build
+ * an identical card from a profile they already hold.
+ */
+export function buildKrewCardModel(profile: PublicKrewProfile): KrewCardModel {
   const connections = [
     profile.x_handle ? `X @${normalizeHandle(profile.x_handle)}` : null,
     profile.telegram_handle ? `Telegram @${normalizeHandle(profile.telegram_handle)}` : null,

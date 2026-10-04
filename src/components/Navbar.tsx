@@ -7,7 +7,7 @@ import { MobileMenu } from "./MobileMenu";
 import { useSaved } from "@/lib/saved";
 import { TELEGRAM_INVITE_URL } from "@/lib/community";
 import { useMemberSession } from "@/lib/member-auth";
-import { isMemberNavRoute } from "@/lib/krew-profile";
+import { isMemberNavRoute, krewIdNavLink } from "@/lib/krew-profile";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -17,7 +17,6 @@ const navLinks = [
 ] as const;
 
 const moreLinks = [
-  { to: "/profile", label: "Krew ID" },
   { to: "/about", label: "About" },
   { to: "/guidelines", label: "Community Guidelines" },
   { to: "/", hash: "faq", label: "FAQ" },
@@ -35,7 +34,12 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
   // Member routes stay hidden until we actually know a session exists, so
   // logged-out visitors never see Krew ID controls. Public nav is untouched.
   const memberLinksVisible = !authLoading && !!user;
-  const visibleMoreLinks = moreLinks.filter((l) => !isMemberNavRoute(l.to) || memberLinksVisible);
+  // The Krew ID entry points at /profile for members and at the public claim
+  // page for everyone else, so an anonymous visitor is never dropped on a
+  // sign-in screen just by tapping "Krew ID".
+  const visibleMoreLinks = [krewIdNavLink(memberLinksVisible), ...moreLinks].filter(
+    (l) => !isMemberNavRoute(l.to) || memberLinksVisible,
+  );
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {

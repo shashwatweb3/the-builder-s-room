@@ -76,6 +76,8 @@ export const RESERVED_USERNAMES = [
   "room",
   "saved",
   "submit",
+  // the public, no-signup claim entry point (also reserved in the database)
+  "krew-id",
   // internal QA routes (src/routes/x-card-test*.tsx)
   "x-card-test",
   "x-card-test-2",
@@ -135,6 +137,22 @@ export const MEMBER_NAV_ROUTES = ["/profile", "/profile/card"] as const;
 
 export function isMemberNavRoute(to: string): boolean {
   return (MEMBER_NAV_ROUTES as readonly string[]).includes(to);
+}
+
+/**
+ * The single "Krew ID" nav entry, resolved per audience.
+ *
+ * Members already have an account, so they go to their dashboard. A logged-out
+ * visitor has nothing to sign in to, so they get the public claim page instead.
+ * Resolved in one place so the desktop dropdown and the mobile sheet agree.
+ */
+export function krewIdNavLink(memberLinksVisible: boolean): {
+  to: "/krew-id" | "/profile";
+  label: string;
+} {
+  return memberLinksVisible
+    ? { to: "/profile", label: "Krew ID" }
+    : { to: "/krew-id", label: "Krew ID" };
 }
 
 export type UsernameValidation = { ok: true; username: string } | { ok: false; error: string };
@@ -228,7 +246,11 @@ export type PublicKrewProfile = {
  */
 export type KrewProfile = PublicKrewProfile & {
   id: string;
-  user_id: string;
+  /**
+   * Null for a profile claimed at /krew-id: nobody has attached an account to
+   * it, and the holder of the manage link is its only editor.
+   */
+  user_id: string | null;
   status: KrewProfileStatus;
   is_public: boolean;
   created_at: string;
@@ -307,6 +329,38 @@ export function isPubliclyVisible(
   profile: Pick<KrewProfile, "status" | "is_public"> | null | undefined,
 ): boolean {
   return !!profile && profile.status === "approved" && profile.is_public === true;
+}
+
+/**
+ * Client-side gate shared by the member editor (/profile) and the public claim
+ * form (/krew-id).
+ *
+ * Returns an empty string when the draft looks submittable. The database
+ * re-validates every field on write (019 constraints plus the RPC checks in
+ * 020), so this only saves a round trip and gives a precise message.
+ */
+export function validateProfileDraft(draft: KrewProfileDraft): string {
+  const username = validateUsername(draft.username);
+  if (!username.ok) return username.error;
+
+  if (!draft.display_name.trim()) return "Add your name.";
+  if (draft.display_name.trim().length > DISPLAY_NAME_MAX)
+    return `Keep your name under ${DISPLAY_NAME_MAX} characters.`;
+
+  if (!draft.bio.trim()) return "Add a short bio so people know who you are.";
+  if (draft.bio.trim().length > BIO_MAX) return `Keep your bio under ${BIO_MAX} characters.`;
+
+  const connections = [draft.x_handle, draft.telegram_handle, draft.website_url].filter((v) =>
+    v.trim(),
+  );
+  if (connections.length === 0) return "Add at least one way to connect: X, Telegram or a website.";
+
+  if (draft.website_url.trim() && !isValidHttpUrl(normalizeUrl(draft.website_url)))
+    return "That website link doesn't look like a valid URL.";
+  if (draft.best_work_url.trim() && !isValidHttpUrl(normalizeUrl(draft.best_work_url)))
+    return "That best work link doesn't look like a valid URL.";
+
+  return "";
 }
 
 /** Supabase storage bucket + path convention for member avatars. */

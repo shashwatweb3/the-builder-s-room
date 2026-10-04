@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { Button } from "./Button";
 import { Dot } from "./StatusBadge";
 import { TELEGRAM_INVITE_URL } from "@/lib/community";
-import { isMemberNavRoute } from "@/lib/krew-profile";
+import { isMemberNavRoute, krewIdNavLink } from "@/lib/krew-profile";
 
 const items = [
   { to: "/projects", label: "Projects" },
@@ -13,7 +13,6 @@ const items = [
 ] as const;
 
 const secondary = [
-  { to: "/profile", label: "Krew ID" },
   { to: "/about", label: "About" },
   { to: "/guidelines", label: "Community Guidelines" },
   { to: "/", hash: "faq", label: "FAQ" },
@@ -28,7 +27,7 @@ type MobileMenuProps = {
 };
 
 export function MobileMenu({ open, onClose, memberLinksVisible }: MobileMenuProps) {
-  const visibleSecondary = secondary.filter(
+  const visibleSecondary = [krewIdNavLink(memberLinksVisible), ...secondary].filter(
     (item) => !isMemberNavRoute(item.to) || memberLinksVisible,
   );
 

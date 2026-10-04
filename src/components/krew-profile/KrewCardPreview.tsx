@@ -1,15 +1,16 @@
 import { KrewQrCode } from "@/components/krew-profile/KrewQrCode";
 import { buildKrewCardModel } from "@/lib/krew-card-model";
-import { KREW3_LOGO_SIZE, KREW3_LOGO_SRC, type KrewProfile } from "@/lib/krew-profile";
+import { KREW3_LOGO_SIZE, KREW3_LOGO_SRC, type PublicKrewProfile } from "@/lib/krew-profile";
 
 /**
  * Krew Card composition.
  *
- * Rendered responsively on /profile/card and driven by the same KrewCardModel as
- * the Phase 2 exports (PNG, 1080x1920 wallpaper, A6 print PDF), so what a
- * member downloads matches what they see here. Kept free of download logic.
+ * Rendered responsively on /profile/card and /krew-id/manage/$token and driven
+ * by the same KrewCardModel as the Phase 2 exports (PNG, 1080x1920 wallpaper,
+ * A6 print PDF), so what a member downloads matches what they see here. Kept
+ * free of download logic.
  */
-export function KrewCardPreview({ profile }: { profile: KrewProfile }) {
+export function KrewCardPreview({ profile }: { profile: PublicKrewProfile }) {
   const model = buildKrewCardModel(profile);
 
   return (

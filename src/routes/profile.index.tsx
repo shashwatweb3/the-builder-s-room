@@ -8,17 +8,14 @@ import { KrewProfileForm } from "@/components/krew-profile/KrewProfileForm";
 import { KrewProfileView } from "@/components/krew-profile/KrewProfileView";
 import { createProfile, fetchOwnProfile, updateProfile, useMemberSession } from "@/lib/member-auth";
 import {
-  BIO_MAX,
-  DISPLAY_NAME_MAX,
   STATUS_LABELS,
   draftFromProfile,
   draftToRow,
   emptyDraft,
   isPubliclyVisible,
-  isValidHttpUrl,
   profilePathLabel,
   profileUrl,
-  validateUsername,
+  validateProfileDraft,
   type KrewProfile,
   type KrewProfileDraft,
 } from "@/lib/krew-profile";
@@ -29,31 +26,6 @@ export const Route = createFileRoute("/profile/")({
   }),
   component: ProfileRoute,
 });
-
-/** Client-side gate. The database remains the authority on every write. */
-function validateDraft(draft: KrewProfileDraft): string {
-  const username = validateUsername(draft.username);
-  if (!username.ok) return username.error;
-
-  if (!draft.display_name.trim()) return "Add your name.";
-  if (draft.display_name.trim().length > DISPLAY_NAME_MAX)
-    return `Keep your name under ${DISPLAY_NAME_MAX} characters.`;
-
-  if (!draft.bio.trim()) return "Add a short bio so people know who you are.";
-  if (draft.bio.trim().length > BIO_MAX) return `Keep your bio under ${BIO_MAX} characters.`;
-
-  const connections = [draft.x_handle, draft.telegram_handle, draft.website_url].filter((v) =>
-    v.trim(),
-  );
-  if (connections.length === 0) return "Add at least one way to connect: X, Telegram or a website.";
-
-  if (draft.website_url.trim() && !isValidHttpUrl(draft.website_url))
-    return "That website link doesn't look like a valid URL.";
-  if (draft.best_work_url.trim() && !isValidHttpUrl(draft.best_work_url))
-    return "That best work link doesn't look like a valid URL.";
-
-  return "";
-}
 
 function LoadingState() {
   return (
@@ -159,7 +131,7 @@ function ProfileRoute() {
               error={error}
               success={success}
               onSave={() => {
-                const invalid = validateDraft(draft);
+                const invalid = validateProfileDraft(draft);
                 if (invalid) {
                   setError(invalid);
                   return;
@@ -251,13 +223,14 @@ function ProfileRoute() {
                 setError("");
                 setSuccess("");
               }}
-              userId={profile.user_id}
+              userId={profile.user_id ?? ""}
               lockedUsername={profile.status !== "pending"}
+              ownUsername={profile.username}
               saving={saving}
               error={error}
               success={success}
               onSave={() => {
-                const invalid = validateDraft(draft);
+                const invalid = validateProfileDraft(draft);
                 if (invalid) {
                   setError(invalid);
                   return;
