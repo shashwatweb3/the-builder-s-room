@@ -35,16 +35,17 @@ begin
   perform set_config('request.jwt.claims', '', true);
 
   if to_regprocedure('storage.get_public_url(text,text)') is null then
-    -- 1. Nothing to go on must fail loudly rather than silently drop the photo.
-    begin
-      perform public.krew_avatar_public_url('claim/x.jpg');
-      raise exception 'FAIL: built a URL with no base available';
-    exception when others then
-      if sqlerrm like 'FAIL:%' then
-        raise;
-      end if;
-    end;
-    raise notice 'PASS: no helper, no GUC, no JWT ref -> actionable error';
+    -- 1. With no helper, no GUC and no JWT there is still one thing we can
+    --    trust: this deployment's own canonical host. Without it a claim dies
+    --    with "Cannot build the avatar URL", because an operator's
+    --    ALTER DATABASE ... SET is a database-level default that a pooled
+    --    PostgREST backend only picks up on reconnect, and a browser request
+    --    carries no ref claim. The path half is still validated below.
+    v_url := public.krew_avatar_public_url('claim/x.jpg');
+    if v_url <> 'https://rkqhestmtbxzatbypbpe.supabase.co/storage/v1/object/public/krew-avatars/claim/x.jpg' then
+      raise exception 'FAIL: bare deployment fallback produced %', v_url;
+    end if;
+    raise notice 'PASS: no helper, no GUC, no JWT -> pinned deployment host';
 
     -- 2. The verified JWT ref claim is enough on its own. This is the path the
     --    live deployment takes.
@@ -81,18 +82,16 @@ begin
     perform set_config('app.settings.supabase_url', '', true);
     perform set_config('app.settings.project_ref', '', true);
 
-    -- 5. A ref that is not a plain project reference must not be interpolated
-    --    into the URL.
+    -- 5. A ref that is not a plain project reference must never be
+    --    interpolated into the URL. It is not an error any more -- there is
+    --    always the pinned deployment host to fall back to -- so the property
+    --    to assert is that the hostile value cannot reach the output.
     perform set_config('request.jwt.claims', '{"ref":"evil.example.com/../../x"}', true);
-    begin
-      perform public.krew_avatar_public_url('claim/x.jpg');
-      raise exception 'FAIL: accepted a ref that is not a project id';
-    exception when others then
-      if sqlerrm like 'FAIL:%' then
-        raise;
-      end if;
-    end;
-    raise notice 'PASS: a malformed ref is rejected, not interpolated';
+    v_url := public.krew_avatar_public_url('claim/x.jpg');
+    if v_url like '%evil%' or v_url !~ '^https://[a-z0-9.-]+/storage/v1/object/public/krew-avatars/claim/x\.jpg$' then
+      raise exception 'FAIL: a malformed ref reached the URL: %', v_url;
+    end if;
+    raise notice 'PASS: a malformed ref is ignored, not interpolated';
 
     perform set_config('request.jwt.claims', '', true);
   else
@@ -194,16 +193,32 @@ begin
      set avatar_url = public.krew_avatar_public_url(v_second)
    where id = v_profile;
 
-  if exists (select 1 from storage.objects where name = v_first) then
-    raise exception 'FAIL: the superseded avatar was not collected';
-  end if;
+  -- The superseded object is NOT collected, and that is deliberate: 024 removed
+  -- the trigger because this Supabase project refuses direct deletes against
+  -- storage.objects (42501), which rolled back every claim. What must hold is
+  -- that binding a new photo never removes anything -- not the current avatar,
+  -- not the replacement, and never an unrelated member's object.
   if not exists (select 1 from storage.objects where name = v_second) then
     raise exception 'FAIL: the replacement avatar was deleted';
   end if;
   if not exists (select 1 from storage.objects where name = v_member) then
     raise exception 'FAIL: an unrelated member avatar was deleted';
   end if;
-  raise notice 'PASS: replacing a photo collects only the superseded claim avatar';
+  raise notice 'PASS: replacing a photo deletes nothing, so no claim can be rolled back';
+
+  -- And the trigger that caused it must not come back.
+  if exists (
+    select 1 from pg_trigger t
+      join pg_class c on c.oid = t.tgrelid
+      join pg_namespace n on n.oid = c.relnamespace
+     where n.nspname = 'public' and c.relname = 'krew_profiles'
+       and not t.tgisinternal
+       and pg_get_triggerdef(t.oid) ilike '%krew_avatar_collect%'
+  ) then
+    raise exception
+      'FAIL: the storage-deleting trigger is back and will fail every claim';
+  end if;
+  raise notice 'PASS: no storage-deleting trigger on krew_profiles';
 
   -- An avatar_url the builder never produced must not arm the cleanup.
   update public.krew_profiles set avatar_url = null where id = v_profile;
@@ -230,50 +245,20 @@ end $$;
 -- ---------------------------------------------------------------------------
 
 do $$
-declare
-  v_expired  text := 'claim/' || repeat('c', 64) || '.webp';
-  v_abandoned text := 'claim/' || repeat('d', 64) || '.avif';
-  v_removed  integer;
 begin
-  insert into public.krew_avatar_tickets (path, expires_at)
-  values (v_expired, now() - interval '3 days');
-  insert into public.krew_avatar_tickets (path, expires_at)
-  values (v_abandoned, now() - interval '3 days');
-  insert into storage.objects (bucket_id, name) values ('krew-avatars', v_expired);
-
-  -- Too aggressive a window is refused outright.
-  begin
-    perform public.krew_prune_expired_avatar_tickets(interval '1 minute');
-    raise exception 'FAIL: prune accepted a sub-hour window';
-  exception when others then
-    if sqlerrm like 'FAIL:%' then
-      raise;
-    end if;
-  end;
-
-  set local role service_role;
-  v_removed := public.krew_prune_expired_avatar_tickets(interval '1 day');
-  reset role;
-
-  if v_removed <> 1 then
-    raise exception 'FAIL: prune removed % objects, expected 1', v_removed;
+  -- 024 dropped both storage-deleting routines: this project refuses direct
+  -- deletes against storage.objects, so a row trigger that tries is a bug, not
+  -- a cleanup. Assert they stay gone, and that nothing else in the request
+  -- path reaches for storage writes it is not allowed to make.
+  if to_regprocedure('public.krew_prune_expired_avatar_tickets(interval)') is not null then
+    raise exception
+      'FAIL: the prune sweep is back and will fail on a real Supabase project';
   end if;
-  if exists (select 1 from storage.objects where name = v_expired) then
-    raise exception 'FAIL: the abandoned upload survived';
+  if to_regprocedure('public.krew_avatar_collect_superseded()') is not null then
+    raise exception
+      'FAIL: the avatar collector is back and will roll back every claim';
   end if;
-  if exists (select 1 from public.krew_avatar_tickets where path = v_expired) then
-    raise exception 'FAIL: the abandoned ticket row survived';
-  end if;
-  raise notice 'PASS: prune sweeps unbound expired uploads only';
-
-  -- Not reachable from a browser.
-  if has_function_privilege('anon', 'public.krew_prune_expired_avatar_tickets(interval)', 'EXECUTE') then
-    raise exception 'FAIL: anon can execute the prune sweep';
-  end if;
-  if has_function_privilege('authenticated', 'public.krew_prune_expired_avatar_tickets(interval)', 'EXECUTE') then
-    raise exception 'FAIL: authenticated can execute the prune sweep';
-  end if;
-  raise notice 'PASS: prune sweep is not callable by client roles';
+  raise notice 'PASS: no storage-deleting routines remain';
 end $$;
 
 commit;

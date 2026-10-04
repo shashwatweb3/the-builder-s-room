@@ -108,3 +108,24 @@ grant select on storage.buckets to anon, authenticated;
 grant usage on schema auth to anon, authenticated, service_role;
 grant usage on schema storage to anon, authenticated, service_role;
 grant usage on schema public to anon, authenticated, service_role;
+
+-- ---------------------------------------------------------------------------
+-- Supabase refuses direct deletes against the storage tables:
+--   42501  Direct deletion from storage tables is not allowed.
+--          Use the Storage API instead.
+-- A bare Postgres happily allows them, which is how 021 shipped an avatar
+-- collection trigger that rolled back every live claim. Reproduce the guard so
+-- the suite fails here the same way production does.
+-- ---------------------------------------------------------------------------
+create or replace function public.t_storage_delete_guard()
+returns trigger language plpgsql as $$
+begin
+  raise exception
+    'Direct deletion from storage tables is not allowed. Use the Storage API instead.'
+    using errcode = '42501';
+end $$;
+
+drop trigger if exists t_no_direct_storage_delete on storage.objects;
+create trigger t_no_direct_storage_delete
+  before delete on storage.objects
+  for each row execute function public.t_storage_delete_guard();

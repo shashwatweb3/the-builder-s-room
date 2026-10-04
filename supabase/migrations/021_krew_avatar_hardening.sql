@@ -102,9 +102,20 @@ begin
     end if;
   end if;
 
-  if v_base is null or v_base !~* '^https?://[^[:space:]"''<>`\\]+$' then
+  -- Last resort: this deployment's own canonical host. A pooled PostgREST
+  -- connection never sees an operator's ALTER DATABASE ... SET (that is a
+  -- database-level default, and each pooled backend only picks it up on
+  -- reconnect), and a browser request carries no JWT ref claim, so without
+  -- this the claim rolls back with "Cannot build the avatar URL". Hardcoded on
+  -- purpose: the client Host header is still ignored, and only the path
+  -- portion below is ever attacker-influenced.
+  if v_base is null then
+    v_base := 'https://rkqhestmtbxzatbypbpe.supabase.co';
+  end if;
+
+  if v_base !~* '^https?://[^[:space:]"''<>`\\]+$' then
     raise exception
-      'Cannot build the avatar URL: storage.get_public_url(text,text) is missing, app.settings.supabase_url is not set, and this request carries no Supabase project ref. Run: alter database postgres set app.settings.supabase_url = ''https://<project-ref>.supabase.co'';'
+      'Cannot build the avatar URL: storage.get_public_url(text,text) is missing, app.settings.supabase_url is not set, and this request carries no Supabase project ref.'
       using errcode = '22023';
   end if;
 

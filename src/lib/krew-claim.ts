@@ -24,7 +24,7 @@ import {
   type MemberType,
   type PublicKrewProfile,
 } from "@/lib/krew-profile";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
+import { createPublicClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import type { KrewAvatarTicket, KrewClaimResult, ManagedKrewProfile } from "@/lib/supabase/types";
 
 export const CLAIM_NOT_CONFIGURED =
@@ -134,7 +134,7 @@ export async function uploadClaimAvatar(file: File): Promise<ClaimAvatar> {
   const ext = AVATAR_EXT_BY_MIME[file.type];
   if (!ext) throw new Error("Use a JPG, PNG, WebP or AVIF image.");
 
-  const supabase = createClient();
+  const supabase = createPublicClient();
   const { data, error } = await supabase.rpc("krew_avatar_upload_ticket", { p_ext: ext });
   if (error) throw rpcMessage(error.message, "Could not reserve an upload slot.");
 
@@ -164,7 +164,7 @@ export async function claimKrewId(
 ): Promise<KrewClaimResult> {
   if (!isSupabaseConfigured()) throw unavailable();
 
-  const supabase = createClient();
+  const supabase = createPublicClient();
   const { data, error } = await supabase.rpc("krew_claim_id", {
     p_profile: claimPayload(draft),
     p_hp: honeypot,
@@ -187,7 +187,7 @@ export async function fetchManagedProfile(token: string): Promise<ManagedKrewPro
   if (!isSupabaseConfigured()) throw unavailable();
   if (!token) return null;
 
-  const supabase = createClient();
+  const supabase = createPublicClient();
   const { data, error } = await supabase.rpc("krew_managed_profile", { p_token: token });
   if (error) throw rpcMessage(error.message, "Could not open that management link.");
 
@@ -205,7 +205,7 @@ export async function updateManagedProfile(
 ): Promise<ManagedKrewProfile> {
   if (!isSupabaseConfigured()) throw unavailable();
 
-  const supabase = createClient();
+  const supabase = createPublicClient();
   const { data, error } = await supabase.rpc("krew_update_by_token", {
     p_token: token,
     p_profile: claimPayload(draft),

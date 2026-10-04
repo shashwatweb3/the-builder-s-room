@@ -66,6 +66,20 @@ begin
   return v;
 end $$;
 
+-- Counts rows a DML statement actually touched. Deliberately NOT security
+-- definer, so it reports what the current role was allowed to do -- an UPDATE
+-- or DELETE that RLS filters out updates zero rows rather than raising, so
+-- "expected an error" would be the wrong assertion here.
+create or replace function public.t_count(sql text) returns bigint
+language plpgsql as $$
+declare n bigint;
+begin
+  execute sql;
+  get diagnostics n = row_count;
+  return n;
+end $$;
+
+grant execute on function public.t_count(text) to anon, authenticated;
 grant execute on function public.t_count_as_owner(text) to anon, authenticated;
 grant execute on function public.t_scalar_as_owner(text) to anon, authenticated;
 grant usage on schema public to anon, authenticated;
@@ -892,6 +906,113 @@ begin
   end if;
   raise notice 'PASS: avatar URL builder is not callable by client roles';
 end $$;
+
+-- A signed-in visitor on /krew-id sends a user JWT, so PostgREST evaluates the
+-- upload as `authenticated`. The ticketed policy must cover that role too, or
+-- choosing a photo fails with "new row violates row-level security policy".
+-- Widening the role must not widen what is authorised: only an unbound,
+-- unexpired ticket path is ever writable, and never with UPDATE or DELETE.
+\echo ''
+\echo '=== 14. Ticketed upload works for a signed-in visitor, and only for a ticket ==='
+
+do $$
+declare
+  v_path text;
+  v_granted boolean;
+begin
+  -- RLS is the gate here: Supabase does grant anon/authenticated table-level
+-- INSERT on storage.objects, so what must hold is that the only INSERT policies
+-- are the two intended ones. Anything else would be a blanket write path.
+  if (select count(*) from pg_policies
+       where schemaname = 'storage' and tablename = 'objects'
+         and cmd = 'INSERT' and 'anon' = any (roles)) <> 1 then
+    raise exception
+      'FAIL: anon should hold exactly 1 INSERT policy (the ticketed claim)';
+  end if;
+
+  if (select count(*) from pg_policies
+       where schemaname = 'storage' and tablename = 'objects'
+         and cmd = 'INSERT' and 'authenticated' = any (roles)) <> 2 then
+    raise exception
+      'FAIL: authenticated should hold exactly 2 INSERT policies (own folder + ticketed claim)';
+  end if;
+  raise notice 'PASS: anon INSERT is the ticketed claim only, authenticated adds its own folder';
+
+  if exists (
+    select 1 from pg_policies
+     where schemaname = 'storage' and tablename = 'objects'
+       and cmd in ('UPDATE', 'DELETE') and 'anon' = any (roles)
+  ) then
+    raise exception 'FAIL: anon holds an UPDATE or DELETE policy on storage.objects';
+  end if;
+  raise notice 'PASS: anon cannot update or delete any object, so no upsert and no overwrite';
+
+  -- The policy has to name authenticated, otherwise a signed-in visitor's
+  -- upload matches no policy at all.
+  select exists (
+    select 1 from pg_policies
+     where schemaname = 'storage'
+       and tablename = 'objects'
+       and policyname = 'Public claimers can upload a ticketed avatar'
+       and cmd = 'INSERT'
+       and 'anon' = any (roles)
+       and 'authenticated' = any (roles)
+  ) into v_granted;
+  if not v_granted then
+    raise exception
+      'FAIL: ticketed upload policy does not cover the authenticated role';
+  end if;
+  raise notice 'PASS: ticketed upload policy covers anon and authenticated';
+
+  raise notice 'PASS: ticketed upload is INSERT-only, so upsert stays impossible';
+end $$;
+
+-- Now actually behave like a signed-in visitor. The role has to be switched at
+-- statement level: SET ROLE is refused inside a SECURITY DEFINER function, and
+-- the helpers below are deliberately not definer, so they evaluate RLS as
+-- whatever role is in force when they are called.
+\echo ''
+\echo '=== 15. A signed-in visitor can upload their own ticketed photo, nothing else ==='
+
+select set_config('request.jwt.claim.sub',
+                  '22222222-2222-2222-2222-222222222222', false);
+select path as v_signed_ticket
+  from public.krew_avatar_upload_ticket('jpg') \gset
+
+set role authenticated;
+
+select public.t_expect_ok(
+  'signed-in visitor wrote their own live ticket path',
+  format('insert into storage.objects(bucket_id, name) values (%L, %L)',
+         'krew-avatars', :'v_signed_ticket'));
+
+select public.t_expect_error(
+  'signed-in visitor refused a claim path that was never issued',
+  format('insert into storage.objects(bucket_id, name) values (%L, %L)',
+         'krew-avatars', 'claim/' || repeat('b', 64) || '.jpg'));
+
+select public.t_expect_error(
+  'signed-in visitor refused inside another member folder',
+  format('insert into storage.objects(bucket_id, name) values (%L, %L)',
+         'krew-avatars',
+         '33333333-3333-3333-3333-333333333333/someone-elses.jpg'));
+
+-- No UPDATE or DELETE policy covers a claim path, so these must affect zero
+-- rows: the photo a visitor uploads cannot be overwritten or removed by anyone
+-- without a session-bound path in their own folder.
+select public.t_assert(
+  'signed-in visitor overwrote the photo at its own ticket path',
+  public.t_count(format(
+    'update storage.objects set name = name where bucket_id = %L and name = %L',
+    'krew-avatars', :'v_signed_ticket')), 0);
+
+select public.t_assert(
+  'signed-in visitor deleted the object at its own ticket path',
+  public.t_count(format(
+    'delete from storage.objects where bucket_id = %L and name = %L',
+    'krew-avatars', :'v_signed_ticket')), 0);
+
+reset role;
 
 commit;
 

@@ -198,6 +198,45 @@ function drawQr(
   }
 }
 
+/** Wraps text, then truncates the final kept line with an ellipsis. */
+function wrapClamped(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number,
+  maxLines: number,
+): string[] {
+  const lines = wrap(ctx, text, maxWidth);
+  if (lines.length <= maxLines) return lines;
+  const kept = lines.slice(0, maxLines);
+  let last = kept[maxLines - 1] ?? "";
+  while (last.length > 1 && ctx.measureText(`${last}…`).width > maxWidth) {
+    last = last.slice(0, -1);
+  }
+  kept[maxLines - 1] = `${last.replace(/[\s,.;:!?-]+$/, "")}…`;
+  return kept;
+}
+
+/**
+ * Largest display size that still fits the safe width on at most two lines, so a
+ * long name shrinks rather than being clipped. Only a pathologically long name
+ * falls back to the minimum size with a third, truncated line.
+ */
+function fitDisplayName(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number,
+  maxSize: number,
+  minSize: number,
+): { size: number; lines: string[] } {
+  for (let size = maxSize; size > minSize; size -= 2) {
+    font(ctx, size, 700);
+    const lines = wrap(ctx, text, maxWidth);
+    if (lines.length <= 2) return { size, lines };
+  }
+  font(ctx, minSize, 700);
+  return { size: minSize, lines: wrapClamped(ctx, text, maxWidth, 3) };
+}
+
 interface RenderAssets {
   theme: CardTheme;
   logo: HTMLImageElement | null;
@@ -440,7 +479,54 @@ function drawCard(
   ctx.stroke();
 }
 
-/** 1080x1920 phone wallpaper: same identity, QR anchored at the bottom. */
+/**
+ * Phone wallpaper backdrop: the cream field with a faint editorial grid, so the
+ * export keeps the Krew3 paper texture instead of reading as a flat fill.
+ */
+function paintWallpaperBackdrop(
+  ctx: CanvasRenderingContext2D,
+  W: number,
+  H: number,
+  theme: CardTheme,
+): void {
+  ctx.fillStyle = theme.background;
+  ctx.fillRect(0, 0, W, H);
+
+  const step = Math.round(W / 12);
+  ctx.save();
+  ctx.globalAlpha = 0.04;
+  ctx.strokeStyle = theme.foreground;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let x = step; x < W; x += step) {
+    ctx.moveTo(x + 0.5, 0);
+    ctx.lineTo(x + 0.5, H);
+  }
+  for (let y = step; y < H; y += step) {
+    ctx.moveTo(0, y + 0.5);
+    ctx.lineTo(W, y + 0.5);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
+/** One measured wallpaper section: its height, and how to paint at a given top. */
+interface WallpaperBlock {
+  h: number;
+  render: (top: number) => void;
+}
+
+/**
+ * The phone wallpaper is its own composition rather than a stretched card: a
+ * single vertical flow of header, photo, identity, bio, QR panel and footer.
+ *
+ * Every section is measured before anything is painted and the stack is walked
+ * with one cursor, so sections cannot collide and nothing can be drawn outside
+ * the safe area. If the content is too tall for the canvas the whole scale
+ * shrinks until it fits; if it is short the leftover height is redistributed
+ * into the gaps. That is what makes a longer name, handle or bio reflow
+ * instead of overflowing.
+ */
 function drawWallpaper(
   ctx: CanvasRenderingContext2D,
   model: KrewCardModel,
@@ -449,135 +535,266 @@ function drawWallpaper(
   H: number,
 ): void {
   const { theme, logo, avatar, grid } = assets;
+  const S = W / 1080;
 
-  ctx.fillStyle = theme.background;
-  ctx.fillRect(0, 0, W, H);
+  const safe = Math.round(92 * S);
+  const contentW = W - safe * 2;
+  const avail = H - safe * 2;
+  const cx = W / 2;
 
-  const pad = Math.round(W * 0.09);
+  paintWallpaperBackdrop(ctx, W, H, theme);
 
-  // Masthead.
-  const logoSize = Math.round(W * 0.17);
-  const y = pad;
-  if (logo) {
-    roundRect(ctx, pad, y, logoSize, logoSize, Math.round(logoSize * 0.28));
-    ctx.save();
-    ctx.clip();
-    ctx.drawImage(logo, pad, y, logoSize, logoSize);
-    ctx.restore();
-  }
-  ctx.strokeStyle = theme.border;
-  ctx.lineWidth = Math.max(2, Math.round(W * 0.005));
-  roundRect(ctx, pad, y, logoSize, logoSize, Math.round(logoSize * 0.28));
-  ctx.stroke();
+  const border = Math.max(2, Math.round(3 * S));
 
-  ctx.fillStyle = theme.foreground;
-  font(ctx, Math.round(W * 0.085), 700);
-  ctx.textBaseline = "top";
-  ctx.fillText("Krew3", pad + logoSize + pad * 0.5, y + logoSize * 0.22);
+  /** Builds the whole stack at a given scale; called again if it has to shrink. */
+  const build = (u: number): WallpaperBlock[] => {
+    const blocks: WallpaperBlock[] = [];
 
-  // Identity, optically centred in the space above the QR block.
-  const qrSize = Math.round(W * 0.42);
-  const qrTop = H - pad * 0.6 - qrSize;
-  const faceSize = Math.round(W * 0.3);
-  const faceY = Math.max(y + logoSize + pad * 0.9, qrTop - faceSize - pad * 2.6);
+    // Header: logo lockup with the wordmark and the KREW ID label.
+    const logoSize = Math.round(64 * u);
+    const wordSize = Math.round(30 * u);
+    const labelSize = Math.round(13 * u);
+    blocks.push({
+      h: logoSize,
+      render: (top) => {
+        const lx = cx - contentW / 2;
+        ctx.fillStyle = theme.lavender;
+        ctx.globalAlpha = 0.45;
+        roundRect(ctx, lx, top, logoSize, logoSize, Math.round(logoSize * 0.3));
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        if (logo) {
+          ctx.save();
+          roundRect(ctx, lx, top, logoSize, logoSize, Math.round(logoSize * 0.3));
+          ctx.clip();
+          ctx.drawImage(logo, lx, top, logoSize, logoSize);
+          ctx.restore();
+        }
+        ctx.strokeStyle = theme.border;
+        ctx.lineWidth = border;
+        roundRect(ctx, lx, top, logoSize, logoSize, Math.round(logoSize * 0.3));
+        ctx.stroke();
 
-  ctx.fillStyle = theme.lavender;
-  ctx.globalAlpha = 0.4;
-  roundRect(ctx, (W - faceSize) / 2, faceY, faceSize, faceSize, Math.round(faceSize * 0.3));
-  ctx.fill();
-  ctx.globalAlpha = 1;
+        const tx = lx + logoSize + Math.round(18 * u);
+        ctx.fillStyle = theme.foreground;
+        font(ctx, wordSize, 700);
+        ctx.textAlign = "left";
+        ctx.textBaseline = "alphabetic";
+        ctx.fillText("Krew3", tx, top + logoSize * 0.56);
 
-  const face = avatar ?? logo;
-  if (face) {
-    drawCover(ctx, face, (W - faceSize) / 2, faceY, faceSize, Math.round(faceSize * 0.3));
-  }
-  ctx.strokeStyle = theme.border;
-  ctx.lineWidth = Math.max(2, Math.round(W * 0.005));
-  roundRect(ctx, (W - faceSize) / 2, faceY, faceSize, faceSize, Math.round(faceSize * 0.3));
-  ctx.stroke();
+        ctx.fillStyle = theme.mutedForeground;
+        font(ctx, labelSize, 500, true);
+        const label = "KREW ID";
+        const track = Math.round(labelSize * 0.16);
+        tracked(ctx, label, tx + Math.round(2 * u), top + logoSize * 0.86, track);
+      },
+    });
 
-  let iy = faceY + faceSize + pad * 0.7;
+    // Profile photo: square, rounded, outlined, with the lavender offset plate.
+    const photo = Math.round(248 * u);
+    const photoR = Math.round(photo * 0.3);
+    const photoShadow = Math.round(8 * u);
+    blocks.push({
+      h: photo + photoShadow,
+      render: (top) => {
+        const px = cx - photo / 2;
+        ctx.fillStyle = theme.lavender;
+        ctx.globalAlpha = 0.45;
+        roundRect(ctx, px + photoShadow, top + photoShadow, photo, photo, photoR);
+        ctx.fill();
+        ctx.globalAlpha = 1;
 
-  const nameSize = Math.round(W * 0.108);
-  ctx.fillStyle = theme.foreground;
-  font(ctx, nameSize, 700);
-  ctx.textAlign = "center";
-  const nameLines = wrap(ctx, model.displayName, W - pad * 2).slice(0, 2);
-  for (const line of nameLines) {
-    const w = ctx.measureText(line).width;
-    ctx.fillText(line, (W - w) / 2, iy);
-    iy += nameSize * 1.06;
-  }
+        const face = avatar ?? logo;
+        if (face) drawCover(ctx, face, px, top, photo, photoR);
 
-  const handleSize = Math.round(W * 0.042);
-  font(ctx, handleSize, 500, true);
-  ctx.fillStyle = theme.mutedForeground;
-  const handle = `@${model.username}`;
-  const hw = ctx.measureText(handle).width;
-  ctx.fillText(handle, (W - hw) / 2, iy);
-  iy += handleSize * 2;
+        ctx.strokeStyle = theme.border;
+        ctx.lineWidth = border;
+        roundRect(ctx, px, top, photo, photo, photoR);
+        ctx.stroke();
+      },
+    });
 
-  if (model.typeLabel) {
-    const pillH = Math.round(handleSize * 1.9);
-    font(ctx, handleSize, 600, true);
-    const tw = trackedWidth(ctx, model.typeLabel.toUpperCase(), handleSize * 0.08);
-    const pw = tw + pillH;
-    ctx.fillStyle = theme.primary;
-    roundRect(ctx, (W - pw) / 2, iy, pw, pillH, pillH / 2);
-    ctx.fill();
-    ctx.fillStyle = theme.primaryForeground;
-    ctx.textAlign = "left";
-    tracked(
-      ctx,
-      model.typeLabel.toUpperCase(),
-      (W - pw) / 2 + (pw - tw) / 2,
-      iy + pillH / 2,
-      handleSize * 0.08,
-    );
-    ctx.textAlign = "center";
-    iy += pillH;
-  }
+    // Name: large, responsive, never wider than the safe area.
+    const name = fitDisplayName(ctx, model.displayName, contentW, 78 * u, 46 * u);
+    const nameLh = name.size * 1.04;
+    blocks.push({
+      h: name.lines.length * nameLh,
+      render: (top) => {
+        ctx.fillStyle = theme.foreground;
+        font(ctx, name.size, 700);
+        ctx.textAlign = "center";
+        ctx.textBaseline = "alphabetic";
+        let y = top + name.size;
+        for (const line of name.lines) {
+          ctx.fillText(line, cx, y);
+          y += nameLh;
+        }
+      },
+    });
 
-  if (model.bio) {
-    font(ctx, Math.round(W * 0.042), 400);
-    ctx.fillStyle = theme.foreground;
-    const lines = wrap(ctx, model.bio, W - pad * 2).slice(0, 3);
-    iy += pad * 0.5;
-    for (const line of lines) {
-      const w = ctx.measureText(line).width;
-      ctx.fillText(line, (W - w) / 2, iy);
-      iy += Math.round(W * 0.058);
+    // Handle.
+    const handleSize = Math.round(26 * u);
+    const handle = `@${model.username}`;
+    blocks.push({
+      h: Math.round(handleSize * 1.4),
+      render: (top) => {
+        let size = handleSize;
+        font(ctx, size, 500, true);
+        while (size > 14 * u && ctx.measureText(handle).width > contentW) {
+          size -= 1;
+          font(ctx, size, 500, true);
+        }
+        ctx.fillStyle = theme.mutedForeground;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(handle, cx, top + (size * 1.4) / 2);
+      },
+    });
+
+    // Member-type badge.
+    if (model.typeLabel) {
+      const badgeSize = Math.round(18 * u);
+      const pillH = Math.round(40 * u);
+      const track = Math.round(1.8 * u);
+      const label = model.typeLabel.toUpperCase();
+      font(ctx, badgeSize, 600, true);
+      const pillW = trackedWidth(ctx, label, track) + Math.round(34 * u);
+      blocks.push({
+        h: pillH,
+        render: (top) => {
+          font(ctx, badgeSize, 600, true);
+          const px = cx - pillW / 2;
+          ctx.fillStyle = theme.primary;
+          roundRect(ctx, px, top, pillW, pillH, pillH / 2);
+          ctx.fill();
+          ctx.fillStyle = theme.primaryForeground;
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          tracked(
+            ctx,
+            label,
+            px + (pillW - trackedWidth(ctx, label, track)) / 2,
+            top + pillH / 2,
+            track,
+          );
+        },
+      });
     }
-  }
 
-  if (model.connections.length > 0) {
-    font(ctx, Math.round(W * 0.032), 500, true);
-    ctx.fillStyle = theme.mutedForeground;
-    iy += pad * 0.45;
-    for (const c of model.connections.slice(0, 3)) {
-      const w = ctx.measureText(c).width;
-      ctx.fillText(c, (W - w) / 2, iy);
-      iy += Math.round(W * 0.046);
+    // Bio: at most three lines, truncated rather than allowed to collide.
+    if (model.bio) {
+      const bioSize = Math.round(22 * u);
+      const bioLh = Math.round(bioSize * 1.55);
+      const lines = wrapClamped(ctx, model.bio, contentW, 3);
+      blocks.push({
+        h: lines.length * bioLh,
+        render: (top) => {
+          ctx.fillStyle = theme.foreground;
+          font(ctx, bioSize, 400);
+          ctx.textAlign = "center";
+          ctx.textBaseline = "alphabetic";
+          let y = top + bioSize;
+          for (const line of lines) {
+            ctx.fillText(line, cx, y);
+            y += bioLh;
+          }
+        },
+      });
     }
+
+    // QR panel: solid cream plate, solid black border, generous quiet space.
+    const qrSize = Math.round(288 * u);
+    const panelW = Math.min(contentW, Math.round(660 * u));
+    const panelPad = Math.round(36 * u);
+    const panelR = Math.round(26 * u);
+    const ctaSize = Math.round(17 * u);
+    const urlSize = Math.round(19 * u);
+    const ctaLh = Math.round(ctaSize * 1.3);
+    const urlLh = Math.round(urlSize * 1.3);
+    const panelH = panelPad * 2 + qrSize + Math.round(24 * u) + ctaLh + Math.round(8 * u) + urlLh;
+    blocks.push({
+      h: panelH,
+      render: (top) => {
+        ctx.fillStyle = theme.card;
+        roundRect(ctx, cx - panelW / 2, top, panelW, panelH, panelR);
+        ctx.fill();
+        ctx.strokeStyle = theme.border;
+        ctx.lineWidth = border;
+        roundRect(ctx, cx - panelW / 2, top, panelW, panelH, panelR);
+        ctx.stroke();
+
+        drawQr(ctx, grid, cx - qrSize / 2, top + panelPad, qrSize, theme);
+
+        const ctaTrack = Math.round(ctaSize * 0.12);
+        const cta = "SCAN TO CONNECT";
+        font(ctx, ctaSize, 600, true);
+        const ctaW = trackedWidth(ctx, cta, ctaTrack);
+        const ctaY = top + panelPad + qrSize + Math.round(24 * u) + ctaLh * 0.5;
+        ctx.fillStyle = theme.foreground;
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        tracked(ctx, cta, cx - ctaW / 2, ctaY, ctaTrack);
+
+        font(ctx, urlSize, 400, true);
+        const urlW = ctx.measureText(model.pathLabel).width;
+        ctx.fillStyle = theme.mutedForeground;
+        ctx.fillText(model.pathLabel, cx - urlW / 2, ctaY + ctaLh / 2 + urlLh * 0.5);
+      },
+    });
+
+    // Footer line.
+    const footSize = Math.round(15 * u);
+    const footTrack = Math.round(footSize * 0.18);
+    const footText = "NOT A COMMUNITY. A KREW.";
+    font(ctx, footSize, 500, true);
+    const footW = trackedWidth(ctx, footText, footTrack);
+    blocks.push({
+      h: Math.round(footSize * 1.6),
+      render: (top) => {
+        font(ctx, footSize, 500, true);
+        ctx.fillStyle = theme.mutedForeground;
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        tracked(ctx, footText, cx - footW / 2, top + (footSize * 1.6) / 2, footTrack);
+      },
+    });
+
+    return blocks;
+  };
+
+  // Shrink the whole composition until the sections alone fit the safe area.
+  const gapBase = Math.round(34 * S);
+  let u = S;
+  let blocks = build(u);
+  const contentTotal = () => blocks.reduce((sum, b) => sum + b.h, 0);
+  while (contentTotal() > avail && u > 0.6 * S) {
+    u = Math.max(0.6 * S, u - 0.02 * S);
+    blocks = build(u);
   }
 
-  // QR footer.
-  const qrX = (W - qrSize) / 2;
-  drawQr(ctx, grid, qrX, qrTop, qrSize, theme);
+  // Redistribute the leftover height into the gaps so the composition breathes
+  // instead of bunching at the top. The gap is bounded three ways: it grows
+  // from the base spacing using whatever room is spare, it never exceeds the
+  // cap, and it never exceeds what the safe area can actually absorb - that last
+  // bound is what guarantees the stack cannot be pushed past the bottom edge.
+  // Anything the cap leaves over becomes balanced top/bottom padding.
+  const contentH = contentTotal();
+  const gaps = blocks.length - 1;
+  const gapBudget = Math.max(0, avail - contentH);
+  const gapCap = Math.round(104 * S);
+  const gap =
+    gaps > 0
+      ? Math.max(
+          0,
+          Math.min(gapBase + (gapBudget - gapBase * gaps) / gaps, gapCap, gapBudget / gaps),
+        )
+      : 0;
+  let y = safe + Math.max(0, (avail - contentH - gap * gaps) / 2);
 
-  const ctaSize = Math.round(W * 0.034);
-  font(ctx, ctaSize, 600, true);
-  ctx.fillStyle = theme.foreground;
-  const cta = "SCAN TO CONNECT";
-  const ctaW = trackedWidth(ctx, cta, ctaSize * 0.1);
-  tracked(ctx, cta, (W - ctaW) / 2, qrTop + qrSize + pad * 0.45, ctaSize * 0.1);
-
-  font(ctx, Math.round(W * 0.036), 400, true);
-  ctx.fillStyle = theme.mutedForeground;
-  const pw2 = ctx.measureText(model.pathLabel).width;
-  ctx.fillText(model.pathLabel, (W - pw2) / 2, qrTop + qrSize + pad * 0.45 + ctaSize * 1.7);
-
-  ctx.textAlign = "left";
+  for (const block of blocks) {
+    block.render(Math.round(y));
+    y += block.h + gap;
+  }
 }
 
 async function renderCanvas(
