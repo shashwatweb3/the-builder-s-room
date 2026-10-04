@@ -251,14 +251,6 @@ function ClaimKrewIdRoute() {
               className="sr-only"
             />
           </OffsetCard>
-
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link to="/login" className="font-semibold text-foreground underline">
-              Sign in
-            </Link>{" "}
-            to edit your Krew ID.
-          </p>
         </div>
       )}
     </div>
