@@ -13,9 +13,9 @@ import { cardFileStem, type KrewCardModel } from "@/lib/krew-card-model";
 const SANS = '"Space Grotesk", ui-sans-serif, system-ui, sans-serif';
 const MONO = '"JetBrains Mono", ui-monospace, SFMono-Regular, monospace';
 
-/** Digital card size. A6 print raster is derived separately. */
-export const CARD_PNG_WIDTH = 1080;
-export const CARD_PNG_HEIGHT = 1520;
+/** Digital card size: a landscape networking card. A6 print raster is separate. */
+export const CARD_PNG_WIDTH = 1200;
+export const CARD_PNG_HEIGHT = 760;
 export const WALLPAPER_WIDTH = 1080;
 export const WALLPAPER_HEIGHT = 1920;
 /** A6 is 105x148mm; at 300dpi that is 1240x1748px. */
@@ -280,10 +280,9 @@ function drawCover(
 }
 
 /**
- * The Krew Card, matching the KrewCardPreview composition: offset-shadowed
- * card, lavender masthead, identity block, then a QR block anchored to the
- * bottom. Sized from both axes so the same routine serves the PNG and the
- * 300dpi print raster.
+ * Portrait Krew Card raster used for the 300dpi A6 print PDF. Sized from both
+ * axes so the print run keeps the document composition regardless of the
+ * landscape PNG proportions.
  */
 function drawCard(
   ctx: CanvasRenderingContext2D,
@@ -477,6 +476,504 @@ function drawCard(
   ctx.lineWidth = border;
   roundRect(ctx, m, m, cw, ch, radius);
   ctx.stroke();
+}
+
+/** Small up-right link arrow, drawn as vectors so no font glyph can drop out. */
+function drawArrowUpRight(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  size: number,
+  color: string,
+): void {
+  const t = Math.max(2, Math.round(size * 0.14));
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = t;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  ctx.moveTo(x, y + size);
+  ctx.lineTo(x + size, y);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x + size - t * 2.2, y);
+  ctx.lineTo(x + size, y);
+  ctx.lineTo(x + size, y + t * 2.2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/** Up to two initials for the placeholder tile used when no avatar exists. */
+function initialsOf(name: string): string {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return "";
+  const first = words[0] ?? "";
+  if (words.length === 1) return first.slice(0, 2).toUpperCase();
+  return `${first[0] ?? ""}${(words[words.length - 1] ?? "")[0] ?? ""}`.toUpperCase();
+}
+
+/** Centred tracked text; tracked() always draws left to right. */
+function trackedCentered(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  centerX: number,
+  y: number,
+  spacing: number,
+): void {
+  tracked(ctx, text, centerX - trackedWidth(ctx, text, spacing) / 2, y, spacing);
+}
+
+/**
+ * The landscape Krew Card PNG: a compact event-networking card.
+ *
+ * Composition is a measured two-column flow, not a stack of absolutely placed
+ * blocks. The left column holds identity, then a tinted panel for bio and best
+ * work, then the tiny footer; the right column is a full-height solid QR rail.
+ * Heights are measured before anything is painted and the leftover column height
+ * is shared out between a capped number of gaps, so the card reads as a
+ * deliberately typeset card instead of a stretched resume. Short profiles centre
+ * rather than stretch, which keeps the whitespace balanced.
+ */
+function drawNetworkingCard(
+  ctx: CanvasRenderingContext2D,
+  model: KrewCardModel,
+  assets: RenderAssets,
+  W: number,
+  H: number,
+): void {
+  const { theme, logo, avatar, grid } = assets;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const m = Math.round(H * 0.045);
+  const shadow = Math.round(H * 0.02);
+  const cw = W - m * 2;
+  const ch = H - m * 2;
+  const radius = Math.round(H * 0.05);
+  const border = Math.max(3, Math.round(H * 0.0065));
+  const pad = Math.round(cw * 0.055);
+
+  // Heavy offset shadow in solid ink, matching --shadow-offset.
+  ctx.fillStyle = theme.foreground;
+  roundRect(ctx, m + shadow, m + shadow * 1.2, cw, ch, radius);
+  ctx.fill();
+
+  ctx.fillStyle = theme.card;
+  roundRect(ctx, m, m, cw, ch, radius);
+  ctx.fill();
+
+  ctx.save();
+  roundRect(ctx, m, m, cw, ch, radius);
+  ctx.clip();
+
+  // ---- Header: small logo + wordmark left, KREW ID mono label right.
+  const headerH = Math.round(ch * 0.115);
+  ctx.globalAlpha = 0.35;
+  ctx.fillStyle = theme.lavender;
+  ctx.fillRect(m, m, cw, headerH);
+  ctx.globalAlpha = 1;
+
+  const logoSize = Math.round(headerH * 0.5);
+  const logoX = m + pad;
+  const logoY = m + (headerH - logoSize) / 2;
+  ctx.fillStyle = theme.primary;
+  roundRect(ctx, logoX, logoY, logoSize, logoSize, Math.round(logoSize * 0.28));
+  ctx.fill();
+  if (logo) {
+    ctx.save();
+    roundRect(ctx, logoX, logoY, logoSize, logoSize, Math.round(logoSize * 0.28));
+    ctx.clip();
+    ctx.drawImage(logo, logoX, logoY, logoSize, logoSize);
+    ctx.restore();
+  }
+
+  const wordmarkSize = Math.round(headerH * 0.34);
+  ctx.fillStyle = theme.foreground;
+  font(ctx, wordmarkSize, 700);
+  ctx.textBaseline = "middle";
+  ctx.fillText("Krew3", logoX + logoSize + Math.round(pad * 0.3), m + headerH / 2);
+
+  const idLabelSize = Math.round(headerH * 0.2);
+  font(ctx, idLabelSize, 600, true);
+  const idSpacing = idLabelSize * 0.18;
+  ctx.fillStyle = theme.mutedForeground;
+  tracked(
+    ctx,
+    "KREW ID",
+    m + cw - pad - trackedWidth(ctx, "KREW ID", idSpacing),
+    m + headerH / 2,
+    idSpacing,
+  );
+
+  ctx.strokeStyle = theme.border;
+  ctx.lineWidth = Math.max(1, Math.round(border * 0.35));
+  ctx.beginPath();
+  ctx.moveTo(m, m + headerH);
+  ctx.lineTo(m + cw, m + headerH);
+  ctx.stroke();
+
+  // ---- Measured grid.
+  const contentTop = m + headerH + Math.round(ch * 0.055);
+  const contentBottom = m + ch - Math.round(ch * 0.045);
+  const availH = contentBottom - contentTop;
+  const contentX = m + pad;
+  const contentW = cw - pad * 2;
+
+  const qrSize = qrBoxFor(grid.length, Math.round(Math.min(ch * 0.265, qrMaxFor(availH))));
+  const railPad = Math.round(qrSize * 0.17);
+  const railW = qrSize + railPad * 2;
+  const railGap = Math.round(cw * 0.045);
+  const railX = contentX + contentW - railW;
+  const leftW = railX - railGap - contentX;
+
+  const avatarSize = Math.max(
+    180,
+    Math.min(210, Math.round(leftW * 0.265), Math.round(availH * 0.42)),
+  );
+  const avatarRadius = Math.round(avatarSize * 0.16);
+  const avatarGap = Math.round(leftW * 0.045);
+  const nameMaxW = leftW - avatarSize - avatarGap;
+
+  // Measure the identity row: name (fitted), handle, member type.
+  const fitted = fitDisplayName(
+    ctx,
+    model.displayName,
+    nameMaxW,
+    Math.round(leftW * 0.076),
+    Math.round(leftW * 0.042),
+  );
+  const nameLead = Math.round(fitted.size * 1.1);
+  const handleSize = Math.round(leftW * 0.031);
+  const typeSize = Math.round(leftW * 0.023);
+  const typeSpacing = typeSize * 0.16;
+  const chipH = Math.round(typeSize * 2.05);
+  const stackGap = Math.round(leftW * 0.022);
+  const typeText = model.typeLabel ? model.typeLabel.toUpperCase() : "";
+  font(ctx, typeSize, 600, true);
+  const chipW = typeText ? trackedWidth(ctx, typeText, typeSpacing) + chipH * 0.8 : 0;
+  const stackH =
+    fitted.lines.length * nameLead +
+    Math.round(stackGap * 0.7) +
+    Math.round(handleSize * 1.34) +
+    (typeText ? Math.round(stackGap * 0.5) + chipH : 0);
+  let identityH = Math.max(avatarSize, stackH);
+
+  // Measure the tinted panel: bio, rule, best work.
+  const panelPadMax = Math.round(leftW * 0.042);
+  const workLabelSize = Math.round(leftW * 0.021);
+  const workLabelSpacing = workLabelSize * 0.16;
+  const workSize = Math.round(leftW * 0.044);
+  const arrowSize = Math.round(workSize * 0.72);
+  const innerGap = Math.round(leftW * 0.038);
+
+  const footerSize = Math.round(leftW * 0.019);
+  const footerSpacing = footerSize * 0.2;
+  const footerText = "NOT A COMMUNITY. A KREW.";
+  const footerH = Math.round(footerSize * 1.3);
+
+  const gapMin = Math.round(ch * 0.028);
+  const gapMax = Math.round(ch * 0.075);
+
+  // One measuring pass over the panel at a given bio size, padding and line cap.
+  // Every wrap is measured in the font it will be painted in.
+  const measurePanel = (bioSize: number, panelPad: number, maxBioLines: number) => {
+    const innerW = leftW - panelPad * 2;
+    const lead = Math.round(bioSize * 1.52);
+    font(ctx, bioSize, 400);
+    const lines = model.bio ? wrapClamped(ctx, model.bio, innerW, maxBioLines) : [];
+    font(ctx, workSize, 600);
+    const w = model.bestWorkTitle
+      ? wrapClamped(ctx, model.bestWorkTitle, innerW - arrowSize - 12, 1)
+      : [];
+    const hasBio = lines.length > 0;
+    const hasWork = w.length > 0;
+    const rule = Math.max(Math.round(innerW * 0.16), Math.round(workLabelSize * 1.2));
+    const innerH =
+      lines.length * lead +
+      (hasBio && hasWork ? innerGap + rule + Math.round(innerGap * 0.55) : 0) +
+      (hasWork ? Math.round(workSize * 1.5) : 0);
+    return {
+      bioSize,
+      lead,
+      lines,
+      workLines: w,
+      hasBio,
+      hasWork,
+      ruleW: rule,
+      innerW,
+      innerH,
+      h: hasBio || hasWork ? innerH + panelPad * 2 : 0,
+    };
+  };
+
+  // Shrink-to-fit: give the panel only what the identity row and footer leave,
+  // so a long bio can never push the footer past the card edge. Truncation is
+  // the last resort, after the line cap, the type size and the padding.
+  let avatarBox = avatarSize;
+  let panelPad = panelPadMax;
+  let bioSize = Math.round(leftW * 0.0345);
+  let maxBioLines = 4;
+  let panel = measurePanel(bioSize, panelPad, maxBioLines);
+  let identity = Math.max(avatarBox, stackH);
+  const room = () => availH - identity - footerH - gapMin * (panel.h > 0 ? 2 : 1);
+  while (panel.h > room() && maxBioLines > 2) {
+    maxBioLines--;
+    panel = measurePanel(bioSize, panelPad, maxBioLines);
+  }
+  while (panel.h > room() && bioSize > 18) {
+    bioSize--;
+    panel = measurePanel(bioSize, panelPad, maxBioLines);
+  }
+  while (panel.h > room() && panelPad > 14) {
+    panelPad--;
+    panel = measurePanel(bioSize, panelPad, maxBioLines);
+  }
+  while (panel.h > room() && avatarBox > 150) {
+    avatarBox -= 4;
+    identity = Math.max(avatarBox, stackH);
+  }
+
+  const { bioLines, workLines, hasBio, hasWork, ruleW, bioLead } = {
+    bioLines: panel.lines,
+    workLines: panel.workLines,
+    hasBio: panel.hasBio,
+    hasWork: panel.hasWork,
+    ruleW: panel.ruleW,
+    bioLead: panel.lead,
+  };
+  const panelH = panel.h;
+  identityH = identity;
+
+  // Distribute leftover height: capped gaps first, then centre the column.
+  const fixedH = identityH + panelH + footerH;
+  const gapSlots = panelH > 0 ? 2 : 1;
+  const slack = availH - fixedH;
+  let gap = gapMin;
+  if (slack > 0) gap = Math.max(gapMin, Math.min(gapMax, Math.round(slack / (gapSlots + 1))));
+  const usedH = fixedH + gap * gapSlots;
+  const leadIn = Math.max(0, Math.round((availH - usedH) / 2));
+
+  // ---- Paint: left column.
+  let y = contentTop + leadIn;
+  const identityY = y;
+  const avatarY = identityY;
+  const stackX = contentX + avatarBox + avatarGap;
+  const stackTop = identityY;
+
+  // Placeholder tile first so the photo, its shadow and its border layer over it.
+  ctx.fillStyle = theme.lavender;
+  roundRect(
+    ctx,
+    contentX + shadow * 0.45,
+    avatarY + shadow * 0.55,
+    avatarBox,
+    avatarBox,
+    avatarRadius,
+  );
+  ctx.fill();
+  ctx.fillStyle = theme.card;
+  roundRect(ctx, contentX, avatarY, avatarBox, avatarBox, avatarRadius);
+  ctx.fill();
+
+  if (avatar) {
+    drawCover(ctx, avatar, contentX, avatarY, avatarBox, avatarRadius);
+  } else {
+    const initials = initialsOf(model.displayName);
+    ctx.fillStyle = theme.lavender;
+    roundRect(ctx, contentX, avatarY, avatarBox, avatarBox, avatarRadius);
+    ctx.fill();
+    if (initials) {
+      ctx.save();
+      ctx.fillStyle = theme.foreground;
+      font(ctx, Math.round(avatarBox * 0.38), 700);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(initials, contentX + avatarBox / 2, avatarY + avatarBox / 2 + avatarBox * 0.02);
+      ctx.restore();
+    }
+  }
+  ctx.strokeStyle = theme.foreground;
+  ctx.lineWidth = Math.max(2, Math.round(border * 0.8));
+  roundRect(ctx, contentX, avatarY, avatarBox, avatarBox, avatarRadius);
+  ctx.stroke();
+
+  // Identity stack: name is the strongest element on the card.
+  let nameY = stackTop;
+  ctx.fillStyle = theme.foreground;
+  font(ctx, fitted.size, 700);
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  for (const line of fitted.lines) {
+    ctx.fillText(line, stackX, nameY);
+    nameY += nameLead;
+  }
+  ctx.fillStyle = theme.mutedForeground;
+  font(ctx, handleSize, 500, true);
+  ctx.fillText(`@${model.username}`, stackX, nameY + Math.round(stackGap * 0.7));
+  if (typeText) {
+    const chipY =
+      nameY +
+      Math.round(stackGap * 0.7) +
+      Math.round(handleSize * 1.34) +
+      Math.round(stackGap * 0.5);
+    ctx.fillStyle = theme.foreground;
+    roundRect(ctx, stackX, chipY, chipW, chipH, Math.round(chipH * 0.34));
+    ctx.fill();
+    ctx.fillStyle = theme.card;
+    font(ctx, typeSize, 600, true);
+    tracked(
+      ctx,
+      typeText,
+      stackX + (chipW - trackedWidth(ctx, typeText, typeSpacing)) / 2,
+      chipY + chipH / 2,
+      typeSpacing,
+    );
+  }
+
+  y = identityY + identityH + gap;
+
+  // Tinted panel holding bio and best work.
+  if (panelH > 0) {
+    ctx.fillStyle = theme.lavender;
+    ctx.globalAlpha = 0.62;
+    roundRect(ctx, contentX, y, leftW, panelH, Math.round(ch * 0.03));
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    let py = y + panelPad;
+    ctx.fillStyle = theme.foreground;
+    font(ctx, bioSize, 400);
+    ctx.textBaseline = "top";
+    for (const line of bioLines) {
+      ctx.fillText(line, contentX + panelPad, py);
+      py += bioLead;
+    }
+
+    if (hasWork) {
+      if (hasBio) {
+        const ruleY = Math.round(py + innerGap * 0.5 - Math.max(ruleW, workLabelSize) / 2);
+        ctx.fillStyle = theme.foreground;
+        ctx.fillRect(contentX + panelPad, ruleY, ruleW, Math.max(2, Math.round(border * 0.5)));
+        py = ruleY + Math.max(ruleW, Math.round(workLabelSize * 1.2)) + innerGap * 0.55;
+      }
+      ctx.fillStyle = theme.mutedForeground;
+      font(ctx, workLabelSize, 600, true);
+      tracked(ctx, "BEST WORK", contentX + panelPad, py, workLabelSpacing);
+      py += Math.round(workLabelSize * 1.9);
+
+      ctx.fillStyle = theme.foreground;
+      font(ctx, workSize, 600);
+      ctx.textBaseline = "alphabetic";
+      const workBaseline = py + Math.round(workSize * 0.8);
+      const workText = workLines[0] ?? "";
+      ctx.fillText(workText, contentX + panelPad, workBaseline);
+      const workTextW = ctx.measureText(workText).width;
+      drawArrowUpRight(
+        ctx,
+        contentX + panelPad + workTextW + 10,
+        workBaseline - arrowSize - Math.round(workSize * 0.04),
+        arrowSize,
+        theme.foreground,
+      );
+    }
+  }
+
+  if (panelH > 0) y += panelH + gap;
+
+  // Tiny footer pinned to the bottom of the left column.
+  ctx.fillStyle = theme.mutedForeground;
+  font(ctx, footerSize, 600, true);
+  tracked(ctx, footerText, contentX, Math.max(y, contentBottom - footerSize * 0.35), footerSpacing);
+
+  // ---- Paint: right QR rail. Solid, black-bordered, never dashed.
+  const railY = contentTop;
+  const railH = availH;
+  ctx.fillStyle = theme.lavender;
+  roundRect(ctx, railX + shadow * 0.4, railY + shadow * 0.5, railW, railH, Math.round(ch * 0.035));
+  ctx.fill();
+  ctx.fillStyle = theme.background;
+  roundRect(ctx, railX, railY, railW, railH, Math.round(ch * 0.035));
+  ctx.fill();
+
+  const ctaSize = Math.round(qrSize * 0.1);
+  const ctaSpacing = ctaSize * 0.14;
+  const pathSize = Math.round(qrSize * 0.105);
+  const railGapIn = Math.round(qrSize * 0.12);
+  const ctaH = Math.round(ctaSize * 1.5);
+  const pathH = Math.round(pathSize * 1.4);
+  const pathLines = wrapClamped(ctx, model.pathLabel, railW - railPad * 2, 2);
+  const pathBlockH = pathLines.length * pathH;
+  const stackTotal =
+    qrSize +
+    railGapIn +
+    ctaH +
+    (pathLines.length > 1 ? railGapIn * 0.4 : railGapIn * 0.6) +
+    pathBlockH;
+  const stackTopY = railY + Math.round((railH - stackTotal) / 2);
+  const qrX = railX + Math.round((railW - qrSize) / 2);
+  const qrY = stackTopY;
+
+  drawQr(ctx, grid, qrX, qrY, qrSize, theme);
+
+  ctx.fillStyle = theme.foreground;
+  font(ctx, ctaSize, 700, true);
+  trackedCentered(
+    ctx,
+    "SCAN TO CONNECT",
+    railX + railW / 2,
+    qrY + qrSize + railGapIn + ctaH * 0.62,
+    ctaSpacing,
+  );
+
+  ctx.fillStyle = theme.foreground;
+  font(ctx, pathSize, 500, true);
+  const pathY =
+    qrY + qrSize + railGapIn + ctaH + (pathLines.length > 1 ? railGapIn * 0.4 : railGapIn * 0.6);
+  for (let i = 0; i < pathLines.length; i++) {
+    const line = pathLines[i] ?? "";
+    const w = ctx.measureText(line).width;
+    ctx.fillText(line, railX + Math.round((railW - w) / 2), pathY + pathH * (i + 0.72));
+  }
+
+  ctx.strokeStyle = theme.foreground;
+  ctx.lineWidth = Math.max(2, Math.round(border * 0.8));
+  roundRect(ctx, railX, railY, railW, railH, Math.round(ch * 0.035));
+  ctx.stroke();
+
+  ctx.restore();
+
+  // Card border last so it sits above the clipped content.
+  ctx.strokeStyle = theme.border;
+  ctx.lineWidth = border;
+  roundRect(ctx, m, m, cw, ch, radius);
+  ctx.stroke();
+}
+
+/**
+ * drawQr() floors the module size, so the painted box lands on a multiple of
+ * (modules + quiet zone). Pick the multiple nearest 200px that still lands
+ * inside the 180-220 band instead of trusting the requested size.
+ */
+function qrBoxFor(count: number, fallback: number): number {
+  const span = count + 4;
+  let best = fallback;
+  let bestDelta = Infinity;
+  for (let mod = 2; mod <= 14; mod++) {
+    const dim = mod * span;
+    if (dim < 182 || dim > 216) continue;
+    const delta = Math.abs(dim - 200);
+    if (delta < bestDelta) {
+      bestDelta = delta;
+      best = dim;
+    }
+  }
+  return best;
+}
+
+/** Largest QR side that still leaves breathing room in a full-height rail. */
+function qrMaxFor(availH: number): number {
+  return Math.max(180, availH - Math.round(availH * 0.42));
 }
 
 /**
@@ -885,7 +1382,7 @@ function buildA6Pdf(jpeg: Uint8Array, imgW: number, imgH: number): Blob {
 }
 
 export async function renderKrewCardPng(model: KrewCardModel): Promise<Blob> {
-  const canvas = await renderCanvas(model, CARD_PNG_WIDTH, CARD_PNG_HEIGHT, drawCard);
+  const canvas = await renderCanvas(model, CARD_PNG_WIDTH, CARD_PNG_HEIGHT, drawNetworkingCard);
   return canvasToBlob(canvas, "image/png");
 }
 

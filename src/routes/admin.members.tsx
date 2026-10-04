@@ -11,6 +11,7 @@ import { OffsetCard } from "@/components/OffsetCard";
 import { EmptyState } from "@/components/EmptyState";
 import { StatusBadge } from "@/components/StatusBadge";
 import { createClient } from "@/lib/supabase/client";
+import { KREW3_SITE_ORIGIN } from "@/lib/krew-card-model";
 import { useMemberSession } from "@/lib/member-auth";
 import {
   KREW3_LOGO_SIZE,
@@ -200,6 +201,41 @@ function AdminMembers() {
     }
   };
 
+  /**
+   * Issues a fresh management token for this member and copies the resulting
+   * edit link. The RPC returns the raw token exactly once and the database only
+   * ever stores its hash, so the previous link stops working immediately and
+   * this one is the only copy: if the clipboard refuses, surface the URL in the
+   * toast rather than silently losing it.
+   */
+  const copyEditLink = async (row: KrewProfile) => {
+    setBusyId(row.id);
+    setError("");
+    try {
+      const supabase = createClient();
+      const { data, error: rpcError } = await supabase.rpc("krew_admin_rotate_manage_token", {
+        p_profile_id: row.id,
+      });
+
+      if (rpcError) throw new Error(rpcError.message);
+
+      const token = typeof data === "string" ? data : "";
+      if (!token) throw new Error("No token was returned.");
+
+      const url = `${KREW3_SITE_ORIGIN}/krew-id/manage/${token}`;
+      try {
+        await navigator.clipboard.writeText(url);
+        toast.success(`Edit link copied for @${row.username}. The previous link no longer works.`);
+      } catch {
+        toast.error(`Clipboard blocked. Copy this link now: ${url}`, { duration: 30000 });
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not create an edit link.");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
   return (
     <AdminLayout>
       <div>
@@ -367,6 +403,15 @@ function AdminMembers() {
                       <Button size="sm" variant="ghost" onClick={() => void copyUrl(row)}>
                         <Copy className="size-4" aria-hidden />
                         Copy URL
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        disabled={busy}
+                        onClick={() => void copyEditLink(row)}
+                      >
+                        <Copy className="size-4" aria-hidden />
+                        Copy Edit Link
                       </Button>
                       {row.status === "approved" && row.is_public && (
                         <Button size="sm" variant="ghost" asChild>
