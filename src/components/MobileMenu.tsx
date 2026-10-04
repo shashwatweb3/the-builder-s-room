@@ -4,10 +4,10 @@ import { useEffect, useRef } from "react";
 import { Button } from "./Button";
 import { Dot } from "./StatusBadge";
 import { TELEGRAM_INVITE_URL } from "@/lib/community";
-import { isMemberNavRoute, krewIdNavLink } from "@/lib/krew-profile";
+import { isMemberNavRoute, krewIdNavLink, memberProfileNavLink } from "@/lib/krew-profile";
 
 const items = [
-  { to: "/projects", label: "Projects" },
+  { to: "/builders", label: "Builders" },
   { to: "/events", label: "Events" },
   { to: "/opportunities", label: "Opportunities" },
 ] as const;
@@ -27,7 +27,7 @@ type MobileMenuProps = {
 };
 
 export function MobileMenu({ open, onClose, memberLinksVisible }: MobileMenuProps) {
-  const visibleSecondary = [krewIdNavLink(memberLinksVisible), ...secondary].filter(
+  const visibleSecondary = [krewIdNavLink(), memberProfileNavLink(), ...secondary].filter(
     (item) => !isMemberNavRoute(item.to) || memberLinksVisible,
   );
 

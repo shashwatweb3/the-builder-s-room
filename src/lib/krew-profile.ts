@@ -140,19 +140,28 @@ export function isMemberNavRoute(to: string): boolean {
 }
 
 /**
- * The single "Krew ID" nav entry, resolved per audience.
- *
- * Members already have an account, so they go to their dashboard. A logged-out
- * visitor has nothing to sign in to, so they get the public claim page instead.
- * Resolved in one place so the desktop dropdown and the mobile sheet agree.
+ * The single "Krew ID" nav entry. Always the public claim page, for members and
+ * visitors alike. Resolved in one place so the desktop dropdown and the mobile
+ * sheet agree.
  */
-export function krewIdNavLink(memberLinksVisible: boolean): {
-  to: "/krew-id" | "/profile";
+export function krewIdNavLink(): {
+  to: "/krew-id";
   label: string;
 } {
-  return memberLinksVisible
-    ? { to: "/profile", label: "Krew ID" }
-    : { to: "/krew-id", label: "Krew ID" };
+  return { to: "/krew-id", label: "Krew ID" };
+}
+
+/**
+ * The member's own dashboard, listed separately from the public "Krew ID" entry
+ * so signing in is never required to reach the claim page. "/profile" is in
+ * MEMBER_NAV_ROUTES, so the existing filter keeps this hidden until a session
+ * is actually known.
+ */
+export function memberProfileNavLink(): {
+  to: "/profile";
+  label: string;
+} {
+  return { to: "/profile", label: "My Krew ID" };
 }
 
 export type UsernameValidation = { ok: true; username: string } | { ok: false; error: string };
