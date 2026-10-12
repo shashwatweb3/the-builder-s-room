@@ -3,9 +3,10 @@ import { cn } from "@/lib/utils";
 const BB_LOGO_SRC = "/assets/bb-logo-light.svg";
 const LUCKOW_LOGO_SRC = "/assets/lucknow.jpg";
 const BUILDER_BASE_URL = "https://link3.to/builderbase";
-const LUCKOW_DAO_URL: string | null = null;
+const LUCKOW_DAO_URL = "https://x.com/Lucknow_DAO";
 const DEVCON_TICKETS_URL = "https://tickets.devcon.org/";
 const DEVCON_LOGO_SRC = "/assets/devcon-logo.webp";
+const VARA_NETWORK_URL = "https://vara.network/";
 const VARA_LOGO_SRC = "/assets/vara.jpg";
 
 export function BuilderBaseCredit({ className }: { className?: string }) {
@@ -98,7 +99,13 @@ export function BuilderBaseCredit({ className }: { className?: string }) {
             Get your ticket →
           </span>
         </a>
-        <div className="flex min-h-[80px] w-[100px] flex-col items-center justify-center gap-1.5 rounded-xl border border-ink bg-card p-2.5 shadow-offset-sm active:translate-y-0.5 active:shadow-offset-sm sm:min-h-[104px] sm:w-[110px] sm:gap-2 sm:p-3">
+        <a
+          href={VARA_NETWORK_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Vara Network"
+          className="flex min-h-[80px] w-[100px] flex-col items-center justify-center gap-1.5 rounded-xl border border-ink bg-card p-2.5 shadow-offset-sm active:translate-y-0.5 active:shadow-offset-sm sm:min-h-[104px] sm:w-[110px] sm:gap-2 sm:p-3"
+        >
           <span className="block h-[40px] w-[40px] overflow-hidden rounded-md border border-border bg-ink sm:h-[44px] sm:w-[44px]">
             <img
               src={VARA_LOGO_SRC}
@@ -112,7 +119,7 @@ export function BuilderBaseCredit({ className }: { className?: string }) {
           <span className="label-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
             Vara Network
           </span>
-        </div>
+        </a>
       </div>
     </div>
   );
