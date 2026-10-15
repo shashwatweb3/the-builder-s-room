@@ -12,7 +12,7 @@ import { JoinCTA } from "@/components/JoinCTA";
 import { MobileFilterSheet } from "@/components/MobileFilterSheet";
 import { EventsTelegramPopup } from "@/components/EventsTelegramPopup";
 import { VenueEntryCard } from "@/components/VenueEntryCard";
-import { formatShortDate } from "@/lib/format";
+import { formatShortDate, formatMonthYear } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { RecEvent } from "@/data/types";
 
@@ -46,7 +46,8 @@ type EventRow = {
   slug: string;
   description: string;
   long_description: string | null;
-  event_date: string;
+  event_date: string | null;
+  date_label: string | null;
   end_date: string | null;
   location: string;
   is_online: boolean;
@@ -130,7 +131,7 @@ const getPublishedEvents = createServerFn({ method: "GET" }).handler(async () =>
     .from("events")
     .select("*")
     .eq("status", "published")
-    .order("event_date", { ascending: true })
+    .order("event_date", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: true });
 
   if (error) {
@@ -143,7 +144,8 @@ const getPublishedEvents = createServerFn({ method: "GET" }).handler(async () =>
     slug: row.slug,
     name: row.title,
     kind: "meetup",
-    date: row.event_date.split("T")[0] ?? row.event_date,
+    date: row.event_date ? (row.event_date.split("T")[0] ?? row.event_date) : null,
+    dateLabel: row.date_label ?? null,
     time: "",
     startTime: row.start_time,
     endTime: row.end_time,
@@ -198,10 +200,16 @@ export const Route = createFileRoute("/events/")({
 });
 
 function sortEvents(events: RecEvent[]) {
-  // Server returns event_date ASC then created_at ASC. created_at was tuned in the
-  // migration to encode same-date chronological order (start time where available).
-  // Stable sort by date preserves that ordering within arrivals.
-  return [...events].sort((a, b) => a.date.localeCompare(b.date));
+  // Server returns event_date ASC (undated last) then created_at ASC. created_at was
+  // tuned in the migration to encode same-date chronological order (start time where
+  // available). Undated events sort after every dated event; stable sort preserves the
+  // rest.
+  return [...events].sort((a, b) => {
+    if (!a.date && !b.date) return 0;
+    if (!a.date) return 1;
+    if (!b.date) return -1;
+    return a.date.localeCompare(b.date);
+  });
 }
 
 function EventsPage() {
@@ -262,17 +270,21 @@ function EventsPage() {
     const todayUTC = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
     return (
       results.find((e) => {
+        if (!e.date) return false;
         const end = e.endDate
           ? new Date(e.endDate + "T00:00:00Z").getTime()
           : new Date(e.date + "T00:00:00Z").getTime();
         return end >= todayUTC;
-      }) ?? results[0]
+      }) ??
+      results.find((e) => e.date) ??
+      results[0]
     );
   }, [results]);
 
   const dateRail = useMemo(() => {
     const seen = new Map<string, string>();
     for (const e of results) {
+      if (!e.date) continue;
       if (!seen.has(e.date)) seen.set(e.date, e.slug);
     }
     return [...seen.entries()];
@@ -431,7 +443,9 @@ function EventsPage() {
                   <span className="label-mono flex w-[96px] shrink-0 flex-col justify-center border-r-2 border-background/15 px-3 py-3 sm:w-[150px] sm:px-5 sm:py-4">
                     <span className="text-[9px] text-background/70 sm:text-[10px]">NEXT UP</span>
                     <span className="mt-1 block text-xl font-extrabold leading-none tracking-tight sm:text-3xl">
-                      {formatShortDate(nextUp.date).toUpperCase()}
+                      {nextUp.date
+                        ? formatShortDate(nextUp.date).toUpperCase()
+                        : formatMonthYear(nextUp.dateLabel) || "TBA"}
                     </span>
                   </span>
                   <span className="flex min-w-0 flex-1 items-center justify-between gap-3 px-3 py-3 sm:px-5 sm:py-4">

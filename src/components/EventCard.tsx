@@ -1,7 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 import type { RecEvent, EventKind } from "@/data/types";
-import { formatDateRange, formatShortDateRange, formatTimeRange } from "@/lib/format";
+import {
+  formatDateRange,
+  formatShortDateRange,
+  formatTimeRange,
+  formatMonthShort,
+  formatMonthYear,
+} from "@/lib/format";
 import { OffsetCard } from "./OffsetCard";
 import { Tag } from "./Tag";
 import { ShareButton } from "./ShareButton";
@@ -16,27 +22,42 @@ const eventKindLabel: Record<EventKind, string> = {
 
 export function EventCard({ event, id }: { event: RecEvent; id?: string }) {
   const cardId = id ?? `event-${event.slug}`;
-  const d = new Date(event.date + "T00:00:00Z");
+  const hasDate = Boolean(event.date);
+  const d = new Date((event.date ?? "") + "T00:00:00Z");
   const end = event.endDate ? new Date(event.endDate + "T00:00:00Z") : null;
-  const month = d.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" }).toUpperCase();
+  const month = hasDate
+    ? d.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" }).toUpperCase()
+    : formatMonthShort(event.dateLabel) || "DATE";
   const sameMonth =
-    end && d.getUTCMonth() === end.getUTCMonth() && d.getUTCFullYear() === end.getUTCFullYear();
-  const dayLabel = sameMonth ? `${d.getUTCDate()}–${end!.getUTCDate()}` : String(d.getUTCDate());
+    hasDate &&
+    end &&
+    d.getUTCMonth() === end.getUTCMonth() &&
+    d.getUTCFullYear() === end.getUTCFullYear();
+  const dayLabel = hasDate
+    ? sameMonth
+      ? `${d.getUTCDate()}–${end!.getUTCDate()}`
+      : String(d.getUTCDate())
+    : "TBA";
 
   const timeRange = formatTimeRange(event.startTime, event.endTime);
-  const metaMobile = [formatShortDateRange(event.date, event.endDate), timeRange, event.location]
-    .filter(Boolean)
-    .join(" · ");
-  const metaDesktop = [formatDateRange(event.date, event.endDate), timeRange, event.location]
-    .filter(Boolean)
-    .join(" · ");
+  const undatedMeta = [formatMonthYear(event.dateLabel), "DATE TBA"].filter(Boolean).join(" · ");
+  const metaMobile = hasDate
+    ? [formatShortDateRange(event.date!, event.endDate), timeRange, event.location]
+        .filter(Boolean)
+        .join(" · ")
+    : [undatedMeta, timeRange, event.location].filter(Boolean).join(" · ");
+  const metaDesktop = hasDate
+    ? [formatDateRange(event.date!, event.endDate), timeRange, event.location]
+        .filter(Boolean)
+        .join(" · ")
+    : [undatedMeta, timeRange, event.location].filter(Boolean).join(" · ");
 
   return (
     <OffsetCard
       as="article"
       id={cardId}
       size="sm"
-      className="group relative flex scroll-mt-24 flex-col gap-2.5 rounded-[1.5rem] p-4 transition-[transform,box-shadow] duration-150 active:translate-y-0.5 active:shadow-offset-sm md:scroll-mt-40 md:rounded-2xl md:p-5 md:duration-200 md:hover:-translate-y-0.5 md:hover:shadow-offset-lg md:focus-within:-translate-y-0.5 md:focus-within:shadow-offset-lg lg:grid lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:grid-rows-[auto_auto_auto_auto_auto] lg:[grid-template-areas:'date_tags_actions'_'._title_actions'_'._org_actions'_'._desc_actions'_'meta_meta_meta'] lg:gap-x-6 lg:gap-y-2"
+      className="group relative flex scroll-mt-24 flex-col gap-2.5 rounded-[1.5rem] p-4 transition-[transform,box-shadow] duration-150 active:translate-y-0.5 active:shadow-offset-sm md:scroll-mt-40 md:rounded-2xl md:p-5 md:duration-200 md:hover:-translate-y-0.5 md:hover:shadow-offset-lg md:focus-within:-translate-y-0.5 md:focus-within:shadow-offset-lg lg:grid lg:grid-cols-[auto_minmax(0,auto)_minmax(0,1fr)_auto] lg:grid-rows-[auto_auto_auto_auto_auto] lg:[grid-template-areas:'date_tags_actions'_'._title_actions'_'._org_actions'_'._desc_actions'_'meta_meta_meta'] lg:gap-x-6 lg:gap-y-2"
     >
       <div className="order-1 flex items-start justify-between gap-3 lg:contents">
         <div
@@ -78,7 +99,7 @@ export function EventCard({ event, id }: { event: RecEvent; id?: string }) {
       </h3>
 
       {event.organizer && (
-        <p className="order-3 label-mono text-muted-foreground lg:[grid-area:org] lg:min-w-0">
+        <p className="order-3 label-mono text-muted-foreground lg:[grid-area:org] lg:min-w-0 lg:line-clamp-1">
           Hosted by {event.organizer}
         </p>
       )}
@@ -88,7 +109,7 @@ export function EventCard({ event, id }: { event: RecEvent; id?: string }) {
         <span className="hidden md:inline">{metaDesktop}</span>
       </p>
 
-      <p className="order-5 line-clamp-2 text-sm leading-snug text-muted-foreground lg:[grid-area:desc] lg:leading-relaxed lg:min-w-0">
+      <p className="order-5 line-clamp-2 text-sm leading-snug text-muted-foreground lg:[grid-area:desc] lg:min-w-0 lg:leading-relaxed">
         {event.summary}
       </p>
 

@@ -7,7 +7,7 @@ import { Button } from "@/components/Button";
 import { OffsetCard } from "@/components/OffsetCard";
 import { Tag } from "@/components/Tag";
 import { ShareButton } from "@/components/ShareButton";
-import { formatDate, formatTimeRange } from "@/lib/format";
+import { formatDate, formatTimeRange, formatMonthYear } from "@/lib/format";
 import { eventPublicUrl } from "@/lib/event";
 
 type DetailRow = {
@@ -16,7 +16,8 @@ type DetailRow = {
   slug: string;
   description: string;
   long_description: string | null;
-  event_date: string;
+  event_date: string | null;
+  date_label: string | null;
   end_date: string | null;
   location: string;
   is_online: boolean;
@@ -94,7 +95,11 @@ export const Route = createFileRoute("/events/$id")({
   component: EventDetail,
 });
 
-function eventDateLabel(start: string, end: string | null) {
+function eventDateLabel(start: string | null, end: string | null, dateLabel: string | null) {
+  if (!start) {
+    const month = formatMonthYear(dateLabel);
+    return month ? `${month} · DATE TBA` : "DATE TBA";
+  }
   const from = formatDate(start);
   if (end && end !== start) return `${from} – ${formatDate(end)}`;
   return from;
@@ -131,7 +136,7 @@ function EventDetail() {
             <p className="label-mono mt-2 text-muted-foreground">{organizerLine}</p>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              <Tag tone="ghost">{eventDateLabel(row.event_date, row.end_date)}</Tag>
+              <Tag tone="ghost">{eventDateLabel(row.event_date, row.end_date, row.date_label)}</Tag>
               {timeRange && <Tag tone="ghost">{timeRange}</Tag>}
               <Tag tone="ghost">{row.is_online ? "Online" : "In person"}</Tag>
               {row.region === "mumbai" && <Tag tone="ghost">Mumbai</Tag>}

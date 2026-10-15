@@ -284,11 +284,13 @@ function Home() {
                   {e.title}
                 </h3>
                 <p className="mt-1.5 label-mono text-muted-foreground">
-                  {new Date(e.event_date).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
+                  {e.event_date
+                    ? new Date(e.event_date).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })
+                    : "Date TBA"}
                 </p>
                 <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{e.description}</p>
                 {e.location && (

@@ -39,6 +39,24 @@ export const formatDateRange = (start: string, end?: string | null) => {
   return `${startLabel} – ${formatDate(end)}`;
 };
 
+/** 'NOV' from a YYYY-MM month hint. Returns '' when the hint is missing/invalid. */
+export const formatMonthShort = (value: string | null | undefined) => {
+  if (!value) return "";
+  const m = /^(\d{4})-(\d{2})/.exec(value);
+  if (!m) return value.toUpperCase();
+  return new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, 1))
+    .toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" })
+    .toUpperCase();
+};
+
+/** 'NOV 2026' from a YYYY-MM month hint. Returns '' when the hint is missing/invalid. */
+export const formatMonthYear = (value: string | null | undefined) => {
+  if (!value) return "";
+  const m = /^(\d{4})-(\d{2})/.exec(value);
+  if (!m) return value.toUpperCase();
+  return `${formatMonthShort(value)} ${m[1]}`;
+};
+
 /** Days between now and an ISO date. Negative means it already passed. */
 export const daysUntil = (iso: string) => {
   if (!iso) return Infinity;

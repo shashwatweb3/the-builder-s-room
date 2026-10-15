@@ -117,7 +117,10 @@ export interface RecEvent {
   slug: string;
   name: string;
   kind: EventKind;
-  date: string;
+  /** ISO date (YYYY-MM-DD). Null when the exact date is not yet announced. */
+  date?: string | null;
+  /** Month-precision hint for undated events, format YYYY-MM (e.g. "2026-11"). */
+  dateLabel?: string | null;
   time: string;
   startTime?: string | null;
   endTime?: string | null;
