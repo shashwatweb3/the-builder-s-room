@@ -7,8 +7,11 @@ import { Button } from "@/components/Button";
 import { OffsetCard } from "@/components/OffsetCard";
 import { Tag } from "@/components/Tag";
 import { ShareButton } from "@/components/ShareButton";
+import { ScheduleButton } from "@/components/ScheduleButton";
+import { CalendarButton } from "@/components/CalendarButton";
 import { formatDate, formatTimeRange, formatMonthYear } from "@/lib/format";
 import { eventPublicUrl } from "@/lib/event";
+import type { RecEvent } from "@/data/types";
 
 type DetailRow = {
   id: string;
@@ -113,6 +116,26 @@ function EventDetail() {
   const registerUrl = row.registration_url || row.meeting_url;
   const timeRange = formatTimeRange(row.start_time, row.end_time);
 
+  const scheduleEvent: RecEvent = {
+    id: row.id,
+    slug: row.slug,
+    name: row.title,
+    kind: "meetup",
+    date: row.event_date ? (row.event_date.split("T")[0] ?? row.event_date) : null,
+    dateLabel: row.date_label,
+    time: "",
+    startTime: row.start_time,
+    endTime: row.end_time,
+    endDate: row.end_date ? (row.end_date.split("T")[0] ?? row.end_date) : null,
+    location: row.location,
+    online: row.is_online,
+    organizer: row.organizer ?? "",
+    summary: row.description,
+    url: row.registration_url || row.meeting_url || "",
+    region: row.region ?? "",
+    category: "",
+  };
+
   return (
     <>
       <div className="mx-auto w-full max-w-[1400px] px-4 pt-8 sm:px-6 lg:px-10">
@@ -170,6 +193,17 @@ function EventDetail() {
               </Button>
             ) : (
               <p className="mt-4 text-sm text-muted-foreground">Details TBA. Invite only.</p>
+            )}
+            <div className="mt-3">
+              <ScheduleButton event={scheduleEvent} variant="full" />
+            </div>
+            <div className="mt-2">
+              <CalendarButton event={scheduleEvent} variant="full" />
+            </div>
+            {!row.event_date && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                Calendar export becomes available when the date is announced.
+              </p>
             )}
             <p className="label-mono mt-6 text-muted-foreground">Organized by</p>
             <p className="mt-1 text-sm font-semibold">{organizer}</p>

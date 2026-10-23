@@ -1,10 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, Search, Bookmark, ChevronDown } from "lucide-react";
+import { Menu, Search, Bookmark, CalendarDays, ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./Button";
 import { Dot } from "./StatusBadge";
 import { MobileMenu } from "./MobileMenu";
 import { useSaved } from "@/lib/saved";
+import { useSchedule } from "@/lib/schedule";
 import { TELEGRAM_INVITE_URL } from "@/lib/community";
 import { useMemberSession } from "@/lib/member-auth";
 import { isMemberNavRoute, krewIdNavLink, memberProfileNavLink } from "@/lib/krew-profile";
@@ -17,6 +18,7 @@ const navLinks = [
 ] as const;
 
 const moreLinks = [
+  { to: "/schedule", label: "My Schedule" },
   { to: "/about", label: "About" },
   { to: "/guidelines", label: "Community Guidelines" },
   { to: "/", hash: "faq", label: "FAQ" },
@@ -29,6 +31,7 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLLIElement>(null);
   const { count, hydrated } = useSaved();
+  const { count: scheduleCount, hydrated: scheduleHydrated } = useSchedule();
   const { user, loading: authLoading } = useMemberSession();
 
   // Member routes stay hidden until we actually know a session exists, so
@@ -190,6 +193,20 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
               {hydrated && count > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 grid size-5 place-items-center rounded-full border-2 border-border bg-primary font-mono text-[10px] font-bold text-primary-foreground">
                   {count}
+                </span>
+              )}
+            </Link>
+
+            <Link
+              to="/schedule"
+              aria-label={`My schedule${scheduleHydrated && scheduleCount ? ` (${scheduleCount})` : ""}`}
+              title="My Schedule"
+              className="press relative hidden size-10 place-items-center rounded-full border-2 border-border bg-card shadow-offset-sm sm:grid"
+            >
+              <CalendarDays className="size-4" aria-hidden />
+              {scheduleHydrated && scheduleCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 grid size-5 place-items-center rounded-full border-2 border-border bg-primary font-mono text-[10px] font-bold text-primary-foreground">
+                  {scheduleCount}
                 </span>
               )}
             </Link>

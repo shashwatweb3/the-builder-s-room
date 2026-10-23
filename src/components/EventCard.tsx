@@ -11,6 +11,8 @@ import {
 import { OffsetCard } from "./OffsetCard";
 import { Tag } from "./Tag";
 import { ShareButton } from "./ShareButton";
+import { ScheduleButton } from "./ScheduleButton";
+import { CalendarButton } from "./CalendarButton";
 
 const eventKindLabel: Record<EventKind, string> = {
   meetup: "Meetup",
@@ -114,7 +116,11 @@ export function EventCard({ event, id }: { event: RecEvent; id?: string }) {
       </p>
 
       <div className="order-6 flex items-center justify-between gap-3 lg:[grid-area:actions] lg:flex-col lg:items-end lg:gap-2 lg:justify-start">
-        <ShareButton title={event.name} slug={event.slug} path={`/events/${event.slug}`} />
+        <div className="flex items-center gap-2">
+          <ScheduleButton event={event} />
+          {event.date && <CalendarButton event={event} />}
+          <ShareButton title={event.name} slug={event.slug} path={`/events/${event.slug}`} />
+        </div>
         {event.url ? (
           <a
             href={event.url}

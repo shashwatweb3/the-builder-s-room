@@ -18,6 +18,8 @@ import { Footer } from "@/components/Footer";
 import { SearchModal } from "@/components/SearchModal";
 import { Button } from "@/components/Button";
 import { SavedProvider } from "@/lib/saved";
+import { ScheduleProvider } from "@/lib/schedule";
+import { QuestsProvider } from "@/lib/quests";
 
 function NotFoundComponent() {
   return (
@@ -143,21 +145,25 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <SavedProvider>
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[80] focus:rounded-full focus:border-2 focus:border-border focus:bg-card focus:px-4 focus:py-2 focus:font-semibold"
-        >
-          Skip to content
-        </a>
-        <Navbar onOpenSearch={() => setSearchOpen(true)} />
-        <main id="main">
-          {/* Required: nested routes render here. */}
-          <Outlet />
-        </main>
-        <Footer />
-        <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
-        <Toaster position="bottom-right" />
-        <Analytics />
+        <ScheduleProvider>
+          <QuestsProvider>
+            <a
+              href="#main"
+              className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[80] focus:rounded-full focus:border-2 focus:border-border focus:bg-card focus:px-4 focus:py-2 focus:font-semibold"
+            >
+              Skip to content
+            </a>
+            <Navbar onOpenSearch={() => setSearchOpen(true)} />
+            <main id="main">
+              {/* Required: nested routes render here. */}
+              <Outlet />
+            </main>
+            <Footer />
+            <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
+            <Toaster position="bottom-right" />
+            <Analytics />
+          </QuestsProvider>
+        </ScheduleProvider>
       </SavedProvider>
     </QueryClientProvider>
   );

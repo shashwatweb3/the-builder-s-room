@@ -13,6 +13,7 @@ const items = [
 ] as const;
 
 const secondary = [
+  { to: "/schedule", label: "My Schedule" },
   { to: "/about", label: "About" },
   { to: "/guidelines", label: "Community Guidelines" },
   { to: "/", hash: "faq", label: "FAQ" },

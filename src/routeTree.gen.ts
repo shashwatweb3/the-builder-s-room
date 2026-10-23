@@ -17,6 +17,7 @@ import { Route as GuidelinesRouteImport } from './routes/guidelines'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RoomRouteImport } from './routes/room'
 import { Route as SavedRouteImport } from './routes/saved'
+import { Route as ScheduleRouteImport } from './routes/schedule'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SubmitRouteImport } from './routes/submit'
 import { Route as XCardTestRouteImport } from './routes/x-card-test'
@@ -85,6 +86,11 @@ const RoomRoute = RoomRouteImport.update({
 const SavedRoute = SavedRouteImport.update({
   id: '/saved',
   path: '/saved',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScheduleRoute = ScheduleRouteImport.update({
+  id: '/schedule',
+  path: '/schedule',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -243,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
+  '/schedule': typeof ScheduleRoute
   '/signup': typeof SignupRoute
   '/submit': typeof SubmitRoute
   '/x-card-test': typeof XCardTestRoute
@@ -282,6 +289,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
+  '/schedule': typeof ScheduleRoute
   '/signup': typeof SignupRoute
   '/submit': typeof SubmitRoute
   '/x-card-test': typeof XCardTestRoute
@@ -322,6 +330,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/room': typeof RoomRoute
   '/saved': typeof SavedRoute
+  '/schedule': typeof ScheduleRoute
   '/signup': typeof SignupRoute
   '/submit': typeof SubmitRoute
   '/x-card-test': typeof XCardTestRoute
@@ -363,6 +372,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/room'
     | '/saved'
+    | '/schedule'
     | '/signup'
     | '/submit'
     | '/x-card-test'
@@ -402,6 +412,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/room'
     | '/saved'
+    | '/schedule'
     | '/signup'
     | '/submit'
     | '/x-card-test'
@@ -441,6 +452,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/room'
     | '/saved'
+    | '/schedule'
     | '/signup'
     | '/submit'
     | '/x-card-test'
@@ -481,6 +493,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   RoomRoute: typeof RoomRoute
   SavedRoute: typeof SavedRoute
+  ScheduleRoute: typeof ScheduleRoute
   SignupRoute: typeof SignupRoute
   SubmitRoute: typeof SubmitRoute
   XCardTestRoute: typeof XCardTestRoute
@@ -564,6 +577,13 @@ declare module '@tanstack/react-router' {
       path: '/saved'
       fullPath: '/saved'
       preLoaderRoute: typeof SavedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/schedule': {
+      id: '/schedule'
+      path: '/schedule'
+      fullPath: '/schedule'
+      preLoaderRoute: typeof ScheduleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -808,6 +828,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   RoomRoute: RoomRoute,
   SavedRoute: SavedRoute,
+  ScheduleRoute: ScheduleRoute,
   SignupRoute: SignupRoute,
   SubmitRoute: SubmitRoute,
   XCardTestRoute: XCardTestRoute,
