@@ -13,6 +13,7 @@ import { MobileFilterSheet } from "@/components/MobileFilterSheet";
 import { EventsTelegramPopup } from "@/components/EventsTelegramPopup";
 import { VenueEntryCard } from "@/components/VenueEntryCard";
 import { formatShortDate, formatMonthYear } from "@/lib/format";
+import { findNextUpcomingEvent } from "@/lib/next-up";
 import { cn } from "@/lib/utils";
 import type { RecEvent } from "@/data/types";
 
@@ -266,19 +267,7 @@ function EventsPage() {
   );
 
   const nextUp = useMemo(() => {
-    const today = new Date();
-    const todayUTC = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
-    return (
-      results.find((e) => {
-        if (!e.date) return false;
-        const end = e.endDate
-          ? new Date(e.endDate + "T00:00:00Z").getTime()
-          : new Date(e.date + "T00:00:00Z").getTime();
-        return end >= todayUTC;
-      }) ??
-      results.find((e) => e.date) ??
-      results[0]
-    );
+    return findNextUpcomingEvent(results);
   }, [results]);
 
   const dateRail = useMemo(() => {
@@ -467,6 +456,18 @@ function EventsPage() {
                     )}
                   </span>
                 </Link>
+              )}
+
+              {!nextUp && (
+                <OffsetCard size="sm" className="p-4 sm:p-5">
+                  <p className="label-mono text-muted-foreground">NEXT UP</p>
+                  <p className="mt-1 text-base font-extrabold tracking-tight sm:text-lg">
+                    No upcoming events right now.
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Check back when organizers add the next date.
+                  </p>
+                </OffsetCard>
               )}
 
               {dateRail.length > 1 && (
