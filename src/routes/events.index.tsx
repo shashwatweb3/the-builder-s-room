@@ -240,7 +240,6 @@ function EventsPage() {
 
   const switchView = (next: EventView) => {
     setFilter("all");
-    setDateShortcut("all");
     if (next !== view) {
       navigate({ to: "/events", search: { view: next } });
     }

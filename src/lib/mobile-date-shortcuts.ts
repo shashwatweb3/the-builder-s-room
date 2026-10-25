@@ -29,23 +29,21 @@ export function getIstTodayKey(date: Date = new Date()) {
 }
 
 export function getIstWeekendKeys(date: Date = new Date()): string[] {
-  const { ist } = getIstDateParts(date);
-  const day = ist.getDay(); // 0 Sun, 6 Sat
-  if (day === 0) {
-    // Sunday - weekend is today (and maybe Sat already passed, but treat as today)
-    const { year, month, day: d } = getIstDateParts(date);
-    return [toDateKey(year, month, d)];
+  const { year, month, day } = getIstDateParts(date);
+  // getUTCDay() on UTC date gives correct day of week for that calendar date
+  const utcDate = new Date(Date.UTC(year, month - 1, day));
+  const dow = utcDate.getUTCDay(); // 0 Sun, 6 Sat
+  if (dow === 0) {
+    return [toDateKey(year, month, day)];
   }
-  if (day === 6) {
-    const { year, month, day: d } = getIstDateParts(date);
-    return [toDateKey(year, month, d)];
+  if (dow === 6) {
+    return [toDateKey(year, month, day)];
   }
-  // upcoming Sat/Sun
-  const daysToSat = (6 - day) % 7;
-  const daysToSun = (7 - day) % 7;
-  const { year, month, day: d } = getIstDateParts(date);
-  const sat = addDays(year, month, d, daysToSat);
-  const sun = addDays(year, month, d, daysToSun);
+  // upcoming Sat/Sun (Sat is 6, Sun is 0)
+  const daysToSat = (6 - dow) % 7;
+  const daysToSun = (7 - dow) % 7;
+  const sat = addDays(year, month, day, daysToSat);
+  const sun = addDays(year, month, day, daysToSun);
   const keys = [toDateKey(sat.year, sat.month, sat.day)];
   if (!(sat.year === sun.year && sat.month === sun.month && sat.day === sun.day)) {
     keys.push(toDateKey(sun.year, sun.month, sun.day));
