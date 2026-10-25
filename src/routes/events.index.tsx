@@ -14,7 +14,10 @@ import { MobileFilterSheet } from "@/components/MobileFilterSheet";
 import { EventsTelegramPopup } from "@/components/EventsTelegramPopup";
 import { VenueEntryCard } from "@/components/VenueEntryCard";
 import { MobileQuickActionDock } from "@/components/MobileQuickActionDock";
-import { MobileEventListToggle, type MobileEventViewMode } from "@/components/MobileEventListToggle";
+import {
+  MobileEventListToggle,
+  type MobileEventViewMode,
+} from "@/components/MobileEventListToggle";
 import { MobileCompactEventCard } from "@/components/MobileCompactEventCard";
 import { formatShortDate, formatMonthYear } from "@/lib/format";
 import { findNextUpcomingEvent } from "@/lib/next-up";
