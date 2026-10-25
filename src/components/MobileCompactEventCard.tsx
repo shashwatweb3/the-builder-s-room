@@ -42,7 +42,11 @@ export function MobileCompactEventCard({ event, id }: { event: RecEvent; id?: st
       ? [formatShortDateRange(event.date!, event.endDate), timeRange, event?.location]
           .filter(Boolean)
           .join(" · ")
-      : [event?.dateLabel ? String(event.dateLabel).replace(/-/g, ".") : "DATE TBA", timeRange, event?.location]
+      : [
+          event?.dateLabel ? String(event.dateLabel).replace(/-/g, ".") : "DATE TBA",
+          timeRange,
+          event?.location,
+        ]
           .filter(Boolean)
           .join(" · ");
 
