@@ -242,7 +242,9 @@ function EventsPage() {
     setFilter("all");
     try {
       setPinnedDate(null);
-    } catch {}
+    } catch {
+      /* ignore */
+    }
     if (next !== view) {
       navigate({ to: "/events", search: { view: next } });
     }
