@@ -315,7 +315,7 @@ function EventsPage() {
                   aria-selected={active}
                   onClick={() => switchView(option.value)}
                   className={cn(
-                    "label-mono min-h-9 flex-1 rounded-full px-3 text-[12px] transition-colors duration-200",
+                    "label-mono press min-h-[44px] flex-1 rounded-full px-3 text-[11px] transition-colors duration-150 motion-reduce:transition-none",
                     active
                       ? "bg-foreground text-background"
                       : "text-muted-foreground hover:text-foreground",
@@ -364,21 +364,21 @@ function EventsPage() {
         </div>
 
         {/* Mobile count + filter trigger */}
-        <button
-          type="button"
-          onClick={() => setFilterOpen(true)}
-          aria-label="Open filters"
-          className="press mt-2.5 flex min-h-11 w-full items-center justify-between gap-3 rounded-full border-2 border-border bg-card px-4 py-2 shadow-offset-sm sm:hidden"
-        >
-          <span className="label-mono text-[13px]">{results.length} EVENTS</span>
-          <span className="label-mono flex items-center gap-1.5 text-[13px]">
-            {activeFilterLabel}
+        <div className="mt-2.5 flex items-center justify-between gap-2 sm:hidden">
+          <p className="label-mono text-[12px] text-muted-foreground">{results.length} EVENTS</p>
+          <button
+            type="button"
+            onClick={() => setFilterOpen(true)}
+            aria-label="Open filters"
+            className="press flex min-h-[44px] items-center justify-between gap-2 rounded-full border-2 border-border bg-card px-3.5 py-2 shadow-offset-sm"
+          >
+            <span className="label-mono text-[12px]">{activeFilterLabel}</span>
             <span aria-hidden className="text-muted-foreground">
               ▾
             </span>
-          </span>
-        </button>
-        <p className="mt-2 text-[11px] leading-snug text-muted-foreground sm:hidden">
+          </button>
+        </div>
+        <p className="mt-1.5 text-[11px] leading-snug text-muted-foreground sm:hidden">
           Events are listed by their respective organizers. Krew3 is the directory, not the host.
         </p>
 
@@ -393,18 +393,18 @@ function EventsPage() {
           />
         </div>
 
-        <div className="mt-4 border-t-2 border-border pt-4 sm:mt-7 sm:pt-6">
+        <div className="mt-3 border-t-2 border-border pt-3 sm:mt-7 sm:pt-6">
           <SectionLabel>{meta.eyebrow}</SectionLabel>
-          <h1 className="mt-2 text-[clamp(2rem,9.5vw,2.5rem)] leading-[0.95] font-extrabold tracking-tight sm:text-[clamp(2rem,5vw,3rem)]">
+          <h1 className="mt-1.5 text-[clamp(2rem,10vw,2.5rem)] leading-[0.95] font-extrabold tracking-tight sm:mt-2 sm:text-[clamp(2rem,5vw,3rem)]">
             {meta.title}
           </h1>
-          <div className="mt-2.5 flex flex-wrap items-baseline gap-x-4 gap-y-1 sm:mt-3">
+          <div className="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 sm:mt-3">
             <p className="max-w-2xl text-sm leading-snug text-muted-foreground sm:text-lg">
               {meta.copy}
             </p>
             {meta.note && <p className="label-mono text-muted-foreground">{meta.note}</p>}
           </div>
-          <p className="mt-2 text-xs text-muted-foreground sm:text-sm">
+          <p className="mt-1.5 text-xs text-muted-foreground sm:mt-2 sm:text-sm">
             Want to add an opportunity or event? DM{" "}
             <a
               href="https://t.me/Lucky_sc0"
@@ -417,39 +417,39 @@ function EventsPage() {
             on Telegram.
           </p>
 
-          <BuilderBaseCredit className="mt-5 sm:mt-6" />
+          <BuilderBaseCredit className="mt-4 sm:mt-6" />
         </div>
 
-        <div className="mt-4 sm:mt-6">
+        <div className="mt-3 sm:mt-6">
           {results.length ? (
-            <div className="flex flex-col gap-3 sm:gap-4">
+            <div className="flex flex-col gap-2.5 sm:gap-4">
               {nextUp && (
                 <Link
                   to="/events/$id"
                   params={{ id: nextUp.slug }}
-                  className="group flex items-stretch overflow-hidden rounded-2xl border-2 border-border bg-foreground text-background shadow-offset-sm transition-[transform,box-shadow] duration-150 active:translate-y-0.5 active:shadow-offset-sm sm:hover:-translate-y-0.5 sm:hover:shadow-offset"
+                  className="group flex items-stretch overflow-hidden rounded-2xl border-2 border-border bg-foreground text-background shadow-offset-sm transition-[transform,box-shadow] duration-150 active:translate-y-0.5 active:shadow-offset-sm motion-reduce:transition-none sm:hover:-translate-y-0.5 sm:hover:shadow-offset"
                 >
-                  <span className="label-mono flex w-[96px] shrink-0 flex-col justify-center border-r-2 border-background/15 px-3 py-3 sm:w-[150px] sm:px-5 sm:py-4">
+                  <span className="label-mono flex w-[78px] shrink-0 flex-col justify-center border-r-2 border-background/15 px-2.5 py-2.5 sm:w-[150px] sm:px-5 sm:py-4">
                     <span className="text-[9px] text-background/70 sm:text-[10px]">NEXT UP</span>
-                    <span className="mt-1 block text-xl font-extrabold leading-none tracking-tight sm:text-3xl">
+                    <span className="mt-0.5 block text-lg font-extrabold leading-none tracking-tight sm:mt-1 sm:text-3xl">
                       {nextUp.date
                         ? formatShortDate(nextUp.date).toUpperCase()
                         : formatMonthYear(nextUp.dateLabel) || "TBA"}
                     </span>
                   </span>
-                  <span className="flex min-w-0 flex-1 items-center justify-between gap-3 px-3 py-3 sm:px-5 sm:py-4">
+                  <span className="flex min-w-0 flex-1 items-center justify-between gap-2 px-2.5 py-2.5 sm:gap-3 sm:px-5 sm:py-4">
                     <span className="min-w-0">
-                      <span className="line-clamp-1 block text-base font-extrabold tracking-tight sm:text-lg">
+                      <span className="line-clamp-2 block text-sm font-extrabold tracking-tight leading-snug sm:line-clamp-1 sm:text-lg">
                         {nextUp.name}
                       </span>
-                      <span className="label-mono mt-0.5 block truncate text-[11px] text-background/80 sm:text-xs">
+                      <span className="label-mono mt-0.5 block truncate text-[10px] text-background/80 sm:text-xs">
                         {[nextUp.organizer, nextUp.location].filter(Boolean).join(" · ")}
                       </span>
                     </span>
                     {nextUp.url && (
                       <span
                         aria-hidden
-                        className="label-mono flex shrink-0 items-center gap-1 rounded-full border-2 border-background/25 px-3 py-1.5 text-[11px] transition-colors group-hover:border-background"
+                        className="label-mono flex shrink-0 items-center gap-1 rounded-full border-2 border-background/25 px-2.5 py-1 text-[10px] transition-colors group-hover:border-background sm:px-3 sm:py-1.5 sm:text-[11px]"
                       >
                         RSVP ↗
                       </span>
@@ -472,7 +472,7 @@ function EventsPage() {
 
               {dateRail.length > 1 && (
                 <div
-                  className="no-scrollbar -mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0 lg:gap-2"
+                  className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-1.5 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0 lg:gap-2"
                   aria-label="Jump to a date"
                 >
                   {dateRail.map(([date, slug]) => {
@@ -486,7 +486,7 @@ function EventsPage() {
                           jumpToDate(slug);
                         }}
                         className={cn(
-                          "label-mono shrink-0 snap-start rounded-full border-2 border-border px-3 py-1.5 text-[11px] transition-colors duration-150 lg:px-3.5",
+                          "label-mono press min-h-[44px] shrink-0 snap-start rounded-full border-2 border-border px-3 py-1.5 text-[11px] transition-colors duration-150 motion-reduce:transition-none lg:px-3.5",
                           active
                             ? "bg-foreground text-background"
                             : "bg-card text-muted-foreground hover:bg-lavender/50 hover:text-foreground",

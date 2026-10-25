@@ -62,13 +62,13 @@ export function MobileFilterSheet({
           <button
             type="button"
             onClick={onClose}
-            className="label-mono press min-h-9 rounded-full border-2 border-border bg-card px-3.5 shadow-offset-sm"
+            className="label-mono press min-h-[44px] rounded-full border-2 border-border bg-card px-3.5 shadow-offset-sm"
           >
             Done
           </button>
         </div>
 
-        <ul className="mt-3 max-h-[60vh] space-y-1 overflow-y-auto pb-1">
+        <ul className="mt-3 max-h-[60vh] space-y-1 overflow-y-auto pb-2">
           {options.map((o) => {
             const active = o.value === value;
             return (
@@ -82,7 +82,7 @@ export function MobileFilterSheet({
                     onClose();
                   }}
                   className={cn(
-                    "flex min-h-12 w-full items-center justify-between gap-3 rounded-2xl border-2 px-4 py-2.5 text-left transition-colors",
+                    "flex min-h-[48px] w-full items-center justify-between gap-3 rounded-2xl border-2 px-4 py-2.5 text-left transition-colors motion-reduce:transition-none",
                     active
                       ? "border-border bg-lavender"
                       : "border-transparent hover:bg-lavender/40",

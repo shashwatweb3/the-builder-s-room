@@ -11,18 +11,18 @@ const VARA_LOGO_SRC = "/assets/vara.jpg";
 
 export function BuilderBaseCredit({ className }: { className?: string }) {
   return (
-    <div className={cn("flex flex-col items-center gap-4 text-center sm:gap-5", className)}>
+    <div className={cn("flex flex-col items-center gap-3 text-center sm:gap-5", className)}>
       <span className="label-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
         Supported by
       </span>
       <div className="no-scrollbar w-full overflow-x-auto">
-        <div className="mx-auto flex w-max flex-nowrap items-stretch gap-1.5 sm:w-full sm:flex-wrap sm:justify-center sm:gap-4">
+        <div className="mx-auto flex w-max flex-nowrap items-stretch gap-1 sm:w-full sm:flex-wrap sm:justify-center sm:gap-4">
           <a
             href={BUILDER_BASE_URL}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Visit Builder Base"
-            className="flex min-h-[96px] w-[80px] flex-col items-center justify-center gap-1.5 rounded-xl border border-ink bg-card p-[7px] shadow-offset-sm transition-[transform,box-shadow] duration-150 ease-out hover:-translate-y-0.5 hover:shadow-offset-lg active:translate-y-0.5 active:shadow-offset-sm sm:min-h-[104px] sm:w-[110px] sm:gap-2 sm:p-3"
+            className="flex min-h-[88px] w-[76px] flex-col items-center justify-center gap-1 rounded-xl border border-ink bg-card p-[6px] shadow-offset-sm transition-[transform,box-shadow] duration-150 ease-out hover:-translate-y-0.5 hover:shadow-offset-lg active:translate-y-0.5 active:shadow-offset-sm motion-reduce:transition-none sm:min-h-[104px] sm:w-[110px] sm:gap-2 sm:p-3"
           >
             <img
               src={BB_LOGO_SRC}
@@ -30,9 +30,9 @@ export function BuilderBaseCredit({ className }: { className?: string }) {
               width={1080}
               height={1080}
               loading="lazy"
-              className="h-10 w-auto sm:h-[64px]"
+              className="h-9 w-auto sm:h-[64px]"
             />
-            <span className="label-mono text-[8px] uppercase tracking-[0.04em] text-muted-foreground sm:text-[9px] sm:tracking-[0.16em]">
+            <span className="label-mono text-[7.5px] uppercase tracking-[0.04em] text-muted-foreground sm:text-[9px] sm:tracking-[0.16em]">
               Builder Base
             </span>
           </a>
