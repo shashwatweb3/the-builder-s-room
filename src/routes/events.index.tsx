@@ -14,14 +14,10 @@ import { MobileFilterSheet } from "@/components/MobileFilterSheet";
 import { EventsTelegramPopup } from "@/components/EventsTelegramPopup";
 import { VenueEntryCard } from "@/components/VenueEntryCard";
 import { MobileQuickActionDock } from "@/components/MobileQuickActionDock";
-import {
-  MobileEventListToggle,
-  type MobileEventViewMode,
-} from "@/components/MobileEventListToggle";
+import { MobileEventListToggle, type MobileEventViewMode } from "@/components/MobileEventListToggle";
 import { MobileCompactEventCard } from "@/components/MobileCompactEventCard";
 import { formatShortDate, formatMonthYear } from "@/lib/format";
 import { findNextUpcomingEvent } from "@/lib/next-up";
-import { eventMatchesShortcut, type MobileDateShortcut } from "@/lib/mobile-date-shortcuts";
 import { cn } from "@/lib/utils";
 import type { RecEvent } from "@/data/types";
 
@@ -232,7 +228,6 @@ function EventsPage() {
   const [filter, setFilter] = useState<EventFilter>("all");
   const [filterOpen, setFilterOpen] = useState(false);
   const [pinnedDate, setPinnedDate] = useState<string | null>(null);
-  const [dateShortcut, setDateShortcut] = useState<MobileDateShortcut>("all");
   const [mobileViewMode, setMobileViewMode] = useState<MobileEventViewMode>("detailed");
   const [showBackToTop, setShowBackToTop] = useState(false);
   const dateRailRef = useRef<HTMLDivElement>(null);
@@ -279,21 +274,13 @@ function EventsPage() {
     [counts, view],
   );
 
-  const scopedWithShortcut = useMemo(() => {
-    try {
-      return scoped.filter((e) => eventMatchesShortcut(e, dateShortcut));
-    } catch {
-      return scoped;
-    }
-  }, [scoped, dateShortcut]);
-
   const results = useMemo(() => {
     try {
-      return sortEvents(scopedWithShortcut.filter((e) => matchesFilter(e, filter)));
+      return sortEvents(scoped.filter((e) => matchesFilter(e, filter)));
     } catch {
-      return sortEvents(scopedWithShortcut);
+      return sortEvents(scoped);
     }
-  }, [scopedWithShortcut, filter]);
+  }, [scoped, filter]);
 
   const nextUp = useMemo(() => {
     return findNextUpcomingEvent(results);
@@ -425,9 +412,7 @@ function EventsPage() {
 
         {/* Mobile count + filter trigger */}
         <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 sm:hidden">
-          <p className="label-mono text-[12px] text-muted-foreground">
-            {results.length} EVENTS{dateShortcut !== "all" ? " • Filtered" : ""}
-          </p>
+          <p className="label-mono text-[12px] text-muted-foreground">{results.length} EVENTS</p>
           <div className="flex items-center gap-2">
             <MobileEventListToggle mode={mobileViewMode} onChange={setMobileViewMode} />
             <button
@@ -446,42 +431,6 @@ function EventsPage() {
         <p className="mt-1.5 text-[11px] leading-snug text-muted-foreground sm:hidden">
           Events are listed by their respective organizers. Krew3 is the directory, not the host.
         </p>
-
-        {/* Desktop filter pills */}
-        {/* Mobile date shortcuts */}
-        <div
-          className="no-scrollbar -mx-4 mt-2 flex snap-x gap-1.5 overflow-x-auto px-4 pb-1 sm:hidden"
-          role="tablist"
-          aria-label="Quick date filters"
-        >
-          {(
-            [
-              { value: "all", label: "All Dates" },
-              { value: "today", label: "Today" },
-              { value: "tomorrow", label: "Tomorrow" },
-              { value: "weekend", label: "This Weekend" },
-            ] as const
-          ).map((opt) => {
-            const active = dateShortcut === opt.value;
-            return (
-              <button
-                key={opt.value}
-                type="button"
-                role="tab"
-                aria-selected={active}
-                onClick={() => setDateShortcut(opt.value)}
-                className={cn(
-                  "label-mono press min-h-[44px] shrink-0 snap-start rounded-full border-2 border-border px-3 py-1.5 text-[11px] transition-colors duration-150 motion-reduce:transition-none",
-                  active
-                    ? "bg-foreground text-background"
-                    : "bg-card text-muted-foreground hover:bg-lavender/50 hover:text-foreground",
-                )}
-              >
-                {opt.label}
-              </button>
-            );
-          })}
-        </div>
 
         <div className="mt-2.5 hidden sm:block">
           <FilterBar
