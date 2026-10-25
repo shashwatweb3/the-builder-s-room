@@ -2,7 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { createServerClient } from "@supabase/ssr";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowUp } from "lucide-react";
 import { BuilderBaseCredit } from "@/components/BuilderBaseCredit";
 import { SectionLabel } from "@/components/SectionLabel";
 import { EventCard } from "@/components/EventCard";
@@ -12,8 +13,15 @@ import { JoinCTA } from "@/components/JoinCTA";
 import { MobileFilterSheet } from "@/components/MobileFilterSheet";
 import { EventsTelegramPopup } from "@/components/EventsTelegramPopup";
 import { VenueEntryCard } from "@/components/VenueEntryCard";
+import { MobileQuickActionDock } from "@/components/MobileQuickActionDock";
+import {
+  MobileEventListToggle,
+  type MobileEventViewMode,
+} from "@/components/MobileEventListToggle";
+import { MobileCompactEventCard } from "@/components/MobileCompactEventCard";
 import { formatShortDate, formatMonthYear } from "@/lib/format";
 import { findNextUpcomingEvent } from "@/lib/next-up";
+import { eventMatchesShortcut, type MobileDateShortcut } from "@/lib/mobile-date-shortcuts";
 import { cn } from "@/lib/utils";
 import type { RecEvent } from "@/data/types";
 
@@ -224,9 +232,15 @@ function EventsPage() {
   const [filter, setFilter] = useState<EventFilter>("all");
   const [filterOpen, setFilterOpen] = useState(false);
   const [pinnedDate, setPinnedDate] = useState<string | null>(null);
+  const [dateShortcut, setDateShortcut] = useState<MobileDateShortcut>("all");
+  const [mobileViewMode, setMobileViewMode] = useState<MobileEventViewMode>("detailed");
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const dateRailRef = useRef<HTMLDivElement>(null);
+  const nextUpRef = useRef<HTMLAnchorElement>(null);
 
   const switchView = (next: EventView) => {
     setFilter("all");
+    setDateShortcut("all");
     if (next !== view) {
       navigate({ to: "/events", search: { view: next } });
     }
@@ -261,9 +275,14 @@ function EventsPage() {
     [counts, view],
   );
 
+  const scopedWithShortcut = useMemo(
+    () => scoped.filter((e) => eventMatchesShortcut(e, dateShortcut)),
+    [scoped, dateShortcut],
+  );
+
   const results = useMemo(
-    () => sortEvents(scoped.filter((e) => matchesFilter(e, filter))),
-    [scoped, filter],
+    () => sortEvents(scopedWithShortcut.filter((e) => matchesFilter(e, filter))),
+    [scopedWithShortcut, filter],
   );
 
   const nextUp = useMemo(() => {
@@ -284,6 +303,37 @@ function EventsPage() {
       .getElementById(`event-${slug}`)
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onScroll = () => {
+      setShowBackToTop(window.scrollY > 600);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const saved = window.localStorage.getItem("krew3:events:mobile-view");
+      if (saved === "compact" || saved === "detailed") {
+        setMobileViewMode(saved);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem("krew3:events:mobile-view", mobileViewMode);
+    } catch {
+      /* ignore */
+    }
+  }, [mobileViewMode]);
 
   const activeFilterLabel = FILTER_OPTIONS.find((o) => o.value === filter)?.label ?? "FILTER";
 
@@ -364,25 +414,65 @@ function EventsPage() {
         </div>
 
         {/* Mobile count + filter trigger */}
-        <div className="mt-2.5 flex items-center justify-between gap-2 sm:hidden">
-          <p className="label-mono text-[12px] text-muted-foreground">{results.length} EVENTS</p>
-          <button
-            type="button"
-            onClick={() => setFilterOpen(true)}
-            aria-label="Open filters"
-            className="press flex min-h-[44px] items-center justify-between gap-2 rounded-full border-2 border-border bg-card px-3.5 py-2 shadow-offset-sm"
-          >
-            <span className="label-mono text-[12px]">{activeFilterLabel}</span>
-            <span aria-hidden className="text-muted-foreground">
-              ▾
-            </span>
-          </button>
+        <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 sm:hidden">
+          <p className="label-mono text-[12px] text-muted-foreground">
+            {results.length} EVENTS{dateShortcut !== "all" ? " • Filtered" : ""}
+          </p>
+          <div className="flex items-center gap-2">
+            <MobileEventListToggle mode={mobileViewMode} onChange={setMobileViewMode} />
+            <button
+              type="button"
+              onClick={() => setFilterOpen(true)}
+              aria-label="Open filters"
+              className="press flex min-h-[44px] items-center justify-between gap-2 rounded-full border-2 border-border bg-card px-3.5 py-2 shadow-offset-sm"
+            >
+              <span className="label-mono text-[12px]">{activeFilterLabel}</span>
+              <span aria-hidden className="text-muted-foreground">
+                ▾
+              </span>
+            </button>
+          </div>
         </div>
         <p className="mt-1.5 text-[11px] leading-snug text-muted-foreground sm:hidden">
           Events are listed by their respective organizers. Krew3 is the directory, not the host.
         </p>
 
         {/* Desktop filter pills */}
+        {/* Mobile date shortcuts */}
+        <div
+          className="no-scrollbar -mx-4 mt-2 flex snap-x gap-1.5 overflow-x-auto px-4 pb-1 sm:hidden"
+          role="tablist"
+          aria-label="Quick date filters"
+        >
+          {(
+            [
+              { value: "all", label: "All Dates" },
+              { value: "today", label: "Today" },
+              { value: "tomorrow", label: "Tomorrow" },
+              { value: "weekend", label: "This Weekend" },
+            ] as const
+          ).map((opt) => {
+            const active = dateShortcut === opt.value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => setDateShortcut(opt.value)}
+                className={cn(
+                  "label-mono press min-h-[44px] shrink-0 snap-start rounded-full border-2 border-border px-3 py-1.5 text-[11px] transition-colors duration-150 motion-reduce:transition-none",
+                  active
+                    ? "bg-foreground text-background"
+                    : "bg-card text-muted-foreground hover:bg-lavender/50 hover:text-foreground",
+                )}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
+        </div>
+
         <div className="mt-2.5 hidden sm:block">
           <FilterBar
             compact
@@ -425,6 +515,7 @@ function EventsPage() {
             <div className="flex flex-col gap-2.5 sm:gap-4">
               {nextUp && (
                 <Link
+                  ref={nextUpRef}
                   to="/events/$id"
                   params={{ id: nextUp.slug }}
                   className="group flex items-stretch overflow-hidden rounded-2xl border-2 border-border bg-foreground text-background shadow-offset-sm transition-[transform,box-shadow] duration-150 active:translate-y-0.5 active:shadow-offset-sm motion-reduce:transition-none sm:hover:-translate-y-0.5 sm:hover:shadow-offset"
@@ -472,6 +563,7 @@ function EventsPage() {
 
               {dateRail.length > 1 && (
                 <div
+                  ref={dateRailRef}
                   className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-1.5 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0 lg:gap-2"
                   aria-label="Jump to a date"
                 >
@@ -484,7 +576,16 @@ function EventsPage() {
                         onClick={() => {
                           setPinnedDate(date);
                           jumpToDate(slug);
+                          const el = dateRailRef.current;
+                          const btn = el?.querySelector(
+                            `button[data-date="${date}"]`,
+                          ) as HTMLElement | null;
+                          if (btn && el) {
+                            const left = btn.offsetLeft - el.offsetLeft;
+                            el.scrollTo({ left: Math.max(0, left - 12), behavior: "smooth" });
+                          }
                         }}
+                        data-date={date}
                         className={cn(
                           "label-mono press min-h-[44px] shrink-0 snap-start rounded-full border-2 border-border px-3 py-1.5 text-[11px] transition-colors duration-150 motion-reduce:transition-none lg:px-3.5",
                           active
@@ -501,7 +602,26 @@ function EventsPage() {
 
               <div
                 key={view}
-                className="grid grid-cols-1 gap-3 rise-in sm:gap-4 md:grid-cols-2 lg:gap-5"
+                className={cn(
+                  "rise-in sm:gap-4 lg:gap-5",
+                  mobileViewMode === "compact"
+                    ? "flex flex-col gap-2 sm:hidden"
+                    : "grid grid-cols-1 gap-3 sm:hidden",
+                )}
+              >
+                {results
+                  .filter((e) => !(nextUp && results.length > 1 && e.id === nextUp.id))
+                  .map((e) =>
+                    mobileViewMode === "compact" ? (
+                      <MobileCompactEventCard key={e.id} event={e} id={`event-${e.slug}`} />
+                    ) : (
+                      <EventCard key={e.id} event={e} id={`event-${e.slug}`} />
+                    ),
+                  )}
+              </div>
+              <div
+                key={`${view}-desktop`}
+                className="hidden sm:grid sm:grid-cols-1 md:grid-cols-2 sm:gap-4 lg:gap-5"
               >
                 {results
                   .filter((e) => !(nextUp && results.length > 1 && e.id === nextUp.id))
@@ -542,6 +662,37 @@ function EventsPage() {
         value={filter}
         onSelect={(v) => setFilter(v as EventFilter)}
       />
+
+      <MobileQuickActionDock
+        onOpenSearch={() => {
+          const btn = document.querySelector(
+            '[aria-label="Open search"]',
+          ) as HTMLButtonElement | null;
+          if (btn) btn.click();
+          else window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
+        onOpenFilters={() => setFilterOpen(true)}
+      />
+
+      {showBackToTop && (
+        <button
+          type="button"
+          onClick={() => {
+            if (nextUpRef.current) {
+              nextUpRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+            } else {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          }}
+          className="press fixed bottom-[calc(env(safe-area-inset-bottom)+86px)] right-3 z-[60] flex min-h-[44px] items-center gap-1.5 rounded-full border-2 border-border bg-foreground px-3 py-1.5 text-background shadow-offset-lg sm:hidden motion-reduce:transition-none"
+          aria-label="Go to next event or top"
+        >
+          <ArrowUp className="size-4" aria-hidden />
+          <span className="label-mono text-[11px]">Next event</span>
+        </button>
+      )}
+
+      <div className="pb-[calc(env(safe-area-inset-bottom)+90px)] sm:pb-0" />
 
       <EventsTelegramPopup />
     </>
