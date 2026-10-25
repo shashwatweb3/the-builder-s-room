@@ -56,37 +56,43 @@ export function eventMatchesShortcut(
   shortcut: MobileDateShortcut,
   date: Date = new Date(),
 ): boolean {
-  if (shortcut === "all") return true;
-  if (!event.date && !event.endDate && !event.dateLabel) return false;
-  const today = getIstTodayKey(date);
-  if (shortcut === "today") {
-    if (event.date === today) return true;
-    if (event.endDate && event.date && event.date <= today && event.endDate >= today) return true;
-    return false;
-  }
-  if (shortcut === "tomorrow") {
-    const { year, month, day } = getIstDateParts(date);
-    const t = addDays(year, month, day, 1);
-    const tomorrow = toDateKey(t.year, t.month, t.day);
-    if (event.date === tomorrow) return true;
-    if (event.endDate && event.date && event.date <= tomorrow && event.endDate >= tomorrow)
-      return true;
-    return false;
-  }
-  if (shortcut === "weekend") {
-    const keys = getIstWeekendKeys(date);
-    const set = new Set(keys);
-    if (event.date && set.has(event.date)) return true;
-    if (event.endDate && event.date) {
-      // check overlap
-      for (let i = 0; i < 7; i++) {
-        const { year, month, day } = getIstDateParts(date);
-        const d = addDays(year, month, day, i);
-        const k = toDateKey(d.year, d.month, d.day);
-        if (set.has(k) && event.date <= k && event.endDate >= k) return true;
-      }
+  try {
+    if (shortcut === "all") return true;
+    if (!event) return false;
+    if (!event.date && !event.endDate) return false;
+    if (typeof event.date === "string" && event.date.length < 8) return false;
+    if (typeof event.endDate === "string" && event.endDate.length < 8) return false;
+    const today = getIstTodayKey(date);
+    if (shortcut === "today") {
+      if (event.date === today) return true;
+      if (event.endDate && event.date && event.date <= today && event.endDate >= today) return true;
+      return false;
     }
+    if (shortcut === "tomorrow") {
+      const { year, month, day } = getIstDateParts(date);
+      const t = addDays(year, month, day, 1);
+      const tomorrow = toDateKey(t.year, t.month, t.day);
+      if (event.date === tomorrow) return true;
+      if (event.endDate && event.date && event.date <= tomorrow && event.endDate >= tomorrow)
+        return true;
+      return false;
+    }
+    if (shortcut === "weekend") {
+      const keys = getIstWeekendKeys(date);
+      const set = new Set(keys);
+      if (event.date && set.has(event.date)) return true;
+      if (event.endDate && event.date) {
+        for (let i = 0; i < 7; i++) {
+          const { year, month, day } = getIstDateParts(date);
+          const d = addDays(year, month, day, i);
+          const k = toDateKey(d.year, d.month, d.day);
+          if (set.has(k) && event.date <= k && event.endDate >= k) return true;
+        }
+      }
+      return false;
+    }
+    return true;
+  } catch {
     return false;
   }
-  return true;
 }

@@ -240,6 +240,9 @@ function EventsPage() {
 
   const switchView = (next: EventView) => {
     setFilter("all");
+    try {
+      setPinnedDate(null);
+    } catch {}
     if (next !== view) {
       navigate({ to: "/events", search: { view: next } });
     }
@@ -274,15 +277,21 @@ function EventsPage() {
     [counts, view],
   );
 
-  const scopedWithShortcut = useMemo(
-    () => scoped.filter((e) => eventMatchesShortcut(e, dateShortcut)),
-    [scoped, dateShortcut],
-  );
+  const scopedWithShortcut = useMemo(() => {
+    try {
+      return scoped.filter((e) => eventMatchesShortcut(e, dateShortcut));
+    } catch {
+      return scoped;
+    }
+  }, [scoped, dateShortcut]);
 
-  const results = useMemo(
-    () => sortEvents(scopedWithShortcut.filter((e) => matchesFilter(e, filter))),
-    [scopedWithShortcut, filter],
-  );
+  const results = useMemo(() => {
+    try {
+      return sortEvents(scopedWithShortcut.filter((e) => matchesFilter(e, filter)));
+    } catch {
+      return sortEvents(scopedWithShortcut);
+    }
+  }, [scopedWithShortcut, filter]);
 
   const nextUp = useMemo(() => {
     return findNextUpcomingEvent(results);
