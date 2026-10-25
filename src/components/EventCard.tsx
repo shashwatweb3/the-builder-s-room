@@ -70,7 +70,7 @@ export function EventCard({ event, id }: { event: RecEvent; id?: string }) {
           <span className="text-base font-extrabold sm:text-lg">{dayLabel}</span>
         </div>
 
-        <div className="flex flex-wrap items-center justify-end gap-1 lg:[grid-area:tags] lg:flex-row lg:flex-wrap lg:items-start lg:gap-1.5">
+        <div className="flex flex-wrap items-center justify-end gap-1 lg:[grid-area:tags] lg:justify-start lg:flex-row lg:items-start lg:gap-1.5">
           <Tag compact tone="purple">
             {eventKindLabel[event.kind]}
           </Tag>
@@ -115,7 +115,7 @@ export function EventCard({ event, id }: { event: RecEvent; id?: string }) {
         {event.summary}
       </p>
 
-      <div className="order-6 flex items-center justify-between gap-2.5 lg:[grid-area:actions] lg:flex-col lg:items-end lg:gap-2 lg:justify-start">
+      <div className="order-6 flex items-center justify-between gap-2.5 lg:[grid-area:actions] lg:flex-col lg:items-end lg:gap-2 lg:justify-self-end">
         <div className="flex items-center gap-1.5">
           <ScheduleButton event={event} />
           {event.date && <CalendarButton event={event} />}
